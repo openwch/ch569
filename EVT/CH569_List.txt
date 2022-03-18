@@ -1,0 +1,57 @@
+
+南京沁恒微电子股份有限公司 2020.08
+最新资料请到我们的网站上查询
+http://wch.cn
+
+  |
+  |-- CH56x：RISC-V内核微控制器 
+  |      |-- DS
+  |      |      |--CH569DS1.PDF：CH569数据手册
+  |      |-- EVT: CH56x评估板和CH56x相关例程
+  |      |      |-- PUB: 
+  |      |      |      |-- CH565W&CH569W评估板说明书.pdf：CH565和CH569评估板说明及工程创建说明
+  |      |      |      |-- CH569WSCH.pdf：CH569W评估板原理图
+  |      |      |      |-- CH565WSCH.pdf：CH565W评估板原理图  
+  |      |      |-- EXAM: 
+  |      |      |      |-- SRC  
+  |      |      |      |      |-- RVMSIS：内核系统头文件
+  |      |      |      |      |-- Startup：CH56x系列启动文件
+  |      |      |      |      |-- Peripheral：基本外设驱动源文件及头文件
+  |      |      |      |-- BUS8：BUS8操作CH372例程
+  |      |      |      |-- DVP：OV2640摄像头操作例程
+  |      |      |      |-- ECDC：ECDC例程
+  |      |      |      |-- EMMC：EMMC例程
+  |      |      |      |-- ETH-GMAC
+  |      |      |      |      |-- GMAC_RAW：以太网原始数据收发例程
+  |      |      |      |      |-- TCP_client：TCP客户端例程   
+  |      |      |      |      |-- TCP_server：TCP服务器例程  
+  |      |      |      |      |-- UDP：UDP例程  
+  |      |      |      |-- FLASH：FLASH的擦/读/写例程
+  |      |      |      |      |-- Flash_Lib：CH56x内部FLASH操作Lib库
+  |      |      |      |-- GPIO：GPIO例程
+  |      |      |      |-- HSPI
+  |      |      |      |      |-- HSPI_BurstMode：HSPI突发模式上下端收发例程
+  |      |      |      |      |-- HSPI_BurstMode_UpDown_Switch：HSPI突发模式上下端切换收发例程    
+  |      |      |      |      |-- HSPI_DoubleDMAMode：HSPI双DMA模式，硬件自动应答模式上下端收发例程
+  |      |      |      |      |-- HSPI_ECDC：HSPI上下端收发数据加解密例程
+  |      |      |      |      |-- HSPI_NormalMode：HSPI普通模式上下端收发例程
+  |      |      |      |-- PWMX：PWMX例程 
+  |      |      |      |-- SPI
+  |      |      |      |      |-- SPI0_FLASH：SPI0操作外部FLASH例程
+  |      |      |      |      |-- SPI0_HOST：SPI0主机例程
+  |      |      |      |      |-- SPI0_SLAVE：SPIO从机例程
+  |      |      |      |      |-- SPI1_HOST：SPI1主机例程
+  |      |      |      |      |-- SPI1_SLAVE：SPI1从机例程
+  |      |      |      |      |-- SPIx_DMA：SPIx 使用DMA，主机从机收发例程
+  |      |      |      |-- TMR：定时器功能例程
+  |      |      |      |-- UART：UART收发例程
+  |      |      |      |-- USBSS
+  |      |      |      |      |-- USBD 
+  |      |      |      |      |      |-- CH372Device：模拟自定义USB设备（CH372设备）例程，支持USB2.0和USB3.0，提供7个非0通道(上传+下传)，实现数据先下传，然后数据内容取反上传
+  |      |      |      |      |      |-- UVC：UVC设备例程  
+  |      |      |      |      |-- USBH 
+  |      |      |      |      |      |-- HOST_SS：USB设备的简易枚举过程例程
+  |      |      |      |      |      |-- HOST_Udisk：U盘文件系统示例
+  |      |      |      |      |-- USB3.0TestDemo.zip：演示372设备端点上传下传以及传输速度工具 
+  |      |      |      |-- UserOptionBytes：用户字配置函数和关闭两线接口函数，以及使用该函数例程
+  
