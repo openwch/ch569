@@ -1,0 +1,57 @@
+
+Nanjing Qinheng Microelectronics Co., Ltd. 2020.08
+
+http://wch-ic.com
+
+  |
+  |-- CH56x: RISC-V MCU 
+  |      |-- DS
+  |      |      |--CH569DS1.PDF: CH569 datasheet
+  |      |-- EVT: CH56x evaluation board andCH56x related software routines
+  |      |      |-- PUB: 
+  |      |      |      |-- CH565W&CH569WEVT Evaluation Board Manual.pdf:  Instruction to CH565 and CH569 evaluation boards and project creation description
+  |      |      |      |-- CH569WSCH.pdf: Schematic of CH569W evaluation board
+  |      |      |      |-- CH565WSCH.pdf: SchematicCH565W evaluation board  
+  |      |      |-- EXAM: 
+  |      |      |      |-- SRC  
+  |      |      |      |      |-- RVMSIS: kernal system header file
+  |      |      |      |      |-- Startup: CH56x startup file
+  |      |      |      |      |-- Peripheral: £ºbasic peripheral driver source file and header file
+  |      |      |      |-- BUS8: BUS8 operation CH372 routine
+  |      |      |      |-- DVP: OV2640 camera operation rouine
+  |      |      |      |-- ECDC: ECDC rouine
+  |      |      |      |-- EMMC: EMMC rouine
+  |      |      |      |-- ETH-GMAC
+  |      |      |      |      |-- GMAC_RAW: Ethernet original data receive/transmit routine
+  |      |      |      |      |-- TCP_client: TCP client routine   
+  |      |      |      |      |-- TCP_server: TCP server routine  
+  |      |      |      |      |-- UDP: UDP routine  
+  |      |      |      |-- FLASH: FLASH erase/read/write routines
+  |      |      |      |      |-- Flash_Lib: CH56x internal FLASH operation library
+  |      |      |      |-- GPIO: GPIO routine
+  |      |      |      |-- HSPI
+  |      |      |      |      |-- HSPI_BurstMode: HSPI upper and lower receive/transmit data routines in burst mode
+  |      |      |      |      |-- HSPI_BurstMode_UpDown_Switch: HSPI upper and lower receive/transmit switch routine in burst mode    
+  |      |      |      |      |-- HSPI_DoubleDMAMode: HSPI dual DMA mode, the upper and lower receive/transmit data routines  in hardware auto respond mode
+  |      |      |      |      |-- HSPI_ECDC: HSPI upper and lower receive/transmit data  encryption/decryption routine
+  |      |      |      |      |-- HSPI_NormalMode: HSPI upper and lower receive/transmit data routines in normal mode
+  |      |      |      |-- PWMX: PWMX routine 
+  |      |      |      |-- SPI
+  |      |      |      |      |-- SPI0_FLASH: SPI0 operation external FLASH routine
+  |      |      |      |      |-- SPI0_HOST: SPI0 host routine
+  |      |      |      |      |-- SPI0_SLAVE: SPIO slave routine
+  |      |      |      |      |-- SPI1_HOST: SPI1 host routine
+  |      |      |      |      |-- SPI1_SLAVE: SPI1 slave routine
+  |      |      |      |      |-- SPIx_DMA: SPIx  uses DMA, host and slave receive/transmit data routines
+  |      |      |      |-- TMR: Timer function routine
+  |      |      |      |-- UART: UART receive/transmit data routines
+  |      |      |      |-- USBSS
+  |      |      |      |      |-- USBD 
+  |      |      |      |      |      |-- CH372Device: simulate custom USB device (CH372 device) routine, supports USB2.0 and USB3.0, provides 7 non-zero  channels (upload+download), implements that data is downloaded first and then the data content is reversed and uploaded
+  |      |      |      |      |      |-- UVC: UVC device routine  
+  |      |      |      |      |-- USBH 
+  |      |      |      |      |      |-- HOST_SS: simple enumeration procedure routine for USB devices
+  |      |      |      |      |      |-- HOST_Udisk£ºU disk file system exam
+  |      |      |      |      |-- USB3.0TestDemo.zip: Demo 372 devce endpoint upload/download and tansfer rate tool 
+  |      |      |      |-- UserOptionBytes: User word configuration function and 2-wire interface disable function, as well as routine to use these functions
+  
