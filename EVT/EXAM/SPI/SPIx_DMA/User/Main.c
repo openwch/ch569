@@ -4,9 +4,17 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *SPIx_DMA routine
+ *
+ */
 
 #include "CH56x_common.h"
 
@@ -55,7 +63,7 @@ int main()
 	SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
 
-    /*配置串口调试 */
+    /* Configure serial debugging */
 	DebugInit(115200);
 	printf("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 
@@ -64,7 +72,7 @@ int main()
 
 #if 0
 
-    /* SPI0 主机模式  */
+    /* SPI0 master mode */
     R32_PA_OUT |= 1<<12;
 
     R32_PA_PD  &= ~(1<<12 | 1<<13 | 1<<14 );
@@ -73,7 +81,7 @@ int main()
 
     SPI0_MasterDefInit( );
 
-    // DMA 连续发送
+    // DMA Send continuously
     R32_PA_CLR |= 1<<12;
 
     SPIA_MasterDMATrans(spiBuff, 12);
@@ -87,7 +95,7 @@ int main()
 
 #if 1
 
-	/* SPI1 主机模式  */
+	/* SPI1 master mode */
 	R32_PB_OUT |= 1<<11;
 
 	R32_PB_PD  &= ~(1<<11 | 1<<12 | 1<<13 );
@@ -96,7 +104,7 @@ int main()
 
 	SPI1_MasterDefInit( );
 
-	// DMA 连续发送
+	// DMA Send continuously
 	R32_PB_CLR |= 1<<11;
 
 	SPI1_MasterDMATrans(spiBuff, 12);

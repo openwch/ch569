@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
@@ -14,9 +16,9 @@
 /*******************************************************************************
  * @fn     SystemInit
  *
- * @brief   系统时钟初始化
+ * @brief   System clock initialization
  *
- * @param  systemclck:系统时钟 Hz
+ * @param  systemclck: system clock Hz
  *
  * @return  None
  */
@@ -79,7 +81,7 @@ void SystemInit(uint32_t systemclck)
 /*******************************************************************************
  * @fn     GetSysClock
  *
- * @brief  获取当前系统时钟
+ * @brief  Get the current system clock
  *
  * @param  None
  *
@@ -91,7 +93,7 @@ UINT32 GetSysClock( void )
 
 	rev = R8_CLK_PLL_DIV & 0x0F;
 
-	if(R8_CLK_CFG_CTRL & RB_CLK_SEL_PLL){             //系统时钟源来自 USB PHY 提供的480M
+	if(R8_CLK_CFG_CTRL & RB_CLK_SEL_PLL){             //The system clock source comes from the 480M provided by the USB PHY
 		if(rev == 0){
 			return (30000000);
 		}
@@ -99,7 +101,7 @@ UINT32 GetSysClock( void )
 			return (480000000/R8_CLK_PLL_DIV);
 		}
 	}
-	else{                                             //系统时钟源来自外部晶振30M
+	else{                                             //The system clock source comes from an external crystal oscillator 30M
 		if(rev == 0){
 			return (2000000);
 		}

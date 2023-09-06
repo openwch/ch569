@@ -3,9 +3,11 @@
  * Author             : WCH
  * Version            : V1.0
  * Date               : 2020/07/31
- * Description 		 : UserOptionBytes用户配置函数和两线接口关闭函数
- * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+ * Description 		 : User Option Bytes user configuration function and two-wire interface closing function
+ *********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
@@ -44,15 +46,15 @@ void DebugInit(UINT32 baudrate)
  *User option byte define
  * [7-0] 8b' = ROM_CFG[0-7]
  *      -[3-0] reserved
- *      -[4] RESET_EN 0-外部复位不使能 1-使能
- *      -[7-5] 3b' 010 固定值有效
+ *      -[4] RESET_EN 0 - External reset is not enabled 1 - enabled
+ *      -[7-5] 3b' 010 Fixed value is valid
  * [10-8] 3b' = ROM_CFG[31-29]
  *      -[8] LOCKUP_RST_EN
  *      -[10-9] USER_MEM
- * [11] 1b' = 1-默认下载引脚 0-第二配置引脚
- * [19-12] 8b' = 用户程序代码保护(4K为单位)
- * [23-20] 4b' = 0101 固定值有效
- * [31-24] 8b' = ~[7-0]有效
+ * [11] 1b' = 1 - Default download pin 0 - Second configuration pin
+ * [19-12] 8b' = User program code protection (in units of 4K)
+ * [23-20] 4b' = 0101 Fixed value is valid
+ * [31-24] 8b' = ~[7-0] valid
  *
  */
 
@@ -76,29 +78,29 @@ void DebugInit(UINT32 baudrate)
 
 /* FLASH_WRProt */
 #define FLASH_WRProt              0xFFF00FFF
-#define WRProt_Size               0x04        /* 单位4KB */
+#define WRProt_Size               0x04        /* in units of 4K */
 #define FLASH_WRProt_Size_4KB     (WRProt_Size << 12)
 
 /*******************************************************************************
  * @fn           UserOptionByteConfig
  *
  * @brief        Configure User Option Byte.
- *               (，使用该函数，必须使用官方提供的.S文件，同时调用该函数后，两次上电后，两线调试接口默认关闭)
+ *               (To use this function, you must use the .S file provided by the official. After calling this function at the same time, after powering on twice, the two-wire debugging interface is disabled by default)
  *
  * @param        RESET_EN:
- *                     ENABLE-外部复位引脚使能
- *                     DISABLE-不使能
+ *                     ENABLE-External reset pin enable
+ *                     DISABLE-not enabled
  *               LOCKUP_RST_EN:
- *                     ENABLE-内核LOCKUP复位系统使能
- *                     DISABLE-不使能
+ *                     ENABLE-Core LOCKUP reset system enable
+ *                     DISABLE-not enabled
  *               BOOT_PIN:
- *                     ENABLE-使用默认boot脚-PA5
- *                     DISABLE-使用boot脚-PA13
- *               USER_MEM_Set：RAM和ROM容量定义
+ *                     ENABLE-Use the default boot pin-PA5
+ *                     DISABLE-Use boot pin - PA13
+ *               USER_MEM_Set: Definition of RAM and ROM capacity
  *                     USER_MEM_RAM32K_ROM96K
  *                     USER_MEM_RAM64K_ROM64K
  *                     USER_MEM_RAM96K_ROM32K
- *               FLASHProt_Size：写保护大小(单位4K)
+ *               FLASHProt_Sizewrite-protected size(in units of 4K)
  *                     FLASH_WRProt_Size_4KB-
  *
  * @return       0: Success
@@ -126,7 +128,7 @@ UINT8 UserOptionByteConfig(FunctionalState RESET_EN, FunctionalState LOCKUP_RST_
 
         /* bit[7:0]-bit[31-24] */
         s |= 0xFFFFFF00;
-        s &= ((~(s << 24)) | 0x000000FF); //高8位 配置信息取反；
+        s &= ((~(s << 24)) | 0x000000FF); //The upper 8 bits configuration information is reversed
 
         /* bit[23-12] */
         s &= 0xFF0000FF;
@@ -155,7 +157,7 @@ UINT8 UserOptionByteConfig(FunctionalState RESET_EN, FunctionalState LOCKUP_RST_
 /*******************************************************************************
  * @fn       Close_SWD
  *
- * @brief    关两线调试接口，其余配置值保持不变.
+ * @brief    Turn off the two-wire debugging interface, and the rest of the configuration values remain unchanged
  *
  * @return   0: Success
  *           1: Err
@@ -174,9 +176,9 @@ UINT8 Close_SWD(void)
         t = ((s >> 21) & (7 << 8)) & (0x00000700);
 
         /* bit[7:0]-bit[31-24] */
-        s &= ~((1 << 5) | (1 << 7)); //禁用调试功能， 禁用SPI读写FLASH
+        s &= ~((1 << 5) | (1 << 7)); //Disable debugging function, disable SPI read and write FLASH
         s |= 0xFFFFFF00;
-        s &= ((~(s << 24)) | 0x000000FF); //高8位 配置信息取反；
+        s &= ((~(s << 24)) | 0x000000FF); //The upper 8 bits configuration information is reversed
 
         /* bit[7:0]-bit[31-24]-bit[10-8]-bit[23-12]=0x000*/
         s &= 0xFF0000FF;
@@ -235,12 +237,12 @@ int main()
     {
         UINT8 p;
 
-#if 0 /* 修改用户配置值 */
+#if 0 /* Modify user configuration values */
        p = UserOptionByteConfig(ENABLE, ENABLE, ENABLE, USER_MEM_RAM96K_ROM32K, FLASH_WRProt_Size_4KB);
 
 #endif
 
-#if 1 /* 关闭两线调试接口 */
+#if 1 /* Turn off two-wire debug interface */
         p = Close_SWD();
 
 #endif

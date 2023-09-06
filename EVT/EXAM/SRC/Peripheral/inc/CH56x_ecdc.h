@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 
@@ -17,27 +19,27 @@
 #endif
 
 
-/* 加解密模式 */
+/* Encryption and decryption mode */
 #define   MODE_SM4_ECB        0
 #define   MODE_AES_ECB        1
 #define   MODE_SM4_CTR        2
 #define   MODE_AES_CTR        3
 
-/* 大小端模式 */
+/* endian mode */
 #define   MODE_BIG_ENDIAN     1
 #define   MODE_LITTLE_ENDIAN  0
 
-/* 密钥长度 */
+/* key length */
 #define   KEYLENGTH_128BIT    0
 #define   KEYLENGTH_192BIT    1
 #define   KEYLENGTH_256BIT    2
 
-/* 加解密速度 */
+/* Encryption and decryption speed */
 #define   ECDCCLK_DISABLE     1
 #define   ECDCCLK_240MHZ      2
 #define   ECDCCLK_160MHZ      3
 
-/* 方向和模式*/
+/* direction and mode */
 #define   SELFDMA_ENCRY				0x84
 #define   SELFDMA_DECRY				0x8c
 #define   SINGLEREGISTER_ENCRY		PERIPHERAL_TO_RAM_ENCRY

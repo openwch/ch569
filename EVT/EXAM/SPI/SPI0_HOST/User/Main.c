@@ -4,9 +4,17 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *SPI0_HOST routine
+ *
+ */
 
 #include "CH56x_common.h"
 
@@ -54,11 +62,11 @@ int main()
 	SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
 
-    /*配置串口调试 */
+    /* Configure serial debugging */
 	DebugInit(115200);
 	printf("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 
-/* 主机模式  */
+/* master mode */
     printf( "1.spi0 mul master mode send data ...\n");
     DelayMs( 100 );
 
@@ -70,7 +78,7 @@ int main()
 
     SPI0_MasterDefInit( );
 
-// 单字节发送
+// single byte sent
     R32_PA_CLR |= 1<<12;
 
     SPI0_MasterSendByte(0x55);
@@ -80,7 +88,7 @@ int main()
     DelayMs( 1 );
 
 
-// FIFO 连续发送
+// FIFO Continuous Send
 	R32_PA_CLR |= 1<<12;
 
 	SPI0_MasterTrans( spiBuff, 9 );

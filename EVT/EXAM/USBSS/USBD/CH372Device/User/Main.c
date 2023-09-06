@@ -2,21 +2,27 @@
 * File Name          : Main.c
 * Author             : WCH
 * Version            : V1.1
-* Date               : 2020/12/23
-* Description 		 : 
+* Date               : 2023/02/16
+*
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ * @Note
+ * This routine is used for USB3.0 device.Simulated a CH372 device.
+ * The host can burst 4 packets of data to endpoint 1 and then take 4 packets of data from endpoint 1.
+ * The host can continuously send or receive data to endpoint 2-7 (to test the speed).
+*/
+
 #include "CH56x_common.h"
 #include "CH56xusb30_lib.h"
 #include "CH56x_usb30.h"
 #include "CH56x_usb20.h"
-/* Global define */
-#define  FREQ_SYS       120000000
-#define  UART1_BAUD     921600
-/* Global Variable */
 
-/* Function declaration */
+/* Global define */
+#define  UART1_BAUD     115200
 
 /*******************************************************************************
  * @fn        DebugInit
@@ -51,25 +57,24 @@ void DebugInit(UINT32 baudrate)
  */
 int main()
 {
-
     SystemInit(FREQ_SYS);
 	Delay_Init(FREQ_SYS);
 
-/* 配置串口调试 */
+	/* Configure serial port debugging */
 	DebugInit(UART1_BAUD);
-	PRINT("CH56x USB3.0 & USB2.0 device test(120MHz) !\n");
+	PRINT("CH56x USB3.0 & USB2.0 device test(80MHz) !\n");
 
-//USB初始化
+	/* USB initialization */
     R32_USB_CONTROL = 0;
     PFIC_EnableIRQ(USBSS_IRQn);
     PFIC_EnableIRQ(LINK_IRQn);
 
     PFIC_EnableIRQ(TMR0_IRQn);
     R8_TMR0_INTER_EN = RB_TMR_IE_CYC_END;
-    TMR0_TimerInit( 67000000 );   //约0.5秒
-
-	USB30D_init(ENABLE);          //USB3.0初始化 初始化之前确保USB3.0两个中断使能
+    TMR0_TimerInit( 67000000 );
+	USB30D_init(ENABLE);
 
 	while(1);
 }
+
 

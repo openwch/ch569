@@ -4,9 +4,17 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *ECDC routine
+ *
+ */
 
 #include "CH56x_common.h"
 
@@ -52,11 +60,11 @@ int main()
     SystemInit(FREQ_SYS);
 //    Delay_Init(FREQ_SYS);
 
-/* 配置串口调试 */
+/* Configure serial debugging */
 	DebugInit(115200);
 	PRINT("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 
-/* 单次寄存器*/
+/* one-time register*/
 #if 0
 //	ECDC_Init(MODE_AES_ECB, ECDCCLK_240MHZ, KEYLENGTH_128BIT, KeyValue, NULL);
 //	ECDC_Init(MODE_AES_CTR, ECDCCLK_240MHZ, KEYLENGTH_128BIT, KeyValue, CountValue);
@@ -65,14 +73,14 @@ int main()
 
 	UINT32 plaintext[4]={0x11112222, 0x33334444, 0x55556666, 0x77778888},ciphertext[4]={0};
 
-/*打印加密后的密文*/
+/*Print the encrypted ciphertext*/
 	PRINT("encryption:\n");
 	ECDC_Excute(SINGLEREGISTER_ENCRY, MODE_BIG_ENDIAN);
 	PRINT("%#X \n",R16_ECEC_CTRL);
 	ECDC_SingleRegister( plaintext, ciphertext);
 	for(UINT8 i=0; i<4; i++)
 		printf("%08x\n",ciphertext[i]);
-/*打印解密后的明文*/
+/*Print the decrypted plaintext*/
 	PRINT("decryption:\n");
 	ECDC_Excute(SINGLEREGISTER_DECRY, MODE_BIG_ENDIAN);
 	PRINT("%#X \n",R16_ECEC_CTRL);
@@ -86,17 +94,17 @@ int main()
 //	ECDC_Init(MODE_AES_CTR, ECDCCLK_240MHZ, KEYLENGTH_128BIT, KeyValue, CountValue);
 //	ECDC_Init(MODE_SM4_ECB, ECDCCLK_240MHZ, KEYLENGTH_128BIT, KeyValue, NULL);
 //	ECDC_Init(MODE_SM4_CTR, ECDCCLK_240MHZ, KEYLENGTH_128BIT, KeyValue, CountValue);
-/*写明文*/
+/*write plaintext*/
 	UINT32 i=0, len=64;
 	for(i=0; i<len; i++)
 		*(UINT32*)(0x20020000+i*4) = i;
-/*打印加密后的密文*/
+/*Print the encrypted ciphertext*/
 	PRINT("encryption:\n");
 	ECDC_Excute(SELFDMA_ENCRY, MODE_BIG_ENDIAN);
 	ECDC_SelfDMA((UINT32)BA_RAMX, len);
 	for(i=0; i<len; i++)
 		PRINT("|%#x	%#x\n",(UINT32*)(0x20020000+i*4),*(UINT32*)(0x20020000+i*4));
-/*打印解密后的明文*/
+/*Print the decrypted plaintext*/
 	PRINT("decryption:\n");
 	ECDC_Excute(SELFDMA_DECRY, MODE_BIG_ENDIAN);
 	ECDC_SelfDMA((UINT32)BA_RAMX, len);

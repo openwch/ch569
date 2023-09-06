@@ -4,9 +4,18 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *Timer routine
+ *
+ */
+
 #include "CH56x_common.h"
 
 #define  FREQ_SYS   80000000
@@ -16,9 +25,9 @@ __attribute__ ((aligned(4))) UINT32 CapBuf[100];
 volatile UINT8 capFlag = 0;
 
 
-#define count 1    //开启计数功能
-//#define pwm   1    //开启脉冲调制波输出功能
-//#define capture 1    //开启捕获功能
+#define count 1    //Turn on the counting function
+//#define pwm   1    //Enable the pulse modulation wave output function
+//#define capture 1    //Enable capture
 
 void TMR0_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TMR2_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -61,7 +70,7 @@ int main()
 	SystemInit(FREQ_SYS);
 	Delay_Init(FREQ_SYS);
 
-/* 配置串口调试 */
+/* Configure serial debugging */
 	DebugInit(115200);
 	PRINT("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 
@@ -84,11 +93,11 @@ int main()
 #endif
 
 /************************************************************
- * TMR1定时器PWM输出
+ * TMR1 timer PWM output
  *****/
 #if pwm
 
-	 GPIOPinRemap(ENABLE,RB_PIN_TMR1);  //使能TMR1重映射功能
+	 GPIOPinRemap(ENABLE,RB_PIN_TMR1);  //Enable TMR1 remapping function
 	 GPIOB_ResetBits(GPIO_Pin_0);
 	 GPIOB_ModeCfg(GPIO_Pin_0,GPIO_Slowascent_PP_8mA);
 
@@ -101,7 +110,7 @@ int main()
 #endif
 
 /************************************************************
- * TMR2定时器DMA捕获
+ * TMR2 timer DMA capture
  *****/
 #if capture
 	 GPIOA_ResetBits(GPIO_Pin_4);
@@ -117,7 +126,7 @@ int main()
 	 while( capFlag == 0 );
 	 capFlag = 0;
 	 for( i=0; i<100; i++ ) {
-		PRINT("%08ld ", CapBuf[i]&0x1ffffff);      // bit26 最高位表示 高电平还是低电平
+		PRINT("%08ld ", CapBuf[i]&0x1ffffff);      //The highest bit of bit26 indicates high level or low level
 	 }PRINT("\n");
 
 	 while(1);
@@ -140,7 +149,7 @@ void TMR0_IRQHandler(void)
 	 if( TMR0_GetITFlag( RB_TMR_IE_CYC_END ) )
 	 {
 		PRINT("counting done!\r\n");
-	    TMR0_ClearITFlag( RB_TMR_IE_CYC_END );      // 清除中断标志
+	    TMR0_ClearITFlag( RB_TMR_IE_CYC_END );      //clear interrupt flag
 	    GPIOA_InverseBits( GPIO_Pin_9 );
 	 }
 }
@@ -157,8 +166,8 @@ void TMR2_IRQHandler(void)
 	PRINT("in Capture!\r\n");
 	if( R8_TMR2_INT_FLAG & RB_TMR_IF_DMA_END  )
 	{
-		R8_TMR2_INTER_EN &= ~RB_TMR_IE_DMA_END;       // 使用单次DMA功能+中断，注意完成后关闭此中断使能，否则会一直上报中断。
-		R8_TMR2_INT_FLAG &= ~RB_TMR_IF_DMA_END;      // 清除中断标志
+		R8_TMR2_INTER_EN &= ~RB_TMR_IE_DMA_END;       //Use a single DMA function + interrupt, pay attention to turn off this interrupt enable after completion, otherwise the interrupt will always be reported
+		R8_TMR2_INT_FLAG &= ~RB_TMR_IF_DMA_END;      //clear interrupt flag
 		capFlag = 1;
 		PRINT("*");
 	}

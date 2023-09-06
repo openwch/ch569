@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 
@@ -20,10 +22,10 @@
 /**
   * @brief  channel of PWM define
   */
-#define	CH_PWM0 	0x01				// PWM0 通道
-#define	CH_PWM1		0x02				// PWM1 通道
-#define	CH_PWM2		0x04				// PWM2  通道
-#define	CH_PWM3		0x08				// PWM3 通道
+#define	CH_PWM0 	0x01				// PWM0 channel
+#define	CH_PWM1		0x02				// PWM1 channel
+#define	CH_PWM2		0x04				// PWM2 channel
+#define	CH_PWM3		0x08				// PWM3 channel
 
 
 /**
@@ -31,8 +33,8 @@
   */
 typedef enum
 {
-	High_Level = 0,					     //默认低电平，高电平有效
-	Low_Level,							 //默认高电平，低电平有效
+	High_Level = 0,					     //Default low level, high level is active
+	Low_Level,							 //Default high level, low level active
 }PWMX_PolarTypeDef;
 
 
@@ -41,22 +43,22 @@ typedef enum
   */
 typedef enum
 {
-	PWMX_Cycle_256 = 0,					                               //256个PWMX周期
-	PWMX_Cycle_255,						                               //255个PWMX周期
+	PWMX_Cycle_256 = 0,					                               //256 PWMX cycles
+	PWMX_Cycle_255,						                               //255 PWMX cycles
 
 }PWMX_CycleTypeDef;
 
 
-#define  PWMX_CLKCfg( d )  (R8_PWM_CLOCK_DIV=d)	                       //PWM基准时钟配置
-void PWMX_CycleCfg( PWMX_CycleTypeDef cyc );		                   //PWM输出波形周期配置
+#define  PWMX_CLKCfg( d )  (R8_PWM_CLOCK_DIV=d)	                       //PWM Reference Clock Configuration
+void PWMX_CycleCfg( PWMX_CycleTypeDef cyc );		                   //PWM output waveform period configuration
 
-#define PWM0_ActDataWidth( d )		(R8_PWM0_DATA = d)		            //PWM0 有效数据脉宽
-#define PWM1_ActDataWidth( d )		(R8_PWM1_DATA = d)					//PWM1 有效数据脉宽
-#define PWM2_ActDataWidth( d )		(R8_PWM2_DATA = d)					//PWM2 有效数据脉宽
-#define PWM3_ActDataWidth( d )		(R8_PWM3_DATA = d)					//PWM3 有效数据脉宽
+#define PWM0_ActDataWidth( d )		(R8_PWM0_DATA = d)		            //PWM0 effective data pulse width
+#define PWM1_ActDataWidth( d )		(R8_PWM1_DATA = d)					//PWM1 effective data pulse width
+#define PWM2_ActDataWidth( d )		(R8_PWM2_DATA = d)					//PWM2 effective data pulse width
+#define PWM3_ActDataWidth( d )		(R8_PWM3_DATA = d)					//PWM3 effective data pulse width
 
-//占空比=数据有效宽度/波形周期
-void PWMX_ACTOUT( UINT8 ch, UINT8 da, PWMX_PolarTypeDef pr, UINT8 s);	//PWM0-3输出波形配置
+//Duty cycle = data valid width/waveform period
+void PWMX_ACTOUT( UINT8 ch, UINT8 da, PWMX_PolarTypeDef pr, UINT8 s);	//PWM0-3 output waveform configuration
 
 
 		 

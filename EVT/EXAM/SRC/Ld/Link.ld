@@ -30,6 +30,13 @@ SECTIONS
         . = ALIGN(64);
     } >FLASH AT>FLASH 
 	
+	.hclib :
+	{
+		. = ALIGN(4);
+		*ISPEM569.o(*)
+		. = ALIGN(4);	
+	}		
+	
 	.text :
 	{
 		. = ALIGN(4);

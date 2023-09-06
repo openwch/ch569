@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 
@@ -40,11 +42,11 @@
 #define BIT_SLP_CLK_ECDC                 RB_SLP_CLK_ECDC   /*!< ECDC peripher clk bit */
 
 
-void PWR_PeriphClkCfg( UINT8 s, UINT16 perph );               /* 外设时钟控制位 */
-void PWR_PeriphWakeUpCfg( UINT8 s, UINT16 perph );            /* 睡眠唤醒源配置 */
-void LowPower_Idle( void );                                   /* 低功耗-IDLE模式 */
-void LowPower_Halt( void );                                   /* 低功耗-Halt模式 */
-void LowPower_Sleep( void );                                  /* 低功耗-Sleep模式 */
+void PWR_PeriphClkCfg( UINT8 s, UINT16 perph );               /* Peripheral Clock Control Bits */
+void PWR_PeriphWakeUpCfg( UINT8 s, UINT16 perph );            /* Sleep wakeup source configuration */
+void LowPower_Idle( void );                                   /* Low power consumption - IDLE mode */
+void LowPower_Halt( void );                                   /* Low power consumption - Halt mode */
+void LowPower_Sleep( void );                                  /* Low power consumption - Sleep mode */
 
 
 	 

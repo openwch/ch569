@@ -3,10 +3,18 @@
 * Author             : WCH
 * Version            : V1.0
 * Date               : 2020/07/31
-* Description 		 : 该例程操作 OV2640摄像头
+* Description 		 : This routine operates the OV2640 camera
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *OV2640 camera operation routine
+ *
+ */
 
 #include "CH56x_common.h"
 #include "ov.h"
@@ -26,9 +34,9 @@ UINT32 JPEG_DVPDMAaddr1 = 0x20020000 + OV2640_JPEG_WIDTH;
 UINT32 RGB565_DVPDMAaddr0 = 0x20020000;
 UINT32 RGB565_DVPDMAaddr1 = 0x20020000 + RGB565_COL_NUM;
 
-volatile UINT32 frame_cnt = 0; //帧计数
+volatile UINT32 frame_cnt = 0; //frame count
 volatile UINT32 addr_cnt = 0;
-volatile UINT32 href_cnt = 0; //行数
+volatile UINT32 href_cnt = 0; //row count
 
 void DVP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
@@ -86,7 +94,7 @@ void DVP_Init(void)
     R8_DVP_CR0 &= ~RB_DVP_MSK_DAT_MOD;
 
 #if(DVP_Work_Mode == RGB565_MODE)
-    //RGB565: VSYNC高电平有效, HSYNC高电平有效
+    //RGB565: VSYNC active high, HSYNC active high
     R8_DVP_CR0 |= RB_DVP_D8_MOD | RB_DVP_V_POLAR;
     R8_DVP_CR1 &= ~((RB_DVP_ALL_CLR) | RB_DVP_RCV_CLR);
     R16_DVP_ROW_NUM = RGB565_ROW_NUM; // rows
@@ -98,11 +106,11 @@ void DVP_Init(void)
 #endif
 
 #if(DVP_Work_Mode == JPEG_MODE)
-    //JPEG:VSYNC高电平有效, HSYNC高电平有效
+    //JPEG: VSYNC active high, HSYNC active high
     R8_DVP_CR0 |= RB_DVP_D8_MOD | RB_DVP_V_POLAR | RB_DVP_JPEG;
     R8_DVP_CR1 &= ~(RB_DVP_ALL_CLR | RB_DVP_RCV_CLR);
 
-    //JPEG模式下：cols: DMA长度  rows:无意义
+    //In JPEG mode: cols: DMA length rows: meaningless
     R16_DVP_COL_NUM = OV2640_JPEG_WIDTH;
 
     R32_DVP_DMA_BUF0 = JPEG_DVPDMAaddr0; //DMA addr0
@@ -125,14 +133,14 @@ void DVP_Init(void)
 /*******************************************************************************
  * @fn DVP_IRQHandler
  *
- * @brief RGB565 - 取数据为 帧起始到帧接收完成 R16_DVP_ROW_NUM * R16_DVP_COL_NUM。
- *                  JPEG：取数据为  帧起始 到 帧结束  一帧数据中 取  0xFF，0xD8开头； 0xFF ,0xD9结尾
+ * @brief RGB565 - Take data from frame start to frame receiving completion R16_DVP_ROW_NUM * R16_DVP_COL_NUM
+ *        JPEG   - Take the data from the start of the frame to the end of the frame. In a frame of data, start with 0xFF 0xD8; end with 0xFF 0xD9
  *
  * @return None
  */
 void DVP_IRQHandler(void)
 {
-    if(R8_DVP_INT_FLAG & RB_DVP_IF_ROW_DONE) //行结束中断
+    if(R8_DVP_INT_FLAG & RB_DVP_IF_ROW_DONE) //end of line Interrupt
     {
         R8_DVP_INT_FLAG = RB_DVP_IF_ROW_DONE; //clear Interrupt
 
@@ -158,29 +166,29 @@ void DVP_IRQHandler(void)
             addr_cnt++;
             R32_DVP_DMA_BUF1 += RGB565_COL_NUM * 2;
 
-            //Send USB数据
+            //Send usb data
         }
         else //buf0 done
         {
             addr_cnt++;
             R32_DVP_DMA_BUF0 += RGB565_COL_NUM * 2;
 
-            //Send USB数据
+            //Send usb data
         }
 
-        href_cnt++; //RGB565 接收行数
+        href_cnt++; //RGB565 Rows received
 
 #endif
     }
 
-    if(R8_DVP_INT_FLAG & RB_DVP_IF_FRM_DONE) //帧接收完成中断
+    if(R8_DVP_INT_FLAG & RB_DVP_IF_FRM_DONE) //Frame reception complete interrupt
     {
         R8_DVP_INT_FLAG = RB_DVP_IF_FRM_DONE; //clear Interrupt
 
 #if(DVP_Work_Mode == JPEG_MODE)
         R8_DVP_CR0 &= ~RB_DVP_ENABLE; //disable DVP
 
-        //使用串口摄像头，实时显示 JPEG 图片
+        //Use a serial port camera to display JPEG pictures in real time
         {
             UINT32 i;
             UINT8  val;
@@ -212,19 +220,19 @@ void DVP_IRQHandler(void)
 #endif
     }
 
-    if(R8_DVP_INT_FLAG & RB_DVP_IF_STR_FRM) //帧开始中断，
+    if(R8_DVP_INT_FLAG & RB_DVP_IF_STR_FRM) //start of frame interrupt
     {
         R8_DVP_INT_FLAG = RB_DVP_IF_STR_FRM; //clear Interrupt
 
         frame_cnt++;
     }
 
-    if(R8_DVP_INT_FLAG & RB_DVP_IF_STP_FRM) //帧结束中断，
+    if(R8_DVP_INT_FLAG & RB_DVP_IF_STP_FRM) //end of frame interrupt
     {
         R8_DVP_INT_FLAG = RB_DVP_IF_STP_FRM; //clear Interrupt
     }
 
-    if(R8_DVP_INT_FLAG & RB_DVP_IF_FIFO_OV) //FIFO 溢出中断
+    if(R8_DVP_INT_FLAG & RB_DVP_IF_FIFO_OV) //FIFO overflow interrupt
     {
         R8_DVP_INT_FLAG = RB_DVP_IF_FIFO_OV; //clear Interrupt
 
@@ -244,7 +252,7 @@ int main()
     SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
 
-    /* 配置串口调试 */
+    /* Configure serial debugging */
     DebugInit(921600);
     PRINT("Start @ChipID=%02X\r\n", R8_CHIP_ID);
 
