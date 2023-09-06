@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
@@ -14,14 +16,14 @@
 /******************************************************************************
  * @fn     UART0_DefInit
  *
- * @brief  串口默认初始化配置：使能了FIFO,触发点字节数，串口数据长度设置，波特率及分频系数
+ * @brief  Serial port default initialization configuration: FIFO enabled, trigger point byte count, serial port data length setting, baud rate and frequency division coefficient
  * 
  * @return   None
  */
 void UART0_DefInit( void )
 {	
     UART0_BaudRateCfg( 115200 );
-    R8_UART0_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO打开，触发点4字节
+    R8_UART0_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO open, trigger point 4 bytes
     R8_UART0_LCR = RB_LCR_WORD_SZ;
     R8_UART0_IER = RB_IER_TXD_EN;
     R8_UART0_DIV = 1;
@@ -30,14 +32,14 @@ void UART0_DefInit( void )
 /*******************************************************************************
  * @fn     UART1_DefInit
  *
- * @brief  串口默认初始化配置：使能了FIFO,触发点字节数，串口数据长度设置，波特率及分频系数
+ * @brief  Serial port default initialization configuration: FIFO enabled, trigger point byte count, serial port data length setting, baud rate and frequency division coefficient
  * 
  * @return   None
  **/
 void UART1_DefInit( void )
 {
     UART1_BaudRateCfg( 115200 );
-    R8_UART1_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO打开，触发点4字节
+    R8_UART1_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO open, trigger point 4 bytes
     R8_UART1_LCR = RB_LCR_WORD_SZ;
     R8_UART1_IER = RB_IER_TXD_EN;
     R8_UART1_DIV = 1;
@@ -46,14 +48,14 @@ void UART1_DefInit( void )
 /*******************************************************************************
  * @fn     UART2_DefInit
  *
- * @brief  串口默认初始化配置：使能了FIFO,触发点字节数，串口数据长度设置，波特率及分频系数
+ * @brief  Serial port default initialization configuration: FIFO enabled, trigger point byte count, serial port data length setting, baud rate and frequency division coefficient
  * 
  * @return   None
  */
 void UART2_DefInit( void )
 {
     UART2_BaudRateCfg( 115200 );
-    R8_UART2_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO打开，触发点4字节
+    R8_UART2_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO open, trigger point 4 bytes
     R8_UART2_LCR = RB_LCR_WORD_SZ;
     R8_UART2_IER = RB_IER_TXD_EN;
     R8_UART2_DIV = 1;
@@ -62,14 +64,14 @@ void UART2_DefInit( void )
 /*******************************************************************************
  * @fn     UART3_DefInit
  *
- * @brief  串口默认初始化配置：使能了FIFO,触发点字节数，串口数据长度设置，波特率及分频系数
+ * @brief  Serial port default initialization configuration: FIFO enabled, trigger point byte count, serial port data length setting, baud rate and frequency division coefficient
  * 
  * @return   None
  */
 void UART3_DefInit( void )
 {
     UART3_BaudRateCfg( 115200 );
-    R8_UART3_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO打开，触发点4字节
+    R8_UART3_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFO open, trigger point 4 bytes
     R8_UART3_LCR = RB_LCR_WORD_SZ;
     R8_UART3_IER = RB_IER_TXD_EN;
     R8_UART3_DIV = 1;
@@ -78,7 +80,7 @@ void UART3_DefInit( void )
 /*******************************************************************************
  * @fn     UART0_BaudRateCfg
  *
- * @brief  串口波特率配置
+ * @brief  Serial port baud rate configuration
  * 
  * @return   None
  */
@@ -94,7 +96,7 @@ void UART0_BaudRateCfg( UINT32 baudrate )
 /*******************************************************************************
  * @fn     UART1_BaudRateCfg
  *
- * @brief  串口波特率配置
+ * @brief  Serial port baud rate configuration
  * 
  * @return   None
  */
@@ -110,7 +112,7 @@ void UART1_BaudRateCfg( UINT32 baudrate )
 /*******************************************************************************
  * @fn     UART2_BaudRateCfg
  *
- * @brief  串口波特率配置
+ * @brief  Serial port baud rate configuration
  * 
  * @return   None
  */
@@ -126,7 +128,7 @@ void UART2_BaudRateCfg( UINT32 baudrate )
 /*******************************************************************************
  * @fn     UART3_BaudRateCfg
  *
- * @brief  串口波特率配置
+ * @brief  Serial port baud rate configuration
  * 
  * @return   None
  */
@@ -142,9 +144,9 @@ void UART3_BaudRateCfg( UINT32 baudrate )
 /*******************************************************************************
  * @fn     UART0_ByteTrigCfg
  *
- * @brief  串口字节触发中断配置
+ * @brief  Serial byte trigger interrupt configuration
  *
- * @param  b - 触发字节数
+ * @param  b - trigger bytes
  *           refer to UARTByteTRIGTypeDef
  * @return   None
  */
@@ -156,9 +158,9 @@ void UART0_ByteTrigCfg( UARTByteTRIGTypeDef b )
 /*******************************************************************************
  * @fn     UART1_ByteTrigCfg
  *
- * @brief  串口字节触发中断配置
+ * @brief  Serial byte trigger interrupt configuration
  *
- * @param  b - 触发字节数
+ * @param  b - trigger bytes
  *           refer to UARTByteTRIGTypeDef
  * @return   None
  **/
@@ -170,9 +172,9 @@ void UART1_ByteTrigCfg( UARTByteTRIGTypeDef b )
 /*******************************************************************************
  * @fn     UART2_ByteTrigCfg
  *
- * @brief  串口字节触发中断配置
+ * @brief  Serial byte trigger interrupt configuration
  *
- * @param  b - 触发字节数
+ * @param  b - trigger bytes
  *           refer to UARTByteTRIGTypeDef
  * @return   None
  */
@@ -184,9 +186,9 @@ void UART2_ByteTrigCfg( UARTByteTRIGTypeDef b )
 /*******************************************************************************
  * @fn     UART3_ByteTrigCfg
  *
- * @brief  串口字节触发中断配置
+ * @brief  Serial byte trigger interrupt configuration
  *
- * @param  b - 触发字节数
+ * @param  b - trigger bytes
  *           refer to UARTByteTRIGTypeDef
  * @return   None
  ***/
@@ -198,16 +200,16 @@ void UART3_ByteTrigCfg( UARTByteTRIGTypeDef b )
 /*******************************************************************************
  * @fn     UART0_INTCfg
  *
- * @brief  串口中断配置
+ * @brief  Serial port interrupt configuration
  *
- * @param  s - 中断控制状态
- *					ENABLE  - 使能相应中断    
- *					DISABLE - 关闭相应中断
- *		   i - 中断类型
- *					RB_IER_MODEM_CHG  - 调制解调器输入状态变化中断使能位（仅 UART0 支持）
- *					RB_IER_LINE_STAT  - 接收线路状态中断
- *					RB_IER_THR_EMPTY  - 发送保持寄存器空中断
- *					RB_IER_RECV_RDY   - 接收数据中断
+ * @param  s - interrupt control status
+ *					ENABLE  - Enable the corresponding interrupt    
+ *					DISABLE - Disable the corresponding interrupt
+ *		   i - interrupt type
+ *					RB_IER_MODEM_CHG  - Modem input status change interrupt enable bit (supported on UART0 only)
+ *					RB_IER_LINE_STAT  - Receive Line Status Interrupt
+ *					RB_IER_THR_EMPTY  - Send Holding Register Empty Interrupt
+ *					RB_IER_RECV_RDY   - receive data interrupt
  * @return   None
  **/
 void UART0_INTCfg( UINT8 s,  UINT8 i )
@@ -226,17 +228,16 @@ void UART0_INTCfg( UINT8 s,  UINT8 i )
 /*******************************************************************************
  * @fn     UART1_INTCfg
  *
- * @brief  串口中断配置
+ * @brief  Serial port interrupt configuration
  *
- * @param  s - 中断控制状态
- *					ENABLE  - 使能相应中断
- *					DISABLE - 关闭相应中断
- *		   i -  中断类型
- *					RB_IER_MODEM_CHG  - 调制解调器输入状态变化中断使能位（仅 UART0 支持）
- *					RB_IER_LINE_STAT  - 接收线路状态中断
- *					RB_IER_THR_EMPTY  - 发送保持寄存器空中断
- *					RB_IER_RECV_RDY   - 接收数据中断
- *
+ * @param  s - interrupt control status
+ *					ENABLE  - Enable the corresponding interrupt    
+ *					DISABLE - Disable the corresponding interrupt
+ *		   i - interrupt type
+ *					RB_IER_MODEM_CHG  - Modem input status change interrupt enable bit (supported on UART0 only)
+ *					RB_IER_LINE_STAT  - Receive Line Status Interrupt
+ *					RB_IER_THR_EMPTY  - Send Holding Register Empty Interrupt
+ *					RB_IER_RECV_RDY   - receive data interrupt
  * @return   None
  **/
 void UART1_INTCfg( UINT8 s,  UINT8 i )
@@ -255,17 +256,16 @@ void UART1_INTCfg( UINT8 s,  UINT8 i )
 /*******************************************************************************
  * @fn     UART2_INTCfg
  *
- * @brief  串口中断配置
+ * @brief  Serial port interrupt configuration
  *
- * @param  s - 中断控制状态
- *					ENABLE  - 使能相应中断
- *					DISABLE - 关闭相应中断
- *		   i -  中断类型
- *					RB_IER_MODEM_CHG  - 调制解调器输入状态变化中断使能位（仅 UART0 支持）
- *					RB_IER_LINE_STAT  - 接收线路状态中断
- *					RB_IER_THR_EMPTY  - 发送保持寄存器空中断
- *					RB_IER_RECV_RDY   - 接收数据中断
- *
+ * @param  s - interrupt control status
+ *					ENABLE  - Enable the corresponding interrupt    
+ *					DISABLE - Disable the corresponding interrupt
+ *		   i - interrupt type
+ *					RB_IER_MODEM_CHG  - Modem input status change interrupt enable bit (supported on UART0 only)
+ *					RB_IER_LINE_STAT  - Receive Line Status Interrupt
+ *					RB_IER_THR_EMPTY  - Send Holding Register Empty Interrupt
+ *					RB_IER_RECV_RDY   - receive data interrupt
  * @return   None
  **/
 void UART2_INTCfg( UINT8 s,  UINT8 i )
@@ -284,17 +284,16 @@ void UART2_INTCfg( UINT8 s,  UINT8 i )
 /*******************************************************************************
  * @fn     UART3_INTCfg
  *
- * @brief  串口中断配置
+ * @brief  Serial port interrupt configuration
  *
- * @param  s - 中断控制状态
- *					ENABLE  - 使能相应中断
- *					DISABLE - 关闭相应中断
- *		   i -  中断类型
- *					RB_IER_MODEM_CHG  - 调制解调器输入状态变化中断使能位（仅 UART0 支持）
- *					RB_IER_LINE_STAT  - 接收线路状态中断
- *					RB_IER_THR_EMPTY  - 发送保持寄存器空中断
- *					RB_IER_RECV_RDY   - 接收数据中断
- *
+ * @param  s - interrupt control status
+ *					ENABLE  - Enable the corresponding interrupt    
+ *					DISABLE - Disable the corresponding interrupt
+ *		   i - interrupt type
+ *					RB_IER_MODEM_CHG  - Modem input status change interrupt enable bit (supported on UART0 only)
+ *					RB_IER_LINE_STAT  - Receive Line Status Interrupt
+ *					RB_IER_THR_EMPTY  - Send Holding Register Empty Interrupt
+ *					RB_IER_RECV_RDY   - receive data interrupt
  * @return   None
  **/
 void UART3_INTCfg( UINT8 s,  UINT8 i )
@@ -313,7 +312,7 @@ void UART3_INTCfg( UINT8 s,  UINT8 i )
 /*******************************************************************************
  * @fn     UART0_Reset
  *
- * @brief  串口软件复位
+ * @brief  Serial port software reset
  * 
  * @return  None
  **/
@@ -325,7 +324,7 @@ void UART0_Reset( void )
 /*******************************************************************************
  * @fn     UART1_Reset
  *
- * @brief  串口软件复位
+ * @brief  Serial port software reset
  * 
  * @return  None
  **/
@@ -337,7 +336,7 @@ void UART1_Reset( void )
 /*******************************************************************************
  * @fn     UART2_Reset
  *
- * @brief  串口软件复位
+ * @brief  Serial port software reset
  * 
  * @return  None
  **/
@@ -349,7 +348,7 @@ void UART2_Reset( void )
 /*******************************************************************************
  * @fn     UART3_Reset
  *
- * @brief  串口软件复位
+ * @brief  Serial port software reset
  * 
  * @return  None
  **/
@@ -361,10 +360,10 @@ void UART3_Reset( void )
 /*******************************************************************************
  * @fn     UART0_SendString
  *
- * @brief  串口多字节发送
+ * @brief  Serial multi-byte transmission
  *
- * @param  buf - 待发送的数据内容首地址
- *         l - 待发送的数据长度
+ * @param  buf - The first address of the data content to be sent
+ *         l - length of data to be sent
  * @return   None
  */
 void UART0_SendString( PUINT8 buf, UINT16 l )
@@ -384,10 +383,10 @@ void UART0_SendString( PUINT8 buf, UINT16 l )
 /*******************************************************************************
  * @fn     UART1_SendString
  *
- * @brief  串口多字节发送
+ * @brief  Serial multi-byte transmission
  *
- * @param  buf - 待发送的数据内容首地址
- *         l - 待发送的数据长度
+ * @param  buf - The first address of the data content to be sent
+ *         l - length of data to be sent
  * @return   None
  */
 void UART1_SendString( PUINT8 buf, UINT16 l )
@@ -407,10 +406,10 @@ void UART1_SendString( PUINT8 buf, UINT16 l )
 /*******************************************************************************
  * @fn     UART2_SendString
  *
- * @brief  串口多字节发送
+ * @brief  Serial multi-byte transmission
  *
- * @param  buf - 待发送的数据内容首地址
- *         l - 待发送的数据长度
+ * @param  buf - The first address of the data content to be sent
+ *         l - length of data to be sent
  * @return   None
  */
 void UART2_SendString( PUINT8 buf, UINT16 l )
@@ -430,10 +429,10 @@ void UART2_SendString( PUINT8 buf, UINT16 l )
 /*******************************************************************************
  * @fn     UART3_SendString
  *
- * @brief  串口多字节发送
+ * @brief  Serial multi-byte transmission
  *
- * @param  buf - 待发送的数据内容首地址
- *         l - 待发送的数据长度
+ * @param  buf - The first address of the data content to be sent
+ *         l - length of data to be sent
  * @return   None
  */
 void UART3_SendString( PUINT8 buf, UINT16 l )
@@ -453,11 +452,11 @@ void UART3_SendString( PUINT8 buf, UINT16 l )
 /*******************************************************************************
  * @fn     UART0_RecvString
  *
- * @brief  串口读取多字节
+ * @brief  Serial port read multibyte
  *
- * @param  buf - 读取数据存放缓存区首地址
+ * @param  buf - The first address of the read data storage buffer
  *
- * @return 读取数据长度
+ * @return read data length
  */
 UINT16 UART0_RecvString( PUINT8 buf )
 {
@@ -475,11 +474,11 @@ UINT16 UART0_RecvString( PUINT8 buf )
 /*******************************************************************************
  * @fn     UART1_RecvString
  *
- * @brief  串口读取多字节
+ * @brief  Serial port read multibyte
  *
- * @param  buf - 读取数据存放缓存区首地址
+ * @param  buf - The first address of the read data storage buffer
  *
- * @return 读取数据长度
+ * @return read data length
  */
 
 UINT16 UART1_RecvString( PUINT8 buf )
@@ -498,11 +497,11 @@ UINT16 UART1_RecvString( PUINT8 buf )
 /*******************************************************************************
  * @fn     UART2_RecvString
  *
- * @brief  串口读取多字节
+ * @brief  Serial port read multibyte
  *
- * @param  buf - 读取数据存放缓存区首地址
+ * @param  buf - The first address of the read data storage buffer
  *
- * @return 读取数据长度
+ * @return read data length
  */
 
 UINT16 UART2_RecvString( PUINT8 buf )
@@ -521,11 +520,11 @@ UINT16 UART2_RecvString( PUINT8 buf )
 /*******************************************************************************
  * @fn     UART3_RecvString
  *
- * @brief  串口读取多字节
+  * @brief  Serial port read multibyte
  *
- * @param  buf - 读取数据存放缓存区首地址
+ * @param  buf - The first address of the read data storage buffer
  *
- * @return 读取数据长度
+ * @return read data length
  */
 
 UINT16 UART3_RecvString( PUINT8 buf )

@@ -4,9 +4,17 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *PWMX routine
+ * 
+ */
 
 #include "CH56x_common.h"
 
@@ -49,37 +57,37 @@ int main()
     SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
 
-    /*配置串口调试 */
+    /*Configure serial debugging */
 	DebugInit(115200);
 
 	printf("Start PWM Test\n");
 	//PRINT("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 
-	/*PWM1引脚配置，PA4 */
+	/*PWM1 pin configuration, PA4 */
 	R32_PA_PD  &= ~(1<<4);
 	R32_PA_DRV &= ~(1<<4);
 	R32_PA_DIR |= 1<<4;
 
-	/*PWM2引脚配置 ，PB1*/
+	/*PWM2 pin configuration, PB1*/
 	R32_PB_PD  &= ~(1<<1);
 	R32_PB_DRV &= ~(1<<1);
 	R32_PB_DIR |= 1<<1;
 
-	/*PWM3引脚配置 ，PB2*/
+	/*PWM3 pin configuration, PB2*/
 	R32_PB_PD  &= ~(1<<2);
 	R32_PB_DRV &= ~(1<<2);
 	R32_PB_DIR |= 1<<2;
 
-	/*PWM0引脚配置 ,PB15复用为外部复位脚，需要关闭复位功能才能开启PWM功能*/
+	/*PWM0 pin configuration, PB15 is multiplexed as an external reset pin, the reset function needs to be turned off to enable the PWM function*/
 	R32_PB_PD  &= ~(1<<15);
 	R32_PB_DRV &= ~(1<<15);
 	R32_PB_DIR |= 1<<15;
 
 
     PWMX_CLKCfg( 4 );                    // cycle = 4/Fsys
-    PWMX_CycleCfg( PWMX_Cycle_256 );     // 周期 = 256*cycle
+    PWMX_CycleCfg( PWMX_Cycle_256 );     // cycle = 256*cycle
 
-    PWMX_ACTOUT( CH_PWM1, 256/8, Low_Level, ENABLE);     // 占空比
+    PWMX_ACTOUT( CH_PWM1, 256/8, Low_Level, ENABLE);     //duty cycle
     PWMX_ACTOUT( CH_PWM2, 256/4, Low_Level, ENABLE);
     PWMX_ACTOUT( CH_PWM3, 256/8, Low_Level, ENABLE);
     PWMX_ACTOUT( CH_PWM0, 256/8, Low_Level, ENABLE);

@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
@@ -14,13 +16,13 @@
 /*******************************************************************************
  * @fn     ECDC_Init
  *
- * @brief  初始化
+ * @brief  initialization
  *
- * @param  ecdcmode -	0-SM4&ECB     1-AES&ECB     2-SM4&CTR     3-AES&CTR
- *         clkmode -     1-关闭        2-240M        3-160M
+ * @param  ecdcmode -   0-SM4&ECB     1-AES&ECB     2-SM4&CTR     3-AES&CTR
+ *         clkmode -    1-closure     2-240M        3-160M
  *         keylen -      0-128bit      1-192bit      2-256bit
- *         pkey -    密钥值指针
- *         pcount -  计数器值指针
+ *         pkey -    key value pointer
+ *         pcount -  counter value pointer
  *
  * @return   None
  */
@@ -29,12 +31,12 @@ void ECDC_Init( UINT8 ecdcmode, UINT8 clkmode, UINT8 keylen, PUINT32 pkey, PUINT
 	R8_ECDC_INT_FG |= 0xFF;
 	R16_ECEC_CTRL = 0;
 
-	R16_ECEC_CTRL |= (ecdcmode&0x03)<<8;     		//工作模式选择
-	R16_ECEC_CTRL |= (keylen&0x03)<<10;			     //密钥长度设置
-	R16_ECEC_CTRL |= (clkmode&0x03)<<4;       		//加解密时钟分频系数,aes加解密工作在240Mhz下
+	R16_ECEC_CTRL |= (ecdcmode&0x03)<<8;     		//Working mode selection
+	R16_ECEC_CTRL |= (keylen&0x03)<<10;			     //key length setting
+	R16_ECEC_CTRL |= (clkmode&0x03)<<4;       		//Encryption and decryption clock frequency division factor, aes encryption and decryption works at 240Mhz
 	ECDC_SetKey(pkey, keylen);
 
-	if(R16_ECEC_CTRL & RB_ECDC_CIPHER_MOD)			//只在CTR模式下执行，CTR与ECB模式编程时的唯一区别
+	if(R16_ECEC_CTRL & RB_ECDC_CIPHER_MOD)			//Execute only in CTR mode, the only difference between CTR and ECB mode programming
 			ECDC_SetCount(pcount);
 
 	R8_ECDC_INT_FG |= RB_ECDC_IF_EKDONE;
@@ -48,9 +50,9 @@ void ECDC_Init( UINT8 ecdcmode, UINT8 clkmode, UINT8 keylen, PUINT32 pkey, PUINT
 /*******************************************************************************
  * @fn     ECDC_SetKey
  *
- * @brief  设置密钥
+ * @brief  set key
  *
- * @param  pkey -   密钥值指针
+ * @param  pkey -   key value pointer
  *         keylen - 0-128bit   1-192bit   2-256bit
  
  * @return   None
@@ -77,9 +79,9 @@ void ECDC_SetKey( PUINT32 pkey, UINT8 keylen )
 /*******************************************************************************
  * @fn     ECDC_SetCount
  *
- * @brief  设置计数器
+ * @brief  set counter
  *
- * @param  pcount -  计数器值指针
+ * @param  pcount -  counter value pointer
  *
  * @return   None
  */
@@ -94,16 +96,16 @@ void ECDC_SetCount( PUINT32 pcount )
 /*******************************************************************************
  * @fn     ECDC_Excute
  *
- * @brief  设置方向和模式
+ * @brief  Set direction and mode
  *
- * @param  excutemode -	  RAMX加密			-0x84
- *					      RAMX解密			-0x8c
- *						  128bits数据单次加密	-0x02
- *						  128bits数据单次解密	-0x0a
- *					      外设到RAMX 加密  		-0x02
- *				    	  外设到 RAMX 解密   		-0x0a
- *						  RAMX到外设加密   		-0x04
- *						  RAMX到外设解密   		-0x0c
+ * @param  excutemode -	  RAMX encryption					-0x84
+ *					      RAMX decryption					-0x8c
+ *						  128bits data single encryption	-0x02
+ *						  128bits data single decryption	-0x0a
+ *					      Peripheral to RAMX encryption		-0x02
+ *				    	  Peripheral to RAMX decryption 	-0x0a
+ *						  RAMX to Peripheral encryption		-0x04
+ *						  RAMX to Peripheral decryption		-0x0c
  *   	   endianmode -    big_endian-1      little_endian-0
  *
  * @return   None
@@ -121,19 +123,19 @@ void ECDC_Excute( UINT8 excutemode, UINT8 endianmode )
 /*******************************************************************************
  * @fn     ECDC_SingleRegister
  *
- * @brief  单次寄存器加解密
+ * @brief  Single register encryption and decryption
  *
- * @param  pWdatbuff - 写入数据首地址
- *         pRdatbuff - 读取数据首地址
+ * @param  pWdatbuff - Write data first address
+ *         pRdatbuff - Read data first address
  *
  * @return   None
  */
 void ECDC_SingleRegister( PUINT32 pWdatbuff, PUINT32 pRdatbuff )
 {
-	R32_ECDC_SGSD_127T96 = pWdatbuff[3];			//低地址
+	R32_ECDC_SGSD_127T96 = pWdatbuff[3];			//low address
 	R32_ECDC_SGSD_95T64 = pWdatbuff[2];
 	R32_ECDC_SGSD_63T32 = pWdatbuff[1];
-	R32_ECDC_SGSD_31T0 = pWdatbuff[0];				//高地址
+	R32_ECDC_SGSD_31T0 = pWdatbuff[0];				//high address
 
 	while(!(R8_ECDC_INT_FG & RB_ECDC_IF_SINGLE));
 	R8_ECDC_INT_FG |= RB_ECDC_IF_SINGLE;
@@ -147,33 +149,33 @@ void ECDC_SingleRegister( PUINT32 pWdatbuff, PUINT32 pRdatbuff )
 /*******************************************************************************
  * @fn     ECDC_RAMX
  *
- * @brief  RAMX加解密
+ * @brief  RAMX encryption and decryption
  *
- * @param  ram_add - 首地址
- * 		   ram_len -  长度
+ * @param  ram_add - first address
+ * 		   ram_len -  length
  * @return   None
  **/
 void ECDC_SelfDMA( UINT32 ram_addr, UINT32 ram_len )
 {
 	R32_ECDC_SRAM_ADDR = ram_addr;
-	R32_ECDC_SRAM_LEN = ram_len;                    //开始转换
+	R32_ECDC_SRAM_LEN = ram_len;                    //start converting
 
-	while(!(R8_ECDC_INT_FG & RB_ECDC_IF_WRSRAM));   //完成标志位
+	while(!(R8_ECDC_INT_FG & RB_ECDC_IF_WRSRAM));   //Completion flag
 	R8_ECDC_INT_FG |= RB_ECDC_IF_WRSRAM;
 }
 
 /*******************************************************************************
  * @fn     ECDC_RloadCount
  *
- * @brief  CTR模式下，每加密/解密一块，重新载入计数器值
+ * @brief  In CTR mode, every time a block is encrypted/decrypted, the counter value is reloaded
  *
- * @param  pcount -  计数器值指针
+ * @param  pcount -  counter value pointer
  *
  * @return   None
  */
 void ECDC_RloadCount( UINT8 excutemode, UINT8 endianmode, PUINT32 pcount )
 {
-	R16_ECEC_CTRL &= 0xDFF9;       //第二位第三位置0
+	R16_ECEC_CTRL &= 0xDFF9;       //second position third position 0
 	ECDC_SetCount(pcount);
 	ECDC_Excute(excutemode, endianmode);
 }

@@ -4,9 +4,18 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *EMMC routine
+ *
+ */
+
 #include "CH56x_common.h"
 
 #define  FREQ_SYS   80000000
@@ -137,11 +146,11 @@ int main()
 #if 0
 	UINT8   s=0;
 	UINT32  i=0, blocknum=2;
-//加解密初始化
+//Encryption and decryption initialization
 	ECDC_Init(MODE_AES_ECB, ECDCCLK_240MHZ, KEYLENGTH_128BIT, KeyValue, NULL);
 //	ECDC_Init(MODE_AES_CTR, ECDCCLK_240MHZ, KEYLENGTH_128BIT, KeyValue, CountValue);
 
-//emmc初始化
+//emmc initialization
 	EMMCIO0Init();
 	s = EMMCCardConfig( &TF_EMMCParam );
 	mDelayuS(250);
@@ -154,11 +163,11 @@ int main()
 	else
 	{
 		PRINT("Init Success...\n");
-		for(i=0;i<128*blocknum;i++)     //一块-512字节|一个地址对应4字节
+		for(i=0;i<128*blocknum;i++)     //One block - 512 bytes | One address corresponds to 4 bytes
 		{
 			*(BA_RAMX+i)=i;
 		}
-//写密文
+//write ciphertext
 		PRINT("write plaintext:\n");
 		PRINT("R16_ECEC_CTRL:%08x\n",R16_ECEC_CTRL);
 
@@ -169,7 +178,7 @@ int main()
 		if( s != OP_SUCCESS ){
 			PRINT("MulSec Write Failed !!!\n");
 		}
-//读密文
+//read ciphertext
 		PRINT("read ciphertext:\n");
 		PRINT("|ADRESS	VALUE\t|\n");
 		s = EMMCCardReadMulSec( &TF_EMMCParam, &blocknum, BA_RAMX, 0x5000);
@@ -179,7 +188,7 @@ int main()
 					PRINT("|%#x	%#x\t", (BA_RAMX+i),*(BA_RAMX+i));
 				}PRINT("\n");
 			}
-//读明文
+//read plaintext
 		PRINT("read plaintext:\n");
 		PRINT("|ADRESS	VALUE\t|\n");
 		PRINT("R16_ECEC_CTRL:%08x\n",R16_ECEC_CTRL);

@@ -4,9 +4,18 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *HSPI_BurstMode Host_MODE Send ,Slave_MODE Receive
+ *
+ */
+
 #define  FREQ_SYS   120000000
 
 #include "CH56x_common.h"
@@ -41,9 +50,9 @@
 #define DMA_RX_Addr1   0x20020000 + DMA_Tx_Len1
 
 
-volatile UINT8 Tx_End_Flag = 0;  //发送完成标志
-volatile UINT8 Rx_End_Flag = 0;  //接收完成标志
-volatile UINT8 BURST_End_Flag = 0;  //突发完成标志
+volatile UINT8 Tx_End_Flag = 0;  //send complete flag
+volatile UINT8 Rx_End_Flag = 0;  //receive complete flag
+volatile UINT8 BURST_End_Flag = 0;  //burst complete flag
 
 void HSPI_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
@@ -80,13 +89,13 @@ void DebugInit(UINT32 baudrate)
  */
 void HSPI_GPIO_Init(void)
 {
-	//TX GPIO PA9、11、21 推挽输出
+	//TX GPIO PA9 11 21 push-pull output
 	R32_PA_DIR |= (1<<9) | (1<<11) | (1<<21);
 
 	//clk 16mA
 	R32_PA_DRV |= (1<<11);
 
-	//Rx GPIO PA10 推挽输出
+	//Rx GPIO PA10 push-pull output
 	R32_PA_DIR |= (1<<10);
 }
 
@@ -94,7 +103,7 @@ void HSPI_GPIO_Init(void)
 /*******************************************************************************
  * @fn       HSPI_Init
  *
- * @brief    HSPI 初始化
+ * @brief    HSPI initialization
  *
  * @return None
  */
@@ -125,7 +134,7 @@ void HSPI_Init(void)
 
 #endif
 
-    //ACk mode  1   (硬件自动应答模式 用于突发模式，不用于正常模式)
+    //ACk mode  1  (Hardware auto-answer mode for burst mode, not for normal mode)
 	R8_HSPI_CFG |= RB_HSPI_HW_ACK;
 
 #if (HSPI_MODE==Slave_MODE)
@@ -140,14 +149,14 @@ void HSPI_Init(void)
 	//Enable fast DMA request
     R8_HSPI_AUX |= RB_HSPI_REQ_FT;
 
-	//TX 采样边沿
-	R8_HSPI_AUX |= RB_HSPI_TCK_MOD;  //下降沿采样
+	//TX edge sampling
+	R8_HSPI_AUX |= RB_HSPI_TCK_MOD;  //Falling edge sampling
 
-	//硬件Auto ack time
+	//Hardware Auto ack time
 	R8_HSPI_AUX |= RB_HSPI_ACK_TX_MOD;
 
-	//延时时间
-	R8_HSPI_AUX &= ~RB_HSPI_ACK_CNT_SEL;   //  延迟2T
+	//delay time
+	R8_HSPI_AUX &= ~RB_HSPI_ACK_CNT_SEL;   //Delay 2T
 
 	//clear ALL_CLR  TRX_RST  (reset)
 	R8_HSPI_CTRL &= ~(RB_HSPI_ALL_CLR|RB_HSPI_TRX_RST);
@@ -158,7 +167,7 @@ void HSPI_Init(void)
 	R8_HSPI_INT_EN |= RB_HSPI_IE_FIFO_OV;
 	R8_HSPI_INT_EN |= RB_HSPI_IE_B_DONE;
 
-	//config TX 自定义  Header
+	//config TX custom Header
 	R32_HSPI_UDF0 = 0x3ABCDEF;      //UDF0
 	R32_HSPI_UDF1 = 0x3ABCDEF;      //UDF1
 
@@ -205,7 +214,7 @@ int main()
     SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
 
-/* 配置串口调试 */
+/* Configure serial debugging */
 	DebugInit(921600);
 	PRINT("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 	PRINT("System Clock=%d\r\n", FREQ_SYS );
@@ -216,14 +225,14 @@ int main()
 	HSPI_Init();
 	mDelaymS(1000);
 
-	//写RAM2
+	//Write RAM2
 	for(i=0; i<0x2000; i++){   //0x2000*4 = 32K
       *(UINT32*)(0x20020000+i*4) = i;
 	}
 
 	R16_HSPI_BURST_CFG = (64<<8)|RB_HSPI_BURST_EN;
-	R8_HSPI_INT_FLAG = 0xF;   //发送之前将所有 HSPI中断标志清 0
-	R8_HSPI_CTRL |= RB_HSPI_SW_ACT;  //软件，触发发送
+	R8_HSPI_INT_FLAG = 0xF;   //Clear all HSPI interrupt flags to 0 before sending
+	R8_HSPI_CTRL |= RB_HSPI_SW_ACT;  //software, trigger sending
 
 #elif (HSPI_MODE==Slave_MODE)
 	PRINT("HSPI Slave MODE\r\n");
@@ -276,22 +285,22 @@ void HSPI_IRQHandler(void)
 	static UINT32 Rx_Cnt = 0;
 	static UINT32 addr_cnt = 0;
 
-	if(R8_HSPI_INT_FLAG & RB_HSPI_IF_T_DONE){   //单包发送完成
+	if(R8_HSPI_INT_FLAG & RB_HSPI_IF_T_DONE){   //Single packet sent completed
 		R8_HSPI_INT_FLAG = RB_HSPI_IF_T_DONE;  //Clear Interrupt
 
 #if (HSPI_MODE==Host_MODE)
 		Tx_Cnt++;
 		addr_cnt++;
 
-		if(Tx_Cnt<64){  // 发 32K
+		if(Tx_Cnt<64){  //send 32K
 			if(addr_cnt%2){
 				R32_HSPI_TX_ADDR0 += 512*2;
 			}
-			else{ //地址0
+			else{ //address 0
 				R32_HSPI_TX_ADDR1 += 512*2;
 			}
 		}
-		else{ //发送完成
+		else{ //send complete
 			Tx_End_Flag = 1;
 			addr_cnt = 0;
 		}
@@ -300,11 +309,11 @@ void HSPI_IRQHandler(void)
 
 	}
 
-	if(R8_HSPI_INT_FLAG & RB_HSPI_IF_R_DONE){  //单包接收完成
+	if(R8_HSPI_INT_FLAG & RB_HSPI_IF_R_DONE){  //Single packet received completed
 		R8_HSPI_INT_FLAG = RB_HSPI_IF_R_DONE;  //Clear Interrupt
 
-        //判断CRC是否正确
-        if(R8_HSPI_RTX_STATUS & RB_HSPI_CRC_ERR){  //CRC 校验  err
+        //Determine whether the CRC is correct
+        if(R8_HSPI_RTX_STATUS & RB_HSPI_CRC_ERR){  //CRC check err
         	PRINT("CRC err\r\n");
 
         	//addr0 DMA TX RX addr
@@ -318,11 +327,11 @@ void HSPI_IRQHandler(void)
         	addr_cnt = 0;
         	Tx_Cnt = 0;
         	Rx_Cnt = 0;
-        	R8_HSPI_RX_SC = 0;  //接收端出现CRC错误或MIS错误 将  RB_HSPI_RX_NUM 清零
+        	R8_HSPI_RX_SC = 0;  //CRC error or MIS error occurs at the receiving end Clear RB_HSPI_RX_NUM to zero
         }
 
-        //接收序列号是否 匹配， (不匹配，修改包序列号)
-        if(R8_HSPI_RTX_STATUS & RB_HSPI_NUM_MIS){  //不匹配
+        //Whether the serial number received matches, (do not match, modify the package serial number)
+        if(R8_HSPI_RTX_STATUS & RB_HSPI_NUM_MIS){  //do not match
         	PRINT("NUM_MIS err\r\n");
 
         	//addr0 DMA TX RX addr
@@ -346,21 +355,21 @@ void HSPI_IRQHandler(void)
 
         }
 
-        //CRC 正确， 接收序列号 匹配 （数据正确接收）
+        //CRC is correct, received serial number matches (data received correctly)
         if((R8_HSPI_RTX_STATUS & (RB_HSPI_CRC_ERR|RB_HSPI_NUM_MIS))==0){
 #if (HSPI_MODE==Slave_MODE)
         	Rx_Cnt++;
         	addr_cnt++;
 
-    		if(Rx_Cnt<64){  // 收 32K
+    		if(Rx_Cnt<64){  //Receive 32K
     			if(addr_cnt%2){
     				R32_HSPI_RX_ADDR0 += 512*2;
     			}
-    			else{ //地址0
+    			else{ //address 0
     				R32_HSPI_RX_ADDR1 += 512*2;
     			}
     		}
-    		else{ //接收完成
+    		else{ //Receive complete
     			Rx_End_Flag = 1;
     			addr_cnt = 0;
 
@@ -378,10 +387,10 @@ void HSPI_IRQHandler(void)
 	}
 
 #if (HSPI_MODE==Host_MODE)
-	if(R8_HSPI_INT_FLAG & RB_HSPI_IF_B_DONE){   //突发模式下，突发序列包发送完成
+	if(R8_HSPI_INT_FLAG & RB_HSPI_IF_B_DONE){   //In burst mode, the burst sequence packet transmission is completed
 		R8_HSPI_INT_FLAG = RB_HSPI_IF_B_DONE;  //Clear Interrupt
 
-		if(Tx_Cnt != (R16_HSPI_BURST_CFG>>8)){  // 判断突发模式是否发送成功
+		if(Tx_Cnt != (R16_HSPI_BURST_CFG>>8)){  //Determine whether the burst mode is sent successfully
 			PRINT("BURST Tx Err\r\n");
 
         	addr_cnt = 0;
@@ -403,8 +412,8 @@ void HSPI_IRQHandler(void)
             }
 
 			R16_HSPI_BURST_CFG = (64<<8)|RB_HSPI_BURST_EN;
-			R8_HSPI_INT_FLAG = 0xF;  //发送之前将所有 HSPI中断标志清 0
-			R8_HSPI_CTRL |= RB_HSPI_SW_ACT;  //软件，触发发送
+			R8_HSPI_INT_FLAG = 0xF;  //Clear all HSPI interrupt flags to 0 before sending
+			R8_HSPI_CTRL |= RB_HSPI_SW_ACT;  //software, trigger sending
 		}
 		else{
 		    BURST_End_Flag = 1;

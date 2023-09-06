@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #include "CH56x_common.h"
 
@@ -731,7 +733,7 @@ UINT8 EMMCCardWriteMulSec( PSD_PARAMETER pEMMCPara, PUINT16 pReqnum, PUINT8 pWda
  * 
  * @return   None
  ***/
-UINT8 AES_EMMCWriteMulSec( PSD_PARAMETER pEMMCPara, PUINT32 pReqnum, PUINT32 pWdatbuf, UINT32 Lbaaddr, UINT8 excutemode, UINT8 endianmode, PUINT32 pcount)//闁哄洤鐡ㄩ弫鍏肩閸℃ɑ娈堕柟璇″枤鐞氼偊宕归敓锟�?
+UINT8 AES_EMMCWriteMulSec( PSD_PARAMETER pEMMCPara, PUINT32 pReqnum, PUINT32 pWdatbuf, UINT32 Lbaaddr, UINT8 excutemode, UINT8 endianmode, PUINT32 pcount)
 {
     UINT32 cmd_arg_val;
     UINT16 cmd_set_val;
@@ -811,7 +813,7 @@ UINT8 AES_EMMCWriteMulSec( PSD_PARAMETER pEMMCPara, PUINT32 pReqnum, PUINT32 pWd
  * @return   OP_SUCCESS - suc
  *           other - err
  **/
-UINT8 AES_EMMCReadMulSec( PSD_PARAMETER pEMMCPara, PUINT32 pReqnum, PUINT32 pRdatbuf, UINT32 Lbaaddr, UINT8 excutemode, UINT8 endianmode, PUINT32 pcount)//闁哄洤鐡ㄩ弫鍏肩閸℃ɑ娈堕柟璇″枤鐞氼偊宕归敓锟�?
+UINT8 AES_EMMCReadMulSec( PSD_PARAMETER pEMMCPara, PUINT32 pReqnum, PUINT32 pRdatbuf, UINT32 Lbaaddr, UINT8 excutemode, UINT8 endianmode, PUINT32 pcount)
 {
     UINT32 cmd_arg_val;
     UINT16 cmd_set_val;

@@ -5,8 +5,10 @@
 * Date               : 2020/07/31
 * Description        : This file contains all the functions prototypes for 
 *                      SystemCoreClock, UART Printf , Delay functions .
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
@@ -20,7 +22,7 @@ static uint16_t p_ms=0;
  *
  * @brief  Initializes Delay Funcation.
  *
- * @param  systemclck - 系统时钟 Hz
+ * @param  systemclck - system clock Hz
  *
  * @return   None
  **/
@@ -79,7 +81,7 @@ void mDelaymS(uint32_t n)
 /*******************************************************************************
  * @fn     SYS_GetInfoSta
  *
- * @brief  获取当前系统信息状态
+ * @brief  Get the current system information status
  *
  * @param  i -
  * @return  stat
@@ -92,7 +94,7 @@ UINT8 SYS_GetInfoSta( SYS_InfoStaTypeDef i )
 /*******************************************************************************
  * @fn     SYS_ResetExecute
  *
- * @brief  执行系统软件复位
+ * @brief  Perform a system software reset
  * 
  * @return   None
  **/
@@ -107,11 +109,11 @@ void SYS_ResetExecute( void )
 /*******************************************************************************
  * @fn     WWDG_ITCfg
  *
- * @brief  看门狗定时器溢出中断使能
+ * @brief  Watchdog timer overflow interrupt enable
  *
  * @param  s -
- *           DISABLE - 溢出不中断      
- *           ENABLE - 溢出中断
+ *           DISABLE - Overflow without interruption      
+ *           ENABLE  - Overflow interrupt
  *
  * @return   None
  **/
@@ -127,11 +129,11 @@ void  WWDG_ITCfg( UINT8 s )
 /*******************************************************************************
  * @fn     WWDG_ResetCfg
  *
- * @brief  看门狗定时器复位功能
+ * @brief  Watchdog timer reset function
  *
  * @param  s -
- *           DISABLE - 溢出不复位      
- *           ENABLE - 溢出系统复位
+ *           DISABLE - Overflow does not reset      
+ *           ENABLE  - Overflow system reset
  *
  * @return   None
  **/
@@ -146,7 +148,7 @@ void WWDG_ResetCfg( UINT8 s )
 
 /*******************************************************************************
  * @fn     WWDG_ClearFlag
- * @brief  清除看门狗中断标志，重新加载计数值也可清除
+ * @brief  Clear watchdog interrupt flag, reload count value can also be cleared
  * @param  None
  * @return   None
  **/

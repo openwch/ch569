@@ -3,15 +3,17 @@
 * Author             : WCH
 * Version            : V1.0
 * Date               : 2020/07/31
-* Description 		 : OV2640 摄像头 配置函数
+* Description 		 : OV2640 camera configuration function
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
 #include "ov.h"
 
-//启动 Camera 初始化配置寄存器 列表
+//Start Camera Initialize configuration register list
 const UINT8 OV2640_InitRegTbl[][2]=
 {
 	0xff, 0x00, 0x2c, 0xff,	0x2e, 0xdf,	0xff, 0x01,	0x3c, 0x32,
@@ -69,19 +71,19 @@ const UINT8 OV2640_InitRegTbl[][2]=
 	0xe5, 0x1f,	0xe1, 0x67,	0xe0, 0x00,	0xdd, 0x7f,	0x05, 0x00,
 };
 
-//Camera YUV422 Mode 配置寄存器 列表
+//Camera YUV422 Mode Configuration Register List
 const UINT8 OV2640_YUV422RegTbl[][2]=
 {
 	0xFF, 0x00,	0xDA, 0x10,	0xD7, 0x03,	0xDF, 0x00,	0x33, 0x80,	0x3C, 0x40,	0xe1, 0x77,	0x00, 0x00,
 };
 
-//Camera JPEG Mode 配置寄存器 列表
+//Camera JPEG Mode Configuration Register List
 const UINT8 OV2640_JPEGRegTbl[][2]=
 {
 	0xff, 0x01,	0xe0, 0x14,	0xe1, 0x77,	0xe5, 0x1f,	0xd7, 0x03,	0xda, 0x10,	0xe0, 0x00,
 };
 
-//Camera RGB565 Mode 配置寄存器 列表
+//Camera RGB565 Mode Configuration Register List
 const UINT8 OV2640_RGB565RegTbl[][2]=
 {
 	0xFF, 0x00,	0xDA, 0x09,	0xD7, 0x03,	0xDF, 0x02,	0x33, 0xa0,	0x3C, 0x00,	0xe1, 0x67,
@@ -92,7 +94,7 @@ const UINT8 OV2640_RGB565RegTbl[][2]=
 /***************************************************************
  * @fn       SCCB_GPIO_Init
  *
- * @brief    SCCB 接口初始化
+ * @brief    SCCB Interface initialization
  *
  * @return   None
  */
@@ -161,8 +163,8 @@ void SCCB_No_Ack(void)
  * @fn        SCCB_WR_Byte
  * @brief     Write One Byte
  * @param     data
- * @return    0:成功
- *                                 其他:失败
+ * @return    0: success
+ *            Other: failed
  */
 UINT8 SCCB_WR_Byte(UINT8 data)
 {
@@ -234,8 +236,8 @@ UINT8 SCCB_RD_Byte(void)
  * @param     Reg_Adr - Register address
  *            Reg_Val - Register value
  *
- * @return    0 - 成功
- *            其他 - 失败
+ * @return    0: success
+ *            Other: failed
  */
 UINT8 SCCB_WR_Reg(UINT8 Reg_Adr, UINT8 Reg_Val)
 {
@@ -285,10 +287,10 @@ UINT8 SCCB_RD_Reg(UINT8 Reg_Adr)
 /*******************************************************************************
  * @fn         OV2640_Init
  *
- * @brief      OV2640 初始化
+ * @brief      OV2640 initialization
  *
- * @return     0 - 初始化成功
- *             1 - 初始化失败
+ * @return     0 - initialization succeeded
+ *             1 - initialization failed
  */
 UINT8 OV2640_Init(void)
 {
@@ -343,7 +345,7 @@ UINT8 OV2640_Init(void)
 /*******************************************************************************
  * @fn       RGB565_Mode_Init
  *
- * @brief    RGB565 模式初始化
+ * @brief    RGB565 mode initialization
  *
  * @return   None
  */
@@ -357,7 +359,7 @@ void RGB565_Mode_Init(void)
 /*******************************************************************************
  * @fn       JPEG_Mode_Init
  *
- * @brief    以 0xFF，0xD8开头； 0xFF，0xD9结尾 构成1帧图片
+ * @brief    Start with 0xFF, 0xD8; end with 0xFF, 0xD9 to form a frame of pictures
  *
  * @return    None
  */
@@ -414,11 +416,11 @@ void OV2640_RGB565_Mode(void)
  *
  * @briefSet     Image Resolution
  *
- * @param        Image_width -  图像宽度 (4的倍数)
- *               Image_height - 图像高度
+ * @param        Image_width  - Image width (multiple of 4)
+ *               Image_height - Image height
  *
- * @return       0 -成功
- *               其他 -失败
+ * @return    0: success
+ *            Other: failed
  */
 UINT8 OV2640_OutSize_Set(UINT16 Image_width, UINT16 Image_height)
 {
@@ -449,10 +451,10 @@ UINT8 OV2640_OutSize_Set(UINT16 Image_width, UINT16 Image_height)
  * @brief     Set DVP PCLK
  *
  * @param     Pclk_Div - DVP output speed ctrl
- *            Xclk_Div - 晶振输入分频
+ *            Xclk_Div - Crystal oscillator input frequency division
  *
- * @return    0 -成功
- *            其他 - 失败
+ * @return    0: success
+ *            Other: failed
  */
 void OV2640_Speed_Set(UINT8 Pclk_Div, UINT8 Xclk_Div)
 {

@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 
@@ -19,7 +21,7 @@
 
 enum
 {
-	CLK_SOURCE_PLL_15MHz = 15,      //上电默认情况	
+	CLK_SOURCE_PLL_15MHz = 15,      //Power-on default	
 	CLK_SOURCE_PLL_30MHz = 30,
 	CLK_SOURCE_PLL_60MHz = 60,
 	CLK_SOURCE_PLL_80MHz = 80,
@@ -29,8 +31,8 @@ enum
 };
 
 
-void SystemInit(uint32_t systemclck);			/* 系统时钟初始化 */
-UINT32 GetSysClock( void );						/* 获取当前系统时钟 */
+void SystemInit(uint32_t systemclck);			/* System clock initialization */
+UINT32 GetSysClock( void );						/* Get the current system clock */
 
 	
 	 

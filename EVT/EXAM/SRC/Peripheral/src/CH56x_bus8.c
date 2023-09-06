@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
@@ -15,7 +17,7 @@
 /*******************************************************************************
  * @fn    BUS8_GPIO_Init
  *
- * @brief  BUS8 GPIO 初始化
+ * @brief  BUS8 GPIO initialization
  *
  * @return  None
  */
@@ -33,7 +35,7 @@ void BUS8_GPIO_Init(void)
 /*******************************************************************************
  * @fn     BUS8_Init
  *
- * @brief  BUS8 初始化
+ * @brief  BUS8 initialization
  *
  * @param  addroe:0x00-none;0x04-[5:0];0x08-[9:0];0x0c-[14:0];
  *				   width: 0x00-3;0x10-5;0x20-9;0x30-16;

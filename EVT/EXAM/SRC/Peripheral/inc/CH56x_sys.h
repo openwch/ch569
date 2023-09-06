@@ -5,8 +5,10 @@
 * Date               : 2020/07/31
 * Description        : This file contains all the functions prototypes for
 *                      SystemCoreClock, UART Printf , Delay functions .
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 
@@ -25,32 +27,32 @@
   */
 typedef enum
 {
-	INFO_RESET_EN = 2,			// RST#外部手动复位输入功能是否开启
-	INFO_BOOT_EN,				// 系统引导程序 BootLoader 是否开启
-	INFO_DEBUG_EN,				// 系统仿真调试接口是否开启
-	INFO_LOADER,				// 当前系统是否处于Bootloader 区
+	INFO_RESET_EN = 2,			// RST# Whether the external manual reset input function is enabled
+	INFO_BOOT_EN,				// Whether the system boot program BootLoader is enabled
+	INFO_DEBUG_EN,				// Whether the system simulation debugging interface is enabled
+	INFO_LOADER,				// Whether the current system is in the Bootloader area
 }SYS_InfoStaTypeDef;
 
 
-#define SYS_GetChipID()				R8_CHIP_ID									/* 获取芯片ID类，一般为固定值 */
-#define SYS_GetAccessID()			R8_SAFE_ACCESS_ID							/* 获取安全访问ID，一般为固定值 */
-UINT8 SYS_GetInfoSta( SYS_InfoStaTypeDef i );									/* 获取当前系统信息状态 */
+#define SYS_GetChipID()				R8_CHIP_ID									/* Get the chip ID class, generally a fixed value */
+#define SYS_GetAccessID()			R8_SAFE_ACCESS_ID							/* Get the security access ID, usually a fixed value */
+UINT8 SYS_GetInfoSta( SYS_InfoStaTypeDef i );									/* Get the current system information status */
 
 void Delay_Init(uint32_t systemclck);
 void mDelayuS(uint32_t n);
 void mDelaymS(uint32_t n);
 
 //refer to SYS_ResetStaTypeDef
-#define SYS_GetLastResetSta()		(R8_RST_BOOT_STAT&RB_RESET_FLAG)				/* 获取系统上次复位状态 */
-void SYS_ResetExecute( void );													/* 执行系统软件复位 */
-#define SYS_ResetKeepBuf( d )		(R8_GLOB_RESET_KEEP = d)					/* 不受手动复位、 软件复位、 看门狗复位或者普通唤醒复位的影响 */
+#define SYS_GetLastResetSta()		(R8_RST_BOOT_STAT&RB_RESET_FLAG)				/* Get the last reset status of the system */
+void SYS_ResetExecute( void );													/* Perform a system software reset */
+#define SYS_ResetKeepBuf( d )		(R8_GLOB_RESET_KEEP = d)					/* Not affected by manual reset, software reset, watchdog reset or normal wake-up reset */
 
 //WWDG
-#define  WWDG_SetCounter( c )		(R8_WDOG_COUNT = c)							/* 加载看门狗计数初值，递增型 */
-void  WWDG_ITCfg( UINT8 s );							/* 看门狗溢出中断使能 */
-void  WWDG_ResetCfg( UINT8 s );							/* 看门狗溢出复位使能 */
-#define  WWDG_GetFlowFlag()			(R8_RST_WDOG_CTRL&RB_WDOG_INT_FLAG)			/* 获取当前看门狗定时器溢出标志 */
-void WWDG_ClearFlag(void);														/* 清除看门狗中断标志，重新加载计数值也可清除 */
+#define  WWDG_SetCounter( c )		(R8_WDOG_COUNT = c)							/* Load the initial value of the watchdog count, incremental */
+void  WWDG_ITCfg( UINT8 s );							/* Watchdog overflow interrupt enable */
+void  WWDG_ResetCfg( UINT8 s );							/* Watchdog time-out reset enable */
+#define  WWDG_GetFlowFlag()			(R8_RST_WDOG_CTRL&RB_WDOG_INT_FLAG)			/* Get the current watchdog timer overflow flag */
+void WWDG_ClearFlag(void);														/* Clear watchdog interrupt flag, reload count value can also be cleared */
 
 
 

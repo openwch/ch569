@@ -9,25 +9,31 @@ http://wch-ic.com
   |      |      |--CH569DS1.PDF: CH569 datasheet
   |      |-- EVT: CH56x evaluation board andCH56x related software routines
   |      |      |-- PUB: 
-  |      |      |      |-- CH565W&CH569WEVT Evaluation Board Manual.pdf:  Instruction to CH565 and CH569 evaluation boards and project creation description
+  |      |      |      |-- CH565W&CH569W Evaluation Board Reference-EN: Instruction to CH565 and CH569 evaluation boards and project creation description
   |      |      |      |-- CH569WSCH.pdf: Schematic of CH569W evaluation board
-  |      |      |      |-- CH565WSCH.pdf: SchematicCH565W evaluation board  
+  |      |      |      |-- CH565WSCH.pdf: Schematic CH565W evaluation board  
+  |      |      |      |-- SCHPCB: Schematic and PCB of CH565W\CH569W evaluation board
   |      |      |-- EXAM: 
   |      |      |      |-- SRC  
   |      |      |      |      |-- RVMSIS: kernal system header file
   |      |      |      |      |-- Startup: CH56x startup file
-  |      |      |      |      |-- Peripheral: £ºbasic peripheral driver source file and header file
+  |      |      |      |      |-- Peripheral: basic peripheral driver source file and header file
+  |      |      |      |      |-- Ld: ld file  
+  |      |      |      |      |-- Flash_Lib: CH56x internal FLASH operation library  
   |      |      |      |-- BUS8: BUS8 operation CH372 routine
   |      |      |      |-- DVP: OV2640 camera operation rouine
   |      |      |      |-- ECDC: ECDC rouine
   |      |      |      |-- EMMC: EMMC rouine
-  |      |      |      |-- ETH-GMAC
-  |      |      |      |      |-- GMAC_RAW: Ethernet original data receive/transmit routine
-  |      |      |      |      |-- TCP_client: TCP client routine   
-  |      |      |      |      |-- TCP_server: TCP server routine  
-  |      |      |      |      |-- UDP: UDP routine  
+  |      |      |      |-- ETH
+  |      |      |      |      |-- DHCP: DHCP demonstration routine to obtain IP automatically
+  |      |      |      |      |-- DNS: DHCP demonstration routine to obtain IP automatically and then request domain name resolution 
+  |      |      |      |      |-- IPRaw_PING: IP_RAW routine, to demonstrate that the TCP client receives data after connecting to the server and then sends it back
+  |      |      |      |      |-- MAC_RAW:demonstrating that MAC RAW receives and sends data
+  |      |      |      |      |-- TCPClient: demonstration routine that TCP Client receives data after connecting to the server and then returns data 
+  |      |      |      |      |-- TCPServer: demonstration routine that TCP Server receives data after connecting to the client and then returns data
+  |      |      |      |      |-- UDPClient: demonstration routine that UDP Client receives data and returns data
+  |      |      |      |      |-- UDPServer: demonstration routine that UDP Server receives data and returns data
   |      |      |      |-- FLASH: FLASH erase/read/write routines
-  |      |      |      |      |-- Flash_Lib: CH56x internal FLASH operation library
   |      |      |      |-- GPIO: GPIO routine
   |      |      |      |-- HSPI
   |      |      |      |      |-- HSPI_BurstMode: HSPI upper and lower receive/transmit data routines in burst mode
@@ -36,6 +42,7 @@ http://wch-ic.com
   |      |      |      |      |-- HSPI_ECDC: HSPI upper and lower receive/transmit data  encryption/decryption routine
   |      |      |      |      |-- HSPI_NormalMode: HSPI upper and lower receive/transmit data routines in normal mode
   |      |      |      |-- PWMX: PWMX routine 
+  |      |      |      |-- SD?SD routine
   |      |      |      |-- SPI
   |      |      |      |      |-- SPI0_FLASH: SPI0 operation external FLASH routine
   |      |      |      |      |-- SPI0_HOST: SPI0 host routine
@@ -46,12 +53,21 @@ http://wch-ic.com
   |      |      |      |-- TMR: Timer function routine
   |      |      |      |-- UART: UART receive/transmit data routines
   |      |      |      |-- USBSS
+  |      |      |      |      |-- USB3.0TestDemo£ºUpper computer software and source code for testing and simulating CH372 devices
   |      |      |      |      |-- USBD 
-  |      |      |      |      |      |-- CH372Device: simulate custom USB device (CH372 device) routine, supports USB2.0 and USB3.0, provides 7 non-zero  channels (upload+download), implements that data is downloaded first and then the data content is reversed and uploaded
-  |      |      |      |      |      |-- UVC: UVC device routine  
+  |      |      |      |      |      |-- CH372Device: Simulate custom USB device (CH372 device) routine
+  |      |      |      |      |      |-- UVC:Simulate  UVC device routine.
+  |      |      |      |      |      |      |--UVC-DVP:Data obtained from DVP is uploaded via USB, supporting MJPEG and YUV2 video formats
+  |      |      |      |      |      |      |--UVC-RAM:Get data in RAM and upload it via USB
+  |      |      |      |      |      |-- CH372-HSPIDataTransDemo: The two CH569 are the master and slave of HSPI respectively. The HSPI host sends data to the HSPI slave, which uploads data via USB.
+  |      |      |      |      |      |      |--CH372-HSPI-HOST
+  |      |      |      |      |      |      |--CH372-HSPI-Slave
+  |      |      |      |      |      |-- CompatibilityHID: Simulate HID device, and the data sent by the upper computer is received through endpoint 1, and uploaded in loop by endpoint 2
+  |      |      |      |      |      |-- SimulateCDC: Simulate CDC device
+  |      |      |      |      |      |-- UDisk: Simulate Udisk device,Emmc as storage medium
   |      |      |      |      |-- USBH 
-  |      |      |      |      |      |-- HOST_SS: simple enumeration procedure routine for USB devices
-  |      |      |      |      |      |-- HOST_Udisk£ºU disk file system exam
-  |      |      |      |      |-- USB3.0TestDemo.zip: Demo 372 devce endpoint upload/download and tansfer rate tool 
+  |      |      |      |      |      |-- HOST_SS:Simple enumeration process routine of USB device
+  |      |      |      |      |      |-- HOST_SS_udisk:Example of USB disk file system
+  |      |      |      |      |      |-- HOST_SS_HUB:Operation HUB routine
   |      |      |      |-- UserOptionBytes: User word configuration function and 2-wire interface disable function, as well as routine to use these functions
   

@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 
@@ -22,8 +24,8 @@
   */
 typedef enum
 {
-	DOWN_Mode = 0,
-	UP_Mode,
+    DOWN_Mode = 0,
+    UP_Mode,
 }HSPI_ModeTypeDef;
 
 
@@ -32,10 +34,10 @@ void HSPI_Mode( UINT8 s,  HSPI_ModeTypeDef i);
 void HSPI_INTCfg( UINT8 s,  UINT8 i );
 
 
-	 
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __CH56x_HSPI_H__	
+#endif  // __CH56x_HSPI_H__
 

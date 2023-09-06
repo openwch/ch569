@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "CH56x_common.h"
@@ -14,21 +16,21 @@
 /*******************************************************************************
  * @fn     HSPI_Mode
  *
- * @brief  DVP模式
+ * @brief  DVP mode
  *
- * @param  s -  数据位宽
- *					RB_HPIF_DAT8_MOD  - 8位模式
- *					RB_HPIF_DAT16_MOD - 16位模式
- *					RB_HPIF_DAT32_MOD - 32位模式
- *		   i -  工作模式
- *					UP_Mode - 使能上端模式
- *					DOWN_Mode - 使能下端模式
+ * @param  s -  data width
+ *					RB_HPIF_DAT8_MOD  - 8-bit mode
+ *					RB_HPIF_DAT16_MOD - 16-bit mode
+ *					RB_HPIF_DAT32_MOD - 32-bit mode
+ *		   i -  Operating mode
+ *					UP_Mode - Enable upper mode
+ *					DOWN_Mode - Enable downside mode
  *
  * @return   None
  */
 void HSPI_Mode( UINT8 s,  HSPI_ModeTypeDef i)
 {
-	R8_HSPI_CFG &= ~RB_HSPI_MSK_SIZE;   //恢复默认模式8bit模式
+	R8_HSPI_CFG &= ~RB_HSPI_MSK_SIZE;   //Restore default mode 8bit mode
 
     if(s){
     	R8_HSPI_CFG |= s;
@@ -48,16 +50,16 @@ void HSPI_Mode( UINT8 s,  HSPI_ModeTypeDef i)
 /*******************************************************************************
  * @fn     HSPI_INTCfg
  *
- * @brief  HSPI中断配置
+ * @brief  HSPI interrupt configuration
  *
- * @param  s -  中断控制状态
- *					ENABLE  - 使能相应中断
- *					DISABLE - 关闭相应中断
- *		   i -  中断类型
- *					RB_HSPI_IE_T_DONE  - 突发序列发送完成中断
- *					RB_HSPI_IE_R_DONE  - 接收FIFO溢出中断
- *					RB_HSPI_IE_FIFO_OV - 单包接收完成中断
- *				    RB_HSPI_IE_B_DONE  - 担保发送完成中断
+ * @param  s -  interrupt control status
+ *					ENABLE  - Enable corresponding interrupt
+ *					DISABLE - Disable the corresponding interrupt
+ *		   i -  interrupt type
+ *					RB_HSPI_IE_T_DONE  - Burst Sequence Transmit Complete Interrupt
+ *					RB_HSPI_IE_R_DONE  - Receive FIFO overflow interrupt
+ *					RB_HSPI_IE_FIFO_OV - Single packet receive complete interrupt
+ *				    RB_HSPI_IE_B_DONE  - Guaranteed Send Complete Interrupt
  *
  * @return   None
  */

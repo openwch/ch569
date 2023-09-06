@@ -4,9 +4,17 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *GPIO routine
+ *
+ */
 
 #include "CH56x_common.h"
 
@@ -14,8 +22,8 @@
 
 void GPIO_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-//#define normal 1     //普通输入输出
-#define interruption 1    //中断使能
+//#define normal 1     //common input and output
+#define interruption 1    //interrupt enable
 
 
 /*******************************************************************************
@@ -55,11 +63,11 @@ int main()
 	SystemInit(FREQ_SYS);
 	Delay_Init(FREQ_SYS);
 
-/* 配置串口调试 */
+/* Configure serial debugging */
 	DebugInit(115200);
 	PRINT("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 
-#if normal                                         //通用输入输出
+#if normal                                         //general purpose input and output
 
 	GPIOB_ModeCfg( GPIO_Pin_24, GPIO_Slowascent_PP_8mA );
 	while(1)
@@ -72,8 +80,8 @@ int main()
 #endif
 
 
-#if interruption                                     //中断配置
-	GPIOB_ITModeCfg( 4, GPIO_ITMode_RiseEdge );
+#if interruption                                     //interrupt configuration
+	GPIOB_ITModeCfg( GPIO_Pin_4, GPIO_ITMode_RiseEdge );
 	R32_PB_PD = (1<<4);
 	R8_GPIO_INT_FLAG = 0xff;
 	PRINT("R8_GPIO_INT_MODE=%x\r\n",R8_GPIO_INT_MODE);

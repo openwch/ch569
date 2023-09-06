@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #ifndef __BASE_TYPE__
@@ -1816,9 +1818,9 @@ typedef struct __PACKED
 extern "C" {
 #endif
 
-/* 连接设备速度定义 */
-#define USB_DEV_SPEED_LS    0x01  /* 当前为低速设备 */
-#define USB_DEV_SPEED_FS    0x00  /* 当前为全速设备 */
+/* Connection device speed definition */
+#define USB_DEV_SPEED_LS    0x01  /* Currently a low-speed device */
+#define USB_DEV_SPEED_FS    0x00  /* Currently full speed device */
 #define USB_DEV_SPEED_HS    0x02
 
 /* USB PID */
@@ -1973,7 +1975,7 @@ extern "C" {
 #endif
 
 #ifndef USB_DEVICE_ADDR
-  #define USB_DEVICE_ADDR    0x02  /* 默认的USB设备地址 */
+  #define USB_DEVICE_ADDR    0x02  /* Default USB device address */
 #endif
 #ifndef DEFAULT_ENDP0_SIZE
   #define DEFAULT_ENDP0_SIZE    8  /* default maximum packet size for endpoint 0 */
@@ -1982,15 +1984,15 @@ extern "C" {
   #define MAX_PACKET_SIZE    512  /* maximum packet size */
 #endif
 #ifndef USB_BO_CBW_SIZE
-  #define USB_BO_CBW_SIZE    0x1F  /* 命令块CBW的总长度 */
-  #define USB_BO_CSW_SIZE    0x0D  /* 命令状态块CSW的总长度 */
+  #define USB_BO_CBW_SIZE    0x1F  /* Total length of command block CBW */
+  #define USB_BO_CSW_SIZE    0x0D  /* The total length of the command status block CSW */
 #endif
 #ifndef USB_BO_CBW_SIG0
-  #define USB_BO_CBW_SIG0    0x55  /* 命令块CBW识别标志'USBC' */
+  #define USB_BO_CBW_SIG0    0x55  /* Command block CBW identification flag 'USBC' */
   #define USB_BO_CBW_SIG1    0x53
   #define USB_BO_CBW_SIG2    0x42
   #define USB_BO_CBW_SIG3    0x43
-  #define USB_BO_CSW_SIG0    0x55  /* 命令状态块CSW识别标志'USBS' */
+  #define USB_BO_CSW_SIG0    0x55  /* Command status block CSW identification flag 'USBS' */
   #define USB_BO_CSW_SIG1    0x53
   #define USB_BO_CSW_SIG2    0x42
   #define USB_BO_CSW_SIG3    0x53
@@ -2167,26 +2169,26 @@ typedef struct __PACKED _USB_INTERFACE_POWER_DESCRIPTOR
 } USB_ITF_PWR_DESCR, *PUSB_ITF_PWR_DESCR;
 #endif
 
-#define USB_BO_CBW_SIG    0x43425355  /* 命令块CBW识别标志'USBC' */
-#define USB_BO_CSW_SIG    0x53425355  /* 命令状态块CSW识别标志'USBS' */
+#define USB_BO_CBW_SIG    0x43425355  /* Command block CBW identification flag 'USBC' */
+#define USB_BO_CSW_SIG    0x53425355  /* Command status block CSW identification flag 'USBS' */
 
 typedef struct __PACKED _UDISK_BOC_CBW
 {
     UINT32 mCBW_Sig;
     UINT32 mCBW_Tag;
-    UINT32 mCBW_DataLen; /* 输入: 数据传输长度 */
-    UINT8  mCBW_Flag;    /* 输入: 传输方向等标志 */
+    UINT32 mCBW_DataLen; /* Input: data transfer length */
+    UINT8  mCBW_Flag;    /* Input: flags such as transmission direction */
     UINT8  mCBW_LUN;
-    UINT8  mCBW_CB_Len;     /* 输入: 命令块的长度,有效值是1到16 */
-    UINT8  mCBW_CB_Buf[16]; /* 输入: 命令块,该缓冲区最多为16个字节 */
+    UINT8  mCBW_CB_Len;     /* Input: the length of the command block, valid values are 1 to 16 */
+    UINT8  mCBW_CB_Buf[16]; /* Input: command block, the buffer is up to 16 bytes */
 } UDISK_BOC_CBW, *PUDISK_BOC_CBW;
 
 typedef struct __PACKED _UDISK_BOC_CSW
 {
     UINT32 mCSW_Sig;
     UINT32 mCSW_Tag;
-    UINT32 mCSW_Residue; /* 返回: 剩余数据长度 */
-    UINT8  mCSW_Status;  /* 返回: 命令执行结果状态 */
+    UINT32 mCSW_Residue; /* Return: remaining data length */
+    UINT8  mCSW_Status;  /* Return: command execution result status */
 } UDISK_BOC_CSW, *PUDISK_BOC_CSW;
 
 #ifdef __cplusplus
@@ -2238,12 +2240,12 @@ extern "C" {
 /**
  * @brief  ETH MAC Init structure definition
  * @note   The user should not configure all the ETH_InitTypeDef structure's fields.
- *   By calling the ETH_StructInit function the structure抯 fields are set to their default values.
+ *   By calling the ETH_StructInit function the structure fields are set to their default values.
  *   Only the parameters that will be set to a non-default value should be configured.
  */
 
 #define PHY_10M_EN      0
-#define ETHMAC_Mode     0x00  //01： 100M    00：10M  10:1000M
+#define ETHMAC_Mode     0x00  //01: 100M  00: 10M  10:1000M
 #define TB_NUM          0x08
 
 #define DMA_TPS_Mask    ((UINT32)0x00700000)
@@ -2460,7 +2462,7 @@ typedef struct
 /** @defgroup ENET_Buffers_setting
  * @{
  */
-#define ETH_MAX_PACKET_SIZE                     1520  /*!< ETH_HEADER + ETH_EXTRA + MAX_ETH_PAYLOAD + ETH_CRC */
+#define ETH_MAX_PACKET_SIZE                     1536  /*!< ETH_HEADER + ETH_EXTRA + MAX_ETH_PAYLOAD + ETH_CRC */
 #define ETH_HEADER                              14    /*!< 6 byte Dest addr, 6 byte Src addr, 2 byte length/type */
 #define ETH_CRC                                 4     /*!< Ethernet CRC */
 #define ETH_EXTRA                               2     /*!< Extra bytes in some cases */

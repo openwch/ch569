@@ -4,9 +4,17 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description 		 : 
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
+
+/*
+ *@Note
+ *UART Send and Receive routine
+ *
+ */
 
 #define  FREQ_SYS   80000000
 #include "CH56x_common.h"
@@ -53,25 +61,25 @@ int main()
 	SystemInit(FREQ_SYS);
 	Delay_Init(FREQ_SYS);
 
-/* 调试串口初始化 */
+/* Debug serial port initialization */
 	DebugInit(115200);
 	PRINT("Start @ChipID=%02X\r\n", R8_CHIP_ID );
 
-/* 数据长度变量 */
+/* data length variable */
 	UINT8 len;
 
-/* 配置串口 */
+/* Configure the serial port */
 	GPIOA_SetBits(GPIO_Pin_3);
-	GPIOA_ModeCfg(GPIO_Pin_2, GPIO_ModeIN_PU_NSMT);			// RXD-上拉输入
-	GPIOA_ModeCfg(GPIO_Pin_3, GPIO_Slowascent_PP_8mA);		// TXD-推挽输出
+	GPIOA_ModeCfg(GPIO_Pin_2, GPIO_ModeIN_PU_NSMT);			// RXD-pull-up input
+	GPIOA_ModeCfg(GPIO_Pin_3, GPIO_Slowascent_PP_8mA);		// TXD-push-pull output
 	UART2_DefInit();
 
-#if 0       // 串口发送字符串
+#if 0       //Serial port to send string
 	UART2_SendString( TxBuff, sizeof(TxBuff) );
 
 #endif
 
-#if 0       // 查询 接受完发送
+#if 0       //Inquire Send after receiving
 	while(1)
 	{
 		len = UART2_RecvString(RxBuff);
@@ -83,7 +91,7 @@ int main()
 
 #endif
 
-#if 1      // 中断方式
+#if 1      //Interrupt method
 	UART2_ByteTrigCfg( UART_7BYTE_TRIG );
 	trigB = 7;
 	UART2_INTCfg( ENABLE, RB_IER_RECV_RDY|RB_IER_LINE_STAT );
@@ -111,11 +119,11 @@ void UART2_IRQHandler(void)
 	UINT8 i;
 	switch( UART2_GetITFlag() )
 	{
-		case UART_II_LINE_STAT:        //线路状态错误
+		case UART_II_LINE_STAT:        //line state error
 			PRINT("UART2_GetLinSTA()\r\n",UART2_GetLinSTA());
 			break;
 
-		case UART_II_RECV_RDY:          //数据达到触发点
+		case UART_II_RECV_RDY:          //Data reaches the trigger point
 			for(i=0; i!=trigB; i++)
 			{
 				RxBuff[i] = UART2_RecvByte();
@@ -124,15 +132,15 @@ void UART2_IRQHandler(void)
 
 			break;
 
-		case UART_II_RECV_TOUT:         //接收超时
+		case UART_II_RECV_TOUT:         //receive timeout
 			i = UART2_RecvString(RxBuff);
 			UART2_SendString( RxBuff, i );
 			break;
 
-		case UART_II_THR_EMPTY:         //发送缓冲区空
+		case UART_II_THR_EMPTY:         //send buffer is empty
 			break;
 
-		case UART_II_MODEM_CHG:         //仅用于串口0
+		case UART_II_MODEM_CHG:         //Only for serial port 0
 			break;
 
 		default:

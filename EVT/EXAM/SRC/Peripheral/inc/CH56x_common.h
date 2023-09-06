@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2020/07/31
 * Description
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 
@@ -32,6 +34,7 @@
 #include "CH56x_ecdc.h"
 #include "CH56x_pwr.h"
 #include "CH56x_emmc.h"
+#include "CH56x_eth.h"
 
 
 /* UART Printf Definition */
