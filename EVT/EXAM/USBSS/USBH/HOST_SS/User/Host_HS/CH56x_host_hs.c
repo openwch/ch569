@@ -31,7 +31,7 @@ UINT8 U20_Endp0MaxSize = 0;
 /*******************************************************************************
  * @fn        user2mem_copy
  *
- * @briefI    copy the contents of the buffer to another address.
+ * @brief     copy the contents of the buffer to another address.
  *
  * @param     usrbuf - buffer address
  *            addr - target address
@@ -53,7 +53,7 @@ void CopySetupReqPkg( const UINT8 *pReqPkt )
 /*******************************************************************************
  * @fn        SetBusReset
  *
- * @briefI    send bus reset.
+ * @brief     send bus reset.
  *
  * @return    None
  */
@@ -76,7 +76,7 @@ void SetBusReset( void )
 /*******************************************************************************
  * @fn        USBHS_Host_Init
  *
- * @briefI    USB host initialized.
+ * @brief     USB host initialized.
  *
  * @param     sta - 1-enable 0-disable
  *
@@ -109,7 +109,7 @@ void USBHS_Host_Init(FunctionalState sta)
 /*******************************************************************************
  * @fn        USBHS_Transact
  *
- * @briefI    USB transact
+ * @brief     USB transact
  *
  * @param     endp_pid - bit7~bit4 current PID  of USB transact. bit3~bit0 target endpoint number
  *            toggle - sync trigger bit
@@ -192,7 +192,7 @@ UINT8 USBHS_Transact( UINT8 endp_pid, UINT8 toggle,UINT32 timeout)
 /*******************************************************************************
  * @fn        USBHS_HostCtrlTransfer
  *
- * @briefI    USB transfer.
+ * @brief     USB transfer.
  *
  * @param     databuf - receiving or send buffer
  *            len - receiving or send length
@@ -272,7 +272,7 @@ UINT8 USBHS_HostCtrlTransfer(UINT8 *databuf,PUINT16 len)
 /*******************************************************************************
  * @fn        USBHS_Host_Enum
  *
- * @briefI    enumerate device.
+ * @brief     enumerate device.
  *
  * @param     Databuf - receive buffer
  *
@@ -317,7 +317,7 @@ UINT8 USBHS_Host_Enum( UINT8 *Databuf )
 /*******************************************************************************
  * @fn        CtrlGetDevDescr
  *
- * @briefI    get device descriptor.
+ * @brief     get device descriptor.
  *
  * @param     pdev - pointer
  *            usrbuf - buffer address
@@ -354,7 +354,7 @@ UINT8 CtrlGetDevDescr(UINT8 *databuf)
 /*******************************************************************************
  * @fn        CtrlGetConfigDescr
  *
- * @briefI    get configuration descriptor.
+ * @brief     get configuration descriptor.
  *
  * @param     pdev - pointer
  *            usrbuf - buffer address
@@ -389,7 +389,7 @@ UINT8 CtrlGetConfigDescr(UINT8 *databuf)
 /*******************************************************************************
  * @fn        CtrlSetAddress
  *
- * @briefI    set device address.
+ * @brief     set device address.
  *
  * @param     addr - address of device
  *
@@ -412,7 +412,7 @@ UINT8 CtrlSetAddress( UINT8 addr )
 /*******************************************************************************
  * @fn        CtrlSetConfig
  *
- * @briefI    set device configuration value.
+ * @brief     set device configuration value.
  *
  * @param     cfg_val - value of  configuration
  *
@@ -434,7 +434,7 @@ UINT8 CtrlSetConfig(UINT8 cfg_val)
 /*******************************************************************************
  * @fn        CtrlSetAddress
  *
- * @briefI    set current target address of host.
+ * @brief     set current target address of host.
  *
  * @param     addr - target address
  *
@@ -448,7 +448,7 @@ void USBHS_CurrentAddr( UINT8 addr )
 /*******************************************************************************
  * @fn        Anaylisys_Descr
  *
- * @briefI    descriptor analysis.
+ * @brief     descriptor analysis.
  *
  * @param     pusbdev - device information variable.
  *            pdesc - descriptor buffer to analyze

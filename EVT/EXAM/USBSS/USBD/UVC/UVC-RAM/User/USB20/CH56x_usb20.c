@@ -18,7 +18,7 @@ static UINT16V  SetupLen = 0;      //Data length actually sent or received in da
 static UINT8V SetupReqType = 0;    //Host request descriptor type
 static UINT8V SetupReq = 0;        //Host request descriptor type
 static PUINT8 pDescr;
-extern UINT8V link_sta;
+extern UINT8V Link_Sta;
 
 __attribute__ ((aligned(16))) UINT8 vendor_buff[16]  __attribute__((section(".DMADATA"))); //Data sending and receiving buffer of endpoint 0
 /* Function declaration */
@@ -680,7 +680,7 @@ void USBHS_IRQHandler(void)
         USB20_Endp_Init();
         USB20_Device_Setaddress( 0 );
         R8_USB_INT_FG = RB_USB_IF_BUSRST;
-        if( link_sta == 1 )
+        if( Link_Sta == LINK_STA_1 )
         {
             PFIC_EnableIRQ(USBSS_IRQn);
             PFIC_EnableIRQ(LINK_IRQn);

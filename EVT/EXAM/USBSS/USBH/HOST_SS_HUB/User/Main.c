@@ -25,9 +25,10 @@
 
 /* Global Variable */
 UINT8V U30_Check_Time = 0;
-volatile DevInfo g_DevInfo;
-USB_HUB_Info    ss_hub_info[8];
-USB_HUB_Info    hs_hub_info[8];
+
+
+USB_HUB_Info ss_hub_info[SS_HUBNUM];
+USB_HUB_Info hs_hub_info[HS_HUBNUM];
 DEV_INFO_Typedef  thisUsbDev;
 __attribute__ ((aligned(4))) UINT8  RxBuffer[1] ;      // IN, must even address
 __attribute__ ((aligned(4))) UINT8  TxBuffer[1] ;      // OUT, must even address
@@ -39,7 +40,7 @@ void TMR0_IRQHandler( void ) __attribute__((interrupt("WCH-Interrupt-fast")));
 /*******************************************************************************
  * @fn        TMR0_IRQHandler
  *
- * @briefI    TMR0 handler.
+ * @brief     TMR0 handler.
  *
  * @return    None
  */
@@ -66,7 +67,7 @@ void TMR0_IRQHandler( void )
 /*******************************************************************************
  * @fn        DebugInit
  *
- * @briefI    nitializes the UART1 peripheral.
+ * @brief     nitializes the UART1 peripheral.
  *
  * @param     baudrate - UART1 communication baud rate.
  *
@@ -91,7 +92,7 @@ void DebugInit(UINT32 baudrate)
 /*******************************************************************************
  * @fn        DebugInit
  *
- * @briefI    nitializes the HUB variable.
+ * @brief     nitializes the HUB variable.
  *
  * @param     none.
  *
@@ -116,12 +117,13 @@ int main( )
 {
     UINT8 s = 0;
     UINT8 depth = 0;
+    UINT8 ss_rootnumofport;
+    UINT8 hs_rootnumofport;
 
     SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
-    mDelaymS(10);                        //delay
     DebugInit(115200);
-    PRINT("\n\nThis is USB3.0 host program !\n");
+    PRINT("\n\nThis is USB3.0 host program(80MHz)\n");
     HUB_Init();
     PFIC_EnableIRQ(LINK_IRQn);           //enable USBSSH LINK global interrupt
     USB20Host_Init(ENABLE);              //USB2.0 initialization
@@ -129,7 +131,7 @@ int main( )
     TMR0_ITCfg( ENABLE ,RB_TMR_IE_CYC_END);
     PFIC_EnableIRQ( TMR0_IRQn );
     Hub_LinkHead = InitHubLink();
-    mDelaymS(100);
+
     while(1)
     {
        mDelayuS(2);
@@ -142,33 +144,35 @@ int main( )
                if( ss_hub_info[depth].device_type == 0x09 )
                {
                    printf("U20_Init\n");
-                   s = U20HOST_Enumerate( depth,pNTFS_BUF,hs_hub_info[0].devaddr,0 );//enumerate USB2.0 HUB
+                   s = U20HOST_Enumerate( depth,pNTFS_BUF,hs_hub_info[depth].devaddr,0 );//enumerate USB2.0 HUB
                }
                if( ss_hub_info[depth].device_type == 0x09 )//The device under HUB starts processing
                {
+                   ss_rootnumofport = ss_hub_info[depth].numofport;
+                   hs_rootnumofport = hs_hub_info[depth].numofport;
                    while(1)
                    {
-                         s = USBSS_HUB_Main_Process( depth ,ss_hub_info[depth].devaddr,0,0);
-                         if( s ==ERR_USB_DISCON )break;
-
-                         s = USBHS_HUB_Main_Process( depth ,hs_hub_info[depth].devaddr,0,hs_hub_info[0].rootnumofport);
-                         if( s ==ERR_USB_DISCON )break;
+                         s = USBSS_HUB_Main_Process( depth ,ss_hub_info[depth].devaddr,0,0,ss_rootnumofport);
+                         if( s == ERR_USB_DISCON )break;
+                         s = USBHS_HUB_Main_Process( depth ,hs_hub_info[depth].devaddr,0,hs_rootnumofport);
+                         if( s == ERR_USB_DISCON )break;
                   }
               }
            }
            else
            {
-               s = U20HOST_Enumerate( 0,pNTFS_BUF,hs_hub_info[0].devaddr,0);
-               if(s != 0x14)
+               s = U20HOST_Enumerate( depth,pNTFS_BUF,hs_hub_info[depth].devaddr,0);
+               if(s != USB_INT_SUCCESS)
                {
                    printf("error:%02x\n",s);
                }
                if( hs_hub_info[depth].device_type == 0x09 )
                {
                    Global_Index = 0;
+                   hs_rootnumofport = hs_hub_info[depth].numofport;
                    while(1)
                    {
-                       s = USBHS_HUB_Main_Process( Global_Index ,hs_hub_info[0].devaddr,0,hs_hub_info[0].rootnumofport);
+                       s = USBHS_HUB_Main_Process( depth ,hs_hub_info[depth].devaddr,0,hs_rootnumofport);
                        if( s ==ERR_USB_DISCON )break;
 
                        if(! (R8_USB_MIS_ST&RB_USB_ATTACH) )

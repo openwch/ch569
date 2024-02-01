@@ -1,7 +1,7 @@
 
-南京沁恒微电子股份有限公司 2020.08
+南京沁恒微电子股份有限公司 2024.01
 最新资料请到我们的网站上查询
-http://wch.cn
+https://wch.cn
 
   |
   |-- CH56x：RISC-V内核微控制器 
@@ -65,7 +65,7 @@ http://wch.cn
   |      |      |      |      |      |      |--CH372-HSPI-Slave
   |      |      |      |      |      |-- CompatibilityHID：模拟HID设备，上位机发送的数据通过端点1接受，端点2回环上传
   |      |      |      |      |      |-- SimulateCDC：模拟CDC设备
-  |      |      |      |      |      |-- UDisk：模拟U盘，emmc做存储介质
+  |      |      |      |      |      |-- MSC_U-Disk：模拟U盘，emmc做存储介质
   |      |      |      |      |-- USBH 
   |      |      |      |      |      |-- HOST_SS：USB设备的简易枚举过程例程
   |      |      |      |      |      |-- HOST_SS_udisk：U盘文件系统示例

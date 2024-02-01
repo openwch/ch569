@@ -27,12 +27,6 @@
 #define PIN_HRTS_LOW( )             ( R32_PB_CLR |= ( 1 << 23 ) )               /* HRTS Output low */
 #define PIN_HRTS_HIGH( )            ( R32_PB_OUT |= ( 1 << 23 ) )               /* HRTS Output high */
 
-#define PIN_MODE_RD( )              ( R32_PA_PIN & ( 1 << 12 ) )                /* MODE Level reading */
-
-#define PIN_ACT_LOW( )              ( R32_PB_CLR |= ( 1 << 24 ) )               /* ACT Output low */
-#define PIN_ACT_HIGH( )             ( R32_PB_OUT |= ( 1 << 24 ) )               /* ACT Output high */
-
-
 /******************************************************************************/
 extern void Delay_uS( UINT16 delay );
 extern void Delay_mS( UINT16 delay );

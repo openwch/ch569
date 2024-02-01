@@ -32,7 +32,7 @@ UINT8 UsbDevEndp0Size = 8;
 /*******************************************************************************
  * @fn        user2mem_copy
  *
- * @briefI    copy the contents of the buffer to another address.
+ * @brief     copy the contents of the buffer to another address.
  *
  * @param     usrbuf - buffer address
  *            addr - target address
@@ -54,7 +54,7 @@ void CopySetupReqPkg( const UINT8 *pReqPkt )
 /*******************************************************************************
  * @fn        SetBusReset
  *
- * @briefI    send bus reset.
+ * @brief     send bus reset.
  *
  * @return    None
  */
@@ -77,7 +77,7 @@ void USB20HOST_SetBusReset( void )
 /*******************************************************************************
  * @fn        USBHS_Host_Init
  *
- * @briefI    USB host initialized.
+ * @brief     USB host initialized.
  *
  * @param     sta - 1-enable 0-disable
  *
@@ -110,7 +110,7 @@ void USB20Host_Init(FunctionalState sta)
 /*******************************************************************************
  * @fn        USB20HOST_Transact
  *
- * @briefI    USB transact
+ * @brief     USB transact
  *
  * @param     endp_pid - bit7~bit4 current PID  of USB transact. bit3~bit0 target endpoint number
  *            toggle - sync trigger bit
@@ -145,8 +145,10 @@ UINT8 USB20HOST_Transact( UINT8 endp_pid, UINT8 toggle,UINT32 timeout)
         {
             mDelayuS(200);
             R8_USB_INT_FG = RB_USB_IF_DETECT;
-            if( R8_USB_MIS_ST & RB_USB_ATTACH ){
-                if(R8_UHOST_CTRL & RB_UH_AUTOSOF_EN){
+            if( R8_USB_MIS_ST & RB_USB_ATTACH )
+            {
+                if(R8_UHOST_CTRL & RB_UH_AUTOSOF_EN)
+                {
                     return ( ERR_USB_CONNECT );
                 }
             }
@@ -165,7 +167,8 @@ UINT8 USB20HOST_Transact( UINT8 endp_pid, UINT8 toggle,UINT32 timeout)
                 -- TransRetry;
             }
             else{
-                switch ( endp_pid >> 4 ){
+                switch ( endp_pid >> 4 )
+                {
                 case USB_PID_SETUP:
                 case USB_PID_OUT:
                     if ( r ) {return( r | ERR_USB_TRANSFER );}
@@ -214,7 +217,8 @@ UINT8 U20HOST_GetDeviceDescr( UINT8 *buf ,UINT16 *len )
     setup_buf[7] = 0x00;
 
     status = USB20HOST_CtrlTransfer( setup_buf,buf,&l );
-    if( status == USB_INT_SUCCESS ){
+    if( status == USB_INT_SUCCESS )
+    {
         *len = l;
         UsbDevEndp0Size = *(buf+7);
     }
@@ -245,13 +249,11 @@ UINT8 U20HOST_GetConfigDescr( UINT8 *buf ,UINT16 *len )
     setup_buf[7] = 0x00;
     l = 0x40;
     status = USB20HOST_CtrlTransfer( setup_buf,buf,&l );
-    if( status == USB_INT_SUCCESS ){
-        //Ctl_Setup->wLengthL = ( (PUSB_CFG_DESCR)buf ) -> wTotalLengthL;
+    if( status == USB_INT_SUCCESS )
+    {
         setup_buf[6] = (( (PUSB_CFG_DESCR)buf ) -> wTotalLength)&0xff;
         setup_buf[7] = (( (PUSB_CFG_DESCR)buf ) -> wTotalLength)>>8;
 
-        //Ctl_Setup->wLengthH = ( (PUSB_CFG_DESCR)buf ) -> wTotalLengthH;
-//      l = ( ( ( UINT16 )Ctl_Setup->wLengthH << 8 ) ) + Ctl_Setup->wLengthL;
         l = Ctl_Setup->wLength;
         status = USB20HOST_CtrlTransfer( setup_buf,buf,&l );
         if( status == USB_INT_SUCCESS )
@@ -346,7 +348,7 @@ UINT8 U20HOST_CofDescrAnalyse( UINT8 *pbuf )
 /*******************************************************************************
  * @fn        USB20Host_Enum
  *
- * @briefI    enumerate device.
+ * @brief     enumerate device.
  *
  * @param     Databuf - receive buffer
  *
@@ -379,32 +381,37 @@ UINT8 USB20Host_Enum( UINT8 *Databuf )
        R8_USB_DEV_AD = 0;
        len = 7;
        status = U20HOST_GetDeviceDescr( Databuf,&len );
-       if( status != USB_INT_SUCCESS ){
+       if( status != USB_INT_SUCCESS )
+       {
            printf("GetDev_ERROR=%02x\n",status);
            return USB_OPERATE_ERROR;
        }
        UsbDevEndp0Size = *(Databuf+4);
 
        status = U20HOST_SetAddress( 0x08 );
-       if( status != USB_INT_SUCCESS ){
+       if( status != USB_INT_SUCCESS )
+       {
            printf("SetAddr_ERROR=%02x\n",status);
            return USB_OPERATE_ERROR;
        }
        len = 0x12;
        status = U20HOST_GetDeviceDescr( Databuf,&len );
-       if( status != USB_INT_SUCCESS ){
+       if( status != USB_INT_SUCCESS )
+       {
            printf("GetDev_ERROR=%02x\n",status);
            return USB_OPERATE_ERROR;
        }
        status = U20HOST_GetConfigDescr( Databuf,&len );
-       if( status != USB_INT_SUCCESS ){
+       if( status != USB_INT_SUCCESS )
+       {
            printf("GetDev_ERROR=%02x\n",status);
            return USB_OPERATE_ERROR;
        }
        cfg = ( (PUSB_CFG_DESCR)Databuf ) -> bConfigurationValue;
        printf("cfg=%02x\n",cfg);
        printf("ConfigDescr:");
-       for( i=0;i!=len;i++ ){
+       for( i=0;i!=len;i++ )
+       {
            printf("%02x ",*(Databuf+i));
        }
        printf("\n");
@@ -429,7 +436,7 @@ UINT8 USB20Host_Enum( UINT8 *Databuf )
 /*******************************************************************************
  * @fn        USB20HOST_CtrlTransfer
  *
- * @briefI    enumerate device.
+ * @brief     enumerate device.
  *
  * @param     ReqBuf -- input parameter
  *            DataBuf-- read data
@@ -533,5 +540,4 @@ UINT8 USB20HOST_ClearEndpStall( UINT8 endp )
     status = USB20HOST_CtrlTransfer( setup_buf, NULL, NULL  );
     return( status );
 }
-
 

@@ -2,7 +2,7 @@
 * File Name          : ISPEM569.h
 * Author             : WCH
 * Version            : V1.0
-* Date               : 2020/07/31
+* Date               : 2024/01/12
 * Description        : for the chip only USER code area, no BOOT
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -62,5 +62,4 @@ extern UINT32 FLASH_ROMA_VERIFY( UINT32 StartAddr, PVOID Buffer, UINT32 Length )
 
 extern UINT8 FLASH_ROMA_READ( UINT32 StartAddr, PVOID Buffer, UINT32 Length );  // read FlashROM data block, minimal block is dword, return 0 if success
 
-extern UINT8 FLASH_ROMA_LOCK( UINT8 LockFlag );  // unlock FlashROM block, return 0 if success
-/* LockFlag: not care */
+extern VOID GET_FLASH_ID( PVOID Buffer );  // get 128 bit FLASH ID

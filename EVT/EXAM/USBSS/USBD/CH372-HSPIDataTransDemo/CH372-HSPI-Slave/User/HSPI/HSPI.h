@@ -11,7 +11,6 @@
 #ifndef __HSPI_H__
 #define __HSPI_H__
 
-
 /******************************************************************************/
 #if( DEF_HSPI_MODE == DEF_HSPI_HOST_MODE )
 #define HPSI_DMA_TX_Addr0          0x20020000                                   /* HSPI send DMA0 address */
@@ -26,19 +25,14 @@
 #endif
 
 #define DEF_HSPI_DOUBLE_DIR_EN     1
-
 #define DEF_HSPI_DATASIZE_8        0                                            /* 8 bit data */
 #define DEF_HSPI_DATASIZE_16       1                                            /* 16 bit data */
 #define DEF_HSPI_DATASIZE_32       2                                            /* 32 bit data */
 #define DEF_HSPI_DATASIZE          DEF_HSPI_DATASIZE_32
-
 #define DEF_HSPI_UDF0              0x3ABCDEF
 #define DEF_HSPI_UDF1              0x3ABCDEF
-
 #define DEF_HSPI_DMA_PACK_LEN      4096                                        /* DMA Packet length */
-
 #define DEF_HSPI_BULK_BPACK_NUM    2                                           /* Definition of the number of burst mode packets in batch transmission mode */
-
 #define DEF_HSPI_BULK_BPACK_LEN    ( DEF_HSPI_DMA_PACK_LEN * DEF_HSPI_BULK_BPACK_NUM )
 #define DEF_HSPI_UVC_BPACK_LEN     ( DEF_HSPI_DMA_PACK_LEN * DEF_HSPI_UVC_BPACK_NUM )
 
@@ -70,9 +64,6 @@ extern void HSPI_Tx_Data_Deal( void );
 #endif
 
 /*********************************END OF FILE**********************************/
-
-
-
 
 
 

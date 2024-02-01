@@ -23,10 +23,6 @@
 #include "CH56x_UDISK.h"
 #include "fat_process.h"
 
-/* Global define */
-#define BULK_IN        0
-#define BULK_OUT       1
-#define DUG_FUNC_EN    0
 
 /* Global Variable */
 UINT8V U30_Check_Time = 0;
@@ -43,17 +39,20 @@ void TMR0_IRQHandler( void ) __attribute__((interrupt("WCH-Interrupt-fast")));
 /*******************************************************************************
  * @fn        TMR0_IRQHandler
  *
- * @briefI    TMR0 handler.
+ * @brief     TMR0 handler.
  *
  * @return    None
  */
 void TMR0_IRQHandler( void )
 {
-    if( R8_TMR0_INT_FLAG & RB_TMR_IF_CYC_END ){
+    if( R8_TMR0_INT_FLAG & RB_TMR_IF_CYC_END )
+    {
         R8_TMR0_INT_FLAG = RB_TMR_IF_CYC_END;
-        if( gDeviceConnectstatus == USB_INT_CONNECT_U20 ){
+        if( gDeviceConnectstatus == USB_INT_CONNECT_U20 )
+        {
              U30_Check_Time++;
-             if( U30_Check_Time>= 5 ){
+             if( U30_Check_Time>= 5 )
+             {
                  printf("u20_connect\n");
                  gDeviceConnectstatus = USB_INT_CONNECT;
                  U30_Check_Time = 0;
@@ -65,7 +64,7 @@ void TMR0_IRQHandler( void )
 /*******************************************************************************
  * @fn        DebugInit
  *
- * @briefI    nitializes the UART1 peripheral.
+ * @brief     nitializes the UART1 peripheral.
  *
  * @param     baudrate - UART1 communication baud rate.
  *
@@ -95,13 +94,12 @@ void DebugInit(UINT32 baudrate)
  *
  * @return  none
  */
-int main( )
+int main( void )
 {
     UINT8 s = 0;
 
     SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
-    mDelaymS(10);                        //delay
     DebugInit(115200);
     PRINT("\n\nThis is USB3.0 host program\n");
 
@@ -121,7 +119,8 @@ int main( )
                mDelaymS(5);
                USB30Host_Enum();
            }
-           else{
+           else
+           {
                printf("U20HOST_Enumerate\n");
                mDelaymS(5);
                s = USB20Host_Enum( endpRXbuff );

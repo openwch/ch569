@@ -22,7 +22,7 @@ DevInfo_Typedef  g_devInfo;
 static UINT8V SetupReqType = 0;    //Host request descriptor type
 static UINT8V SetupReq = 0;        //Host request descriptor type
 static PUINT8 pDescr;
-extern UINT8V link_sta;
+extern UINT8V Link_Sta;
 
 __attribute__ ((aligned(16))) UINT8 vendor_buff[16]  __attribute__((section(".DMADATA")));
 /* Function declaration */
@@ -532,7 +532,7 @@ UINT16 U20_Standard_Request_Deal()
  *
  * @return   None
  */
-void USBHS_IRQHandler(void)			                                //USBHS interrupt severice
+void USBHS_IRQHandler(void)			                                //USBHS interrupt service
 {
 	UINT32 end_num;
 	UINT32 rx_token;
@@ -678,7 +678,7 @@ void USBHS_IRQHandler(void)			                                //USBHS interrupt 
 		USB20_Endp_Init();
 		USB20_Device_Setaddress( 0 );
 		R8_USB_INT_FG = RB_USB_IF_BUSRST;
-        if( link_sta == 1 )
+        if( Link_Sta == LINK_STA_1 )
         {
             PFIC_EnableIRQ(USBSS_IRQn);
             PFIC_EnableIRQ(LINK_IRQn);

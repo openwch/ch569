@@ -12,6 +12,7 @@
 #include "CH56x_usb20.h"
 #include "CH56x_usb30.h"
 #include "CH56xUSB30_LIB.H"
+#include "SW_UDISK.h"
 
 /* Global Variable */
 UINT16V  U20_EndpnMaxSize = 512;
@@ -22,7 +23,6 @@ DevInfo_Typedef  g_devInfo;
 static UINT8V SetupReqType = 0;    //Host request descriptor type
 static UINT8V SetupReq = 0;        //Host request descriptor type
 static PUINT8 pDescr;
-extern UINT8V Link_Sta;
 
 __attribute__ ((aligned(16))) UINT8 vendor_buff[16]  __attribute__((section(".DMADATA")));
 /* Function declaration */
@@ -38,10 +38,10 @@ const UINT8 hs_device_descriptor[] =
     0x00,   // device sub-class
     0x00,   // vendor specific protocol
     0x40,   // max packet size 512B
-    0x86,   // vendor id-0x1A86(qinheng)
+    0x86, // vendor id-0x1A86(qinheng)
     0x1A,
-    0x37,   // product id 0x5537
-    0x55,
+    0x10, // product id 0xfe10
+    0xFE,
     0x00,   //bcdDevice 0x0111
     0x11,
     0x01,   // manufacturer index string
@@ -52,137 +52,43 @@ const UINT8 hs_device_descriptor[] =
 
 const UINT8 hs_config_descriptor[] =
 {
-    0x09,   // length of this descriptor
-    0x02,   // CONFIGURATION (2)
-    0x74,   // total length includes endpoint descriptors (should be 1 more than last address)
-    0x00,   // total length high byte
-    0x01,   // number of interfaces
-    0x01,   // configuration value for this one
-    0x00,   // configuration - string is here, 0 means no string
-    0x80,   // attributes - bus powered, no wakeup
-    0x64,   // max power - 800 ma is 100 (64 hex)
+        /* Configuration Descriptor */
+        0x09,                                                                        // bLength
+        0x02,                                                                        // bDescriptorType (Configuration)
+        0x20, 0x00,                                                                  // wTotalLength 32
+        0x01,                                                                        // bNumInterfaces 1
+        0x01,                                                                        // bConfigurationValue
+        0x00,                                                                        // iConfiguration (String Index)
+        0xC0,                                                                        // bmAttributes Self Powered
+        0x32,                                                                        // bMaxPower 100mA
 
-    0x09,   // length of the interface descriptor
-    0x04,   // INTERFACE (4)
-    0x00,   // Zero based index 0f this interface
-    0x00,   // Alternate setting value (?)
-    0x0e,   // Number of endpoints (not counting 0)
-    0xFF,   // Interface class, ff is vendor specific
-    0xFF,   // Interface sub-class
-    0xFF,   // Interface protocol
-    0x00,   // Index to string descriptor for this interface
+        /*****************************************************************/
+        /* Interface Descriptor(UDisk) */
+        0x09,                                                                        // bLength
+        0x04,                                                                        // bDescriptorType (Interface)
+        0x00,                                                                        // bInterfaceNumber 0
+        0x00,                                                                        // bAlternateSetting
+        0x02,                                                                        // bNumEndpoints 2
+        0x08,                                                                        // bInterfaceClass
+        0x06,                                                                        // bInterfaceSubClass
+        0x50,                                                                        // bInterfaceProtocol
+        0x00,                                                                        // iInterface (String Index)
 
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x81,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
+        /* Endpoint Descriptor */
+        0x07,                                                                        // bLength
+        0x05,                                                                        // bDescriptorType (Endpoint)
+        0x82,                                                                        // bEndpointAddress (IN/D2H)
+        0x02,                                                                        // bmAttributes (Bulk)
+        0x00, 0x02,                                                                  // wMaxPacketSize 512
+        0x00,                                                                        // bInterval 0 (unit depends on device speed)
 
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x01,   // endpoint direction (00 is out) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,    // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x82,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x02,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x83,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x03,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x84,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x04,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x85,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x05,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x86,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x06,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x87,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00,   // polling interval in milliseconds (1 for iso)
-
-    0x07,   // length of this endpoint descriptor
-    0x05,   // ENDPOINT (5)
-    0x07,   // endpoint direction (80 is in) and address
-    0x02,   // transfer type - 00 = control, 01 = iso, 10 = bulk, 11 = int
-    0x00,   // max packet size - 512 bytes
-    0x02,   // max packet size - high
-    0x00    // polling interval in milliseconds (1 for iso)
+        /* Endpoint Descriptor */
+        0x07,                                                                        // bLength
+        0x05,                                                                        // bDescriptorType (Endpoint)
+        0x03,                                                                        // bEndpointAddress (OUT/H2D)
+        0x02,                                                                        // bmAttributes (Bulk)
+        0x00, 0x02,                                                                  // wMaxPacketSize 512
+        0x00,                                                                        // bInterval 0 (unit depends on device speed)
 };
 
 /* Language Descriptor */
@@ -260,6 +166,8 @@ const UINT8 hs_bos_descriptor[] =
     0x07
 };
 
+
+
 /*******************************************************************************
  * @fn     USB20_Endp_Init
  *
@@ -267,76 +175,26 @@ const UINT8 hs_bos_descriptor[] =
  *
  * @return  None
  */
-void USB20_Endp_Init( void )	// USBHS device endpoint initial
+void USB20_Endp_Init ( )	// USBHS device endpoint initial
 {
-    R8_UEP4_1_MOD = RB_UEP1_RX_EN | RB_UEP1_TX_EN | RB_UEP4_RX_EN | RB_UEP4_TX_EN;
-    R8_UEP2_3_MOD = RB_UEP2_RX_EN | RB_UEP2_TX_EN | RB_UEP3_RX_EN | RB_UEP3_TX_EN;
-    R8_UEP5_6_MOD = RB_UEP5_RX_EN | RB_UEP5_TX_EN | RB_UEP6_RX_EN | RB_UEP6_TX_EN;
-    R8_UEP7_MOD  = RB_UEP7_RX_EN |RB_UEP7_TX_EN;                                       //endpoint send and  receive enable
+    R8_UEP2_3_MOD = RB_UEP2_TX_EN | RB_UEP3_RX_EN;
 
     R16_UEP0_MAX_LEN = 64;
-    R16_UEP1_MAX_LEN = 512;
     R16_UEP2_MAX_LEN = 512;
     R16_UEP3_MAX_LEN = 512;
-    R16_UEP4_MAX_LEN = 512;
-    R16_UEP5_MAX_LEN = 512;
-    R16_UEP6_MAX_LEN = 512;
-    R16_UEP7_MAX_LEN = 512;
 
     R32_UEP0_RT_DMA = (UINT32)(UINT8 *)endp0RTbuff;
 
-    R32_UEP1_TX_DMA = (UINT32)(UINT8 *)endp1RTbuff;
-	R32_UEP1_RX_DMA = (UINT32)(UINT8 *)endp1RTbuff;
-
-	R32_UEP2_TX_DMA = (UINT32)(UINT8 *)endp2RTbuff;
-	R32_UEP2_RX_DMA = (UINT32)(UINT8 *)endp2RTbuff;
-
-	R32_UEP3_TX_DMA = (UINT32)(UINT8 *)endp3RTbuff;
-	R32_UEP3_RX_DMA = (UINT32)(UINT8 *)endp3RTbuff;
-
-	R32_UEP4_TX_DMA = (UINT32)(UINT8 *)endp4RTbuff;
-	R32_UEP4_RX_DMA = (UINT32)(UINT8 *)endp4RTbuff;
-
-	R32_UEP5_TX_DMA = (UINT32)(UINT8 *)endp5RTbuff;
-	R32_UEP5_RX_DMA = (UINT32)(UINT8 *)endp5RTbuff;
-
-	R32_UEP6_TX_DMA = (UINT32)(UINT8 *)endp6RTbuff;
-	R32_UEP6_RX_DMA = (UINT32)(UINT8 *)endp6RTbuff;
-
-	R32_UEP7_TX_DMA = (UINT32)(UINT8 *)endp7RTbuff;
-	R32_UEP7_RX_DMA = (UINT32)(UINT8 *)endp7RTbuff;
+	R32_UEP2_TX_DMA = (UINT32)(UINT8 *)UDisk_In_Buf;
+	R32_UEP3_RX_DMA = (UINT32)(UINT8 *)UDisk_Out_Buf;
 
 	R16_UEP0_T_LEN = 0;
 	R8_UEP0_TX_CTRL = UEP_T_RES_NAK;
 	R8_UEP0_RX_CTRL = 0;
 
-	R16_UEP1_T_LEN = 0;
-	R8_UEP1_TX_CTRL = UEP_T_RES_NAK ;
-	R8_UEP1_RX_CTRL = UEP_R_RES_ACK | RB_UEP_R_TOG_0;
-
     R16_UEP2_T_LEN = U20_MAXPACKET_LEN;
-    R8_UEP2_TX_CTRL = UEP_T_RES_ACK | RB_UEP_T_TOG_0;
-    R8_UEP2_RX_CTRL = UEP_R_RES_ACK | RB_UEP_R_TOG_0;
-
-    R16_UEP3_T_LEN = 0;
-    R8_UEP3_TX_CTRL = UEP_T_RES_NAK;
-    R8_UEP3_RX_CTRL = UEP_R_RES_NAK;
-
-    R16_UEP4_T_LEN = 0;
-    R8_UEP4_TX_CTRL = UEP_T_RES_NAK ;
-    R8_UEP4_RX_CTRL = UEP_R_RES_NAK;
-
-    R16_UEP5_T_LEN = 0;
-    R8_UEP5_TX_CTRL = UEP_T_RES_NAK;
-    R8_UEP5_RX_CTRL = UEP_R_RES_NAK;
-
-    R16_UEP6_T_LEN = 0;
-    R8_UEP6_TX_CTRL = UEP_T_RES_NAK;
-    R8_UEP6_RX_CTRL = UEP_R_RES_NAK;
-
-    R16_UEP7_T_LEN = 0;
-    R8_UEP7_TX_CTRL = UEP_T_RES_NAK;
-    R8_UEP7_RX_CTRL = UEP_R_RES_NAK;
+    R8_UEP2_TX_CTRL = UEP_T_RES_NAK | RB_UEP_T_AUTOTOG;
+    R8_UEP3_RX_CTRL = UEP_R_RES_ACK | RB_UEP_R_AUTOTOG;
 }
 
 /*******************************************************************************
@@ -352,12 +210,12 @@ void USB20_Device_Init ( FunctionalState sta )  // USBHS device initial
 {
     UINT16 i;
     UINT32 *p;
-    if( sta )
+    if(sta)
     {
         R8_USB_CTRL = 0;
         R8_USB_CTRL =  UCST_HS | RB_DEV_PU_EN | RB_USB_INT_BUSY |RB_USB_DMA_EN;
         R8_USB_INT_EN = RB_USB_IE_SETUPACT | RB_USB_IE_TRANS | RB_USB_IE_SUSPEND  |RB_USB_IE_BUSRST ;
-        USB20_Endp_Init( );
+        USB20_Endp_Init();
     }
     else
     {
@@ -386,7 +244,7 @@ void USB20_Device_Setaddress( UINT32 address )
  *
  * @return   None
  */
-UINT16 U20_NonStandard_Request_Deal( void )
+UINT16 U20_NonStandard_Request_Deal()
 {
   UINT16 len = 0;
 
@@ -400,7 +258,7 @@ UINT16 U20_NonStandard_Request_Deal( void )
  *
  * @return   None
  */
-UINT16 U20_Standard_Request_Deal( void )
+UINT16 U20_Standard_Request_Deal()
 {
   UINT16 len = 0;
   UINT8 endp_dir;
@@ -611,7 +469,7 @@ UINT16 U20_Standard_Request_Deal( void )
         break;
    }
 
-  if( ( SetupLen != USB_DESCR_UNSUPPORTED ) && ( SetupLen != 0 ))
+  if( (SetupLen != USB_DESCR_UNSUPPORTED) && (SetupLen != 0))
   {
       len = ( SetupLen >= U20_UEP0_MAXSIZE ) ? U20_UEP0_MAXSIZE : SetupLen;
       if(endp_dir)
@@ -625,13 +483,13 @@ UINT16 U20_Standard_Request_Deal( void )
 }
 
 /*******************************************************************************
- * @fn       USBHS_IRQHandler
+ * @fn       USBHSD_IRQHandler
  *
  * @brief    USB2.0 Interrupt Handler.
  *
  * @return   None
  */
-void USBHS_IRQHandler( void )			                  //USBHS interrupt service
+void USBHS_IRQHandler(void)			                                //USBHS interrupt service
 {
 	UINT32 end_num;
 	UINT32 rx_token;
@@ -655,11 +513,11 @@ void USBHS_IRQHandler( void )			                  //USBHS interrupt service
 		 /*Analyze host requests*/
 		 if((UsbSetupBuf->bRequestType & USB_REQ_TYP_MASK) != USB_REQ_TYP_STANDARD)
          {
-             ret_len =  U20_NonStandard_Request_Deal( );
+             ret_len =  U20_NonStandard_Request_Deal();
          }
          else
          {
-             ret_len = U20_Standard_Request_Deal( );
+             ret_len = U20_Standard_Request_Deal();
          }
 		 if(ret_len == 0xFFFF)
          {
@@ -679,7 +537,7 @@ void USBHS_IRQHandler( void )			                  //USBHS interrupt service
 	else if( int_flg & RB_USB_IF_TRANSFER )
 	{
 		end_num =   R8_USB_INT_ST & 0xf;
-		rx_token = ( R8_USB_INT_ST >>4) & 0x3;
+		rx_token = ( (R8_USB_INT_ST )>>4) & 0x3;
 #if 0
 		if( !(R8_USB_INT_ST & RB_USB_ST_TOGOK) )
 		{
@@ -723,40 +581,29 @@ void USBHS_IRQHandler( void )			                  //USBHS interrupt service
                 }
                 break;
 		   case 1:
-		       if( rx_token == PID_IN )
-		       {
-                   R16_UEP1_T_LEN = 0;
-                   R8_UEP1_TX_CTRL ^= RB_UEP_T_TOG_1;
-                   R8_UEP1_TX_CTRL = (R8_UEP1_TX_CTRL & ~RB_UEP_RRES_MASK) | UEP_R_RES_NAK;
-
-                   R8_UEP1_RX_CTRL ^= RB_UEP_R_TOG_1;
-                   R8_UEP1_RX_CTRL = (R8_UEP1_RX_CTRL & ~RB_UEP_RRES_MASK) | UEP_R_RES_ACK;
-		       }
-		       else if(rx_token == PID_OUT)
-		       {
-		           rxlen = R16_USB_RX_LEN;
-                   R8_UEP1_RX_CTRL = (R8_UEP1_RX_CTRL & ~RB_UEP_RRES_MASK) | UEP_R_RES_NAK;
-
-		           R32_UEP1_TX_DMA = (UINT32)(UINT8 *)endp1RTbuff;
-		           R16_UEP1_T_LEN =  rxlen;
-		           R8_UEP1_TX_CTRL = (R8_UEP1_TX_CTRL &~RB_UEP_TRES_MASK)|UEP_T_RES_ACK;
-		       }
 		       break;
 		   case 2:
-		       if(rx_token == PID_IN)
-		       {
-                   R32_UEP2_TX_DMA = (UINT32)(UINT8 *)endp2RTbuff;
-                   R8_UEP2_TX_CTRL ^= RB_UEP_T_TOG_1;
-                   R8_UEP2_TX_CTRL = (R8_UEP2_TX_CTRL & ~RB_UEP_TRES_MASK) | UEP_T_RES_ACK;
-		       }
-		       else if(rx_token == PID_OUT)
-		       {
-		           R32_UEP2_RX_DMA = (UINT32)(UINT8 *)endp2RTbuff;
-		           R8_UEP2_RX_CTRL ^= RB_UEP_R_TOG_1;
-		           R8_UEP2_RX_CTRL = (R8_UEP2_RX_CTRL & ~RB_UEP_RRES_MASK) | UEP_R_RES_ACK;
-		       }
+               if( rx_token == PID_IN )
+               {
+                   R32_UEP2_TX_DMA = (UINT32)(UINT8 *)UDisk_In_Buf;
+                   R8_UEP2_TX_CTRL = (R8_UEP2_TX_CTRL & ~RB_UEP_TRES_MASK) | UEP_T_RES_NAK;
+                   UDISK_In_EP_Deal();
+               }
 		       break;
 		   case 3:
+		       if( rx_token == PID_OUT )
+               {
+		           R32_UEP3_RX_DMA = (UINT32)(UINT8 *)UDisk_Out_Buf;
+                   R8_UEP3_RX_CTRL = (R8_UEP3_RX_CTRL & ~RB_UEP_TRES_MASK) | UEP_R_RES_NAK;
+
+                   rxlen = R16_USB_RX_LEN;
+
+                   UDISK_Out_EP_Deal(UDisk_Out_Buf,rxlen);
+                   if( UDISK_OutPackflag == 0 )
+                   {
+                       R8_UEP3_RX_CTRL = (R8_UEP3_RX_CTRL & ~RB_UEP_RRES_MASK) | UEP_R_RES_ACK;
+                   }
+               }
 		       break;
            case 4:
                 break;
@@ -800,7 +647,7 @@ void USBHS_IRQHandler( void )			                  //USBHS interrupt service
  *
  * @return   None
  */
-UINT16 U20_Endp0_IN_Callback( void )
+UINT16 U20_Endp0_IN_Callback(void)
 {
     UINT16 len = 0;
     switch(SetupReq)

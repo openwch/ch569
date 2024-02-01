@@ -37,7 +37,7 @@ void U30_BulkTest(void);
 /*******************************************************************************
  * @fn        TMR0_IRQHandler
  *
- * @briefI    TMR0 handler.
+ * @brief     TMR0 handler.
  *
  * @return    None
  */
@@ -63,7 +63,7 @@ void TMR0_IRQHandler( void )
 /*******************************************************************************
  * @fn        DebugInit
  *
- * @briefI    nitializes the UART1 peripheral.
+ * @brief     nitializes the UART1 peripheral.
  *
  * @param     baudrate - UART1 communication baud rate.
  *
@@ -92,12 +92,11 @@ void DebugInit(UINT32 baudrate)
  *
  * @return  none
  */
-int main( )
+int main( void )
 {
     UINT8 ret;
     SystemInit(FREQ_SYS);
     Delay_Init(FREQ_SYS);
-    mDelaymS(10);                        //delay
     DebugInit(115200);
     PRINT("\n\nThis is USB3.0 host program\n");
 
@@ -178,7 +177,7 @@ int main( )
 /*******************************************************************************
  * @fn        para_init
  *
- * @briefI    parameter initialize
+ * @brief     parameter initialize
  *
  * @param     pusbdev
  *

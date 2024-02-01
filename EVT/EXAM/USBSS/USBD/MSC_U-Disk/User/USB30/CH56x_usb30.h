@@ -18,18 +18,17 @@ extern "C" {
 #include "CH56x_common.h"
 
 /* Global define */
-#define ENDP_INTERRUPT_BURST_LEVEL   3                    //The maximum number of burst package at the USB3.0 interrupt endpoint is 3
-
+#define DEF_ENDP2_IN_BURST_LEVEL        1
+#define DEF_ENDP3_OUT_BURST_LEVEL       1
 
 #define SIZE_DEVICE_DESC      		 18
-#define SIZE_CONFIG_DESC       		 0x35
+#define SIZE_CONFIG_DESC       		 0x2c
 #define SIZE_STRING_LANGID     		 4
 #define SIZE_STRING_VENDOR     	     8
 #define SIZE_STRING_PRODUCT    	     38
 #define SIZE_STRING_SERIAL      	 22
 #define SIZE_BOS_DESC      			 22
 #define SIZE_STRING_OS      		 18
-#define SIZE_HIDREPORTDES            34
 #define SIZE_PropertyHeader			 0x8E
 #define SIZE_CompactId				 0x28
 #define SIZE_MSOS20DescriptorSet     72
@@ -37,10 +36,29 @@ extern "C" {
 
 #define LINK_STA_1  (1<<0)
 #define LINK_STA_3  (1<<2)
+
+#define UDISKSIZE 1024*4*10
 /* Global Variable */
 extern __attribute__ ((aligned(16))) UINT8  endp0RTbuff[512] __attribute__((section(".DMADATA")));
-extern __attribute__ ((aligned(16))) UINT8  HIDbuff[1024*ENDP_INTERRUPT_BURST_LEVEL] __attribute__((section(".DMADATA")));
+extern __attribute__ ((aligned(16))) UINT8  UDisk_In_Buf[UDISKSIZE] __attribute__((section(".DMADATA")));
+extern __attribute__ ((aligned(16))) UINT8  UDisk_Out_Buf[UDISKSIZE] __attribute__((section(".DMADATA")));
+extern UINT8V Link_Sta;
 
+typedef struct
+{
+    volatile uint32_t OUT_LoadPtr;//Current buffer location
+    volatile uint32_t OUT_TotalPack;
+    volatile uint32_t OUT_RemainPack;//The remaining number of unprocessed downstream packets
+    volatile uint32_t OUT_RemainPackPtr;//Buffer location for remaining unprocessed download packets
+    volatile uint32_t OUT_LastPack;
+    volatile uint32_t IN_LoadPtr;//Current buffer location
+    volatile uint32_t IN_RemainPack;//The remaining number of unprocessed downstream packets
+    volatile uint32_t IN_RemainPackPtr;//Buffer location for remaining unprocessed upload packets
+    volatile uint32_t IN_TotalPack;
+    volatile uint32_t IN_UploadFlag;
+    volatile uint32_t IN_LastPack;
+}USB_DEAL;
+extern USB_DEAL USBDeal;
 
 /* Function declaration */
 void USB30D_init(FunctionalState sta);

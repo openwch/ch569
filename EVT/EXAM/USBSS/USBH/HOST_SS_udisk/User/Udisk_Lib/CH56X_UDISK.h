@@ -62,7 +62,7 @@ extern UINT8V gDeviceConnectstatus;                                             
 extern UINT8  gDeviceUsbType;                                                          /* 01--USB2.0&1.1  02--USB3.0*/
 
 #define	DEFAULT_MAX_OPERATE_SIZE      	8*1024					/***Default maximum packet size for current operation***/
-#define		MAX_DATA_ADDR	0x20020000
+#define	MAX_DATA_ADDR	0x20020000
 extern UINT8V U30_TIME_OUT;
 extern UINT8V tx_lmp_port;
 extern UINT8V Hot_ret_flag;

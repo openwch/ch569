@@ -2,7 +2,7 @@
 * File Name          : CH56xSFR.h
 * Author             : WCH
 * Version            : V1.0
-* Date               : 2020/07/31
+* Date               : 2024/01/15
 * Description
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -2399,7 +2399,7 @@ typedef struct
     UINT32 ETH_AddressAlignedBeats; /*!< Enables or disables the Address Aligned Beats
                                            This parameter can be a value of @ref ETH_Address_Aligned_Beats */
 
-    UINT32 ETH_FixedBurst; /*!< Enables or disables the AHB Master interface fixed burst transfers
+    UINT32 ETH_FixedBurst; /*!< Enables or disables the HB Master interface fixed burst transfers
                                   This parameter can be a value of @ref ETH_Fixed_Burst */
 
     UINT32 ETH_RxDMABurstLength; /*!< Indicates the maximum number of beats to be transferred in one Rx DMA transaction

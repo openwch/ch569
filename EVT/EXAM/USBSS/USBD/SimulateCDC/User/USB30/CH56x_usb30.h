@@ -34,8 +34,8 @@ extern "C" {
 #define SIZE_BOS_DESC      			 22
 #define SIZE_STRING_OS      		 18
 
-
-
+#define LINK_STA_1  (1<<0)
+#define LINK_STA_3  (1<<2)
 /* Global Variable */
 extern __attribute__ ((aligned(16))) UINT8  endp0RTbuff[512] __attribute__((section(".DMADATA")));
 extern __attribute__ ((aligned(16))) UINT8  endp1RTbuff[4096] __attribute__((section(".DMADATA")));
@@ -43,7 +43,7 @@ extern __attribute__ ((aligned(16))) UINT8  endp2Rxbuff[4096] __attribute__((sec
 extern __attribute__ ((aligned(16))) UINT8  endp2Txbuff[4096] __attribute__((section(".DMADATA")));
 
 
-extern UINT8V link_sta;
+extern UINT8V Link_Sta;
 
 /* Function declaration */
 void USB30D_init(FunctionalState sta);

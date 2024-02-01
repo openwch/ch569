@@ -13,7 +13,8 @@
  * This routine demonstrates that CH569 is the HSPI master sending data to the slave.
  * A flow control line needs to be connected:
  * CH569(HOST) GPIOB22 -> CH569(SLAVE) GPIOB23(Can be changed to other GPIO in HAL.h)
- * Overall process: CH569(A) -> HSPI -> CH569(B) -> USB upload
+ * CH569(SLAVE) GPIOB22 -> CH569(HOST) GPIOB23(Can be changed to other GPIO in HAL.h)
+ * Overall process: CH569(A) -> HSPI -> CH569(B) -> USB upload(endpoint 1)
 */
 
 /* Global define */
@@ -47,7 +48,7 @@ void DebugInit(UINT32 baudrate)//uart1
  *
  * @return  none
  */
-int main()
+int main( void )
 {
     SystemInit(FREQ_SYS);
 	Delay_Init(FREQ_SYS);
@@ -65,19 +66,12 @@ int main()
 	HSPI_GPIO_Init( );                                                          /* GPIO initialization related to HSPI interface */
     GPIO_Init( );                                                               /* Hardware related GPIO initialization */
 
-
-    /*****************************Timer initialization **************************/
+    /* Timer initialization */
     Timer1_Init( 160000 );                                                      /* 2ms */
 
 #if( DEF_FUN_DEBUG_EN == 0x01 )
     DUG_PRINTF("Main\n");
 #endif
-    /*****************************HSPI test*************************************/
-    /* Configure PB24 as push-pull output, and the drive capacity is 16mA level*/
-    R32_PB_DIR |= ( ( 1 << 24 ) );
-    R32_PB_DRV |= ( ( 1 << 24 ) );
-    R32_PB_PU &= ~( ( 1 << 24 ) );
-    R32_PB_PD &= ~( ( 1 << 24 ) );
 
     HSPI_DataTrans( );
 

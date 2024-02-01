@@ -252,7 +252,7 @@ void U20_CDC_UartTx_Deal( void )
  */
 void CDC_Uart_Deal( void )
 {
-    if( link_sta == 1)//2.0
+    if( Link_Sta == LINK_STA_1)//2.0
     {
         U20_CDC_UartTx_Deal();
         U20_CDC_UartRx_Deal();

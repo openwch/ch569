@@ -102,17 +102,17 @@ typedef struct __attribute__((packed))
  */
 UINT8V Get_Curr[26]=
 {
-        0x00, 0x00,
-        0x01,
-        0x01,
-        0x0A, 0x8b, 0x02, 0x00,
-        0x00, 0x00,
-        0x00, 0x00,
-        0x00, 0x00,
-        0x00, 0x00,
-        0x00, 0x00,
-        0x00, 0x48, 0x3f, 0x00,
-        0x00, 0x00, 0x00, 0x00
+    0x00, 0x00,
+    0x01,
+    0x01,
+    0x0A, 0x8b, 0x02, 0x00,
+    0x00, 0x00,
+    0x00, 0x00,
+    0x00, 0x00,
+    0x00, 0x00,
+    0x00, 0x00,
+    0x00, 0x48, 0x3f, 0x00,
+    0x00, 0x00, 0x00, 0x00
 };
 
 /*******************************************************************************
@@ -124,17 +124,16 @@ UINT8V Get_Curr[26]=
 *******************************************************************************/
 void UVC_SourceClock(FunctionalState sta)
 {
-  if(sta)
-  {
-   SysTick->CMP=0xffffffff;
-   SysTick->CTLR=(1<<8)|(1<<2)|(1<<0);
-
-  }
-  else
-  {
-      /*systick close*/
-      SysTick->CTLR=0;
-  }
+    if(sta)
+    {
+        SysTick->CMP=0xffffffff;
+        SysTick->CTLR=(1<<8)|(1<<2)|(1<<0);
+    }
+    else
+    {
+        /*systick close*/
+        SysTick->CTLR=0;
+    }
 }
 
 /*******************************************************************************
@@ -507,7 +506,8 @@ void SS_Endp1_Hander(void)
  *
  * @return  None
  */
-void DVP_Hander(void){
+void DVP_Hander(void)
+{
 
     /* End of line interrupt */
     if (R8_DVP_INT_FLAG & RB_DVP_IF_ROW_DONE)

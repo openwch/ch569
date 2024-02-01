@@ -112,11 +112,11 @@ const uint8_t set_feature_U2[] =
 /*******************************************************************************
  * @fn        USB30HOST_INTransaction
  *
- * @briefI    bulk Transmit IN transaction
+ * @brief     bulk Transmit IN transaction
  *
- * @param     seq_num - The host is ready to receive the packet sequence of the first packet
- *            recv_packnum - The number of packets the host is ready to receive
- *            endp_num - endponit number
+ * @param     seq_num -         The host is ready to receive the packet sequence of the first packet
+ *            recv_packnum -    The number of packets the host is ready to receive
+ *            endp_num -        endpoint number
  *
  * @return    None
  */
@@ -129,6 +129,7 @@ UINT16 USB30HOST_INTransaction(UINT8 seq_num,UINT8 *recv_packnum ,UINT8 endp_num
     UINT32 i = 0;
 
     num = USB30H_IN_Data(seq_num, recv_packnum, endp_num );
+    mDelayuS(200);
     switch( num & 0x7000 )
     {
         case 0x1000:                                                           //ACK
@@ -164,12 +165,12 @@ UINT16 USB30HOST_INTransaction(UINT8 seq_num,UINT8 *recv_packnum ,UINT8 endp_num
 /*******************************************************************************
  * @fn        USB30HOST_OUTTransaction
  *
- * @briefI    bulk Transmit OUT transaction
+ * @brief     bulk Transmit OUT transaction
  *
- * @param     seq_num£º                The packet sequence of the first packet of the distributed packet
- *            recv_packnum:  The number of packets that the host is ready to send
- *            endp_num£º              endponit number
- *            txlen£º                      The packet length of the last packet of data
+ * @param     seq_num:              The packet sequence of the first packet of the distributed packet
+ *            recv_packnum:         The number of packets that the host is ready to send
+ *            endp_num:             endpoint number
+ *            txlen:                The packet length of the last packet of data
  *
  * @return    Number of unsent packets remaining
  */
@@ -219,7 +220,7 @@ UINT8 USB30HOST_OUTTransaction(UINT8 seq_num,UINT8 send_packnum ,UINT8 endp_num,
 /*******************************************************************************
  * @fn        USB30HOST_CtrlTransaciton
  *
- * @briefI    Control transmission
+ * @brief     Control transmission
  *
  * @param     databuf - receiving or send buffer
  *
@@ -264,7 +265,8 @@ UINT16 USB30HOST_CtrlTransaciton(UINT8 *databuf)
                         i=0;
                         len = USB30H_IN_Data(seq_num, &req_nump, 0 );
                         if( (len & 0x7000) == 0x1000 )    break;
-                        else{
+                        else
+                        {
                             break;
                         }
                       }
@@ -333,7 +335,7 @@ UINT16 USB30HOST_CtrlTransaciton(UINT8 *databuf)
 /*******************************************************************************
  * @fn        GetDEV_Descrptor
  *
- * @briefI    GetDEV_Descrptor
+ * @brief     GetDEV_Descrptor
  *
  * @return    len
  */
@@ -350,7 +352,7 @@ UINT16 GetDEV_Descriptor(void)
 /*******************************************************************************
  * @fn        GetConfig_Descrptor
  *
- * @briefI    GetConfig_Descrptor
+ * @brief     GetConfig_Descrptor
  *
  * @return    len
  */
@@ -379,7 +381,7 @@ UINT16 GetConfig_Descriptor(void)
 /*******************************************************************************
  * @fn        Set_Address
  *
- * @briefI    Set device address
+ * @brief     Set device address
  *
  * @param     addr - device address
  *
@@ -397,7 +399,7 @@ void Set_Address(UINT8 addr)
 /*******************************************************************************
  * @fn        Set_IsochDelay
  *
- * @briefI    Set isoch_delay
+ * @brief     Set isoch_delay
  *
  * @return    None
  */
@@ -411,7 +413,7 @@ void Set_IsochDelay(void)
 /*******************************************************************************
  * @fn        Set_Sel
  *
- * @briefI    set Set_Sel
+ * @brief     set Set_Sel
  *
  * @return    None
  */
@@ -431,7 +433,7 @@ void Set_Sel(void)
 /*******************************************************************************
  * @fn        Set_Configuration
  *
- * @briefI    set configuration
+ * @brief     set configuration
  *
  * @return    None
  */
@@ -446,7 +448,7 @@ void Set_Configuration(void)
 /*******************************************************************************
  * @fn        Anaylisys_Descr
  *
- * @briefI    descriptor analysis.
+ * @brief     descriptor analysis.
  *
  * @param     pdesc - descriptor buffer to analyze
  *            l - length
@@ -486,7 +488,7 @@ void Analysis_Descr(UINT8 *pdesc, UINT16 l)
 /*******************************************************************************
  * @fn        USB30_host_enum
  *
- * @briefI    enumerate device
+ * @brief     enumerate device
  *
  * @return    None
  */
@@ -531,7 +533,7 @@ void USB30_Host_Enum(void)
 /*******************************************************************************
  * @fn        USB30_link_status
  *
- * @briefI    set link status
+ * @brief     set link status
  *
  * @param     s - value of link status
  *
@@ -539,11 +541,13 @@ void USB30_Host_Enum(void)
  */
 void USB30_link_status(UINT8 s)
 {
-    if(s){    //Successfully connected to the device
+    if(s)
+    {    //Successfully connected to the device
         printf("Linked!\n");
         device_link_status = 1;
     }
-    else{     //Device disconnected
+    else
+    {     //Device disconnected
         device_link_status = 0;
         printf("link is disconnect !\n\n");
     }
@@ -552,11 +556,11 @@ void USB30_link_status(UINT8 s)
 /*******************************************************************************
  * @fn        LINK_IRQHandler
  *
- * @briefI    LINK_IRQHandler
+ * @brief     LINK_IRQHandler
  *
  * @return    None
  */
-void LINK_IRQHandler (void)         //USBSSH interrupt severice
+void LINK_IRQHandler (void)         //USBSSH interrupt service
 {
     UINT32 temp = 0;
     temp = USBSS->LINK_ERR_STATUS;
@@ -626,11 +630,11 @@ void LINK_IRQHandler (void)         //USBSSH interrupt severice
 /*******************************************************************************
  * @fn        USBSS_IRQHandler
  *
- * @briefI    USBSS_IRQHandler
+ * @brief     USBSS_IRQHandler
  *
  * @return    None
  */
-void USBSS_IRQHandler (void)            //USBSSH interrupt severice
+void USBSS_IRQHandler (void)            //USBSSH interrupt service
 {
     ;
 }

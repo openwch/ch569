@@ -42,7 +42,6 @@ UINT16 U20_ENDP_SIZE;
 
 __attribute__ ((aligned(16))) BULK_ONLY_CMD   mBOC  __attribute__((section(".DMADATA")));
 
-
 typedef struct _USB_ENDPOINT_DESCRIPTOR_U30 /*Endpoint descriptor*/
 {
     UINT8  bLength;
@@ -94,7 +93,8 @@ UINT8 MS_GetMaxLun( void )
 	setup_buf[7] = 0x00;
 
 	gDiskMaxLun = 0x00;
-    if( gDeviceUsbType == USB_U30_SPEED ){
+    if( gDeviceUsbType == USB_U30_SPEED )
+    {
         memcpy( endpTXbuff , setup_buf , 8);
         s = USB30H_Send_Setup( 8 );
         if( s )
@@ -125,7 +125,8 @@ UINT8 MS_GetMaxLun( void )
     }
     else if( status == USB_INT_DISK_ERR )
     {
-        if( gDeviceUsbType == USB_U30_SPEED ){
+        if( gDeviceUsbType == USB_U30_SPEED )
+        {
             status = USB30HOST_ClearEndpStall(0x00);
         }
         else{
@@ -156,31 +157,37 @@ UINT8 MS_ResetErrorBOC( void )
 	setup_buf[5] = 0x00;
 	setup_buf[6] = 0x00;
 	setup_buf[7] = 0x00;
-	if( gDeviceUsbType == USB_U30_SPEED ){
+	if( gDeviceUsbType == USB_U30_SPEED )
+	{
 	    USB30HOST_CtrlTransaciton(setup_buf);
 	    status = USB_INT_SUCCESS;
 	}
-	else{
+	else
+	{
 		status = USB20HOST_CtrlTransfer(  setup_buf, NULL, NULL  );
 	}
 	if( status == USB_INT_SUCCESS )
 	{
-		if( gDeviceUsbType == USB_U30_SPEED ){
+		if( gDeviceUsbType == USB_U30_SPEED )
+		{
             status = USB30HOST_ClearEndpStall( 0x80 | gDiskBulkInEp );
 
 		}
-		else{
+		else
+		{
 			status = USB20HOST_ClearEndpStall( 0x80 | gDiskBulkInEp );
 		}
 		if( status != USB_INT_SUCCESS )
 		{
 			return( status );
 		}
-		if( gDeviceUsbType == USB_U30_SPEED ){
+		if( gDeviceUsbType == USB_U30_SPEED )
+		{
             status  =  USB30HOST_ClearEndpStall( gDiskBulkOutEp );
 
 		}
-		else{
+		else
+		{
 			status = USB20HOST_ClearEndpStall( gDiskBulkOutEp );
 		}
 	}
@@ -313,14 +320,17 @@ UINT8 MS_U30HOST_BulkInHandle( UINT8 *pDatBuf, UINT32 *pSize )
 	UINT8 packnum = 1;
 	total_len = 0;
 
-	while(1){
+	while(1)
+	{
 
 	    packnum = 1;
 		if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
-		if( *pSize >= U30_MAX_PACKSIZE ){
+		if( *pSize >= U30_MAX_PACKSIZE )
+		{
 			len = U30_MAX_PACKSIZE;
 		}
-		else{
+		else
+		{
 			len = *pSize;
 		}
         USBSSH->UH_RX_DMA = (UINT32)(UINT8 *)endpRXbuff;
@@ -336,7 +346,8 @@ UINT8 MS_U30HOST_BulkInHandle( UINT8 *pDatBuf, UINT32 *pSize )
 		*pSize -= len;
 		pDatBuf+=len;
 		total_len+=len;
-		if( (*pSize == 0) || (len<U30_MAX_PACKSIZE)){
+		if( (*pSize == 0) || (len<U30_MAX_PACKSIZE))
+		{
 			*pSize = total_len;
 			break;
 		}
@@ -360,7 +371,8 @@ UINT8 MS_U30HOST_BulkOutHandle( UINT8 *pDatBuf, UINT32 *pSize )
 	UINT8* p;
 	UINT8 count = 0;
     UINT32 timeoutcount = 0;
-	while(1){
+	while(1)
+	{
 		if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
 
 		if( *pSize >= U30_MAX_PACKSIZE )
@@ -375,14 +387,16 @@ UINT8 MS_U30HOST_BulkOutHandle( UINT8 *pDatBuf, UINT32 *pSize )
 		p = (UINT8 *)endpTXbuff;
 		memcpy(p , pDatBuf , *pSize);
 
-		do {
+		do
+		{
 		    count = USB30HOST_OUTTransaction(gDiskBulkOutTog , 1 , gDiskBulkOutEp,len);
-            if( timeoutcount >= 2)
+            if( timeoutcount >= 10000)
             {
                 return USB_CH56XUSBTIMEOUT;
             }
             timeoutcount ++;
-        } while (count);
+        }
+		while (count);
 
 
 		*pSize -= len;
@@ -407,7 +421,8 @@ UINT8 Hot_Reset( UINT8 *pdata )
     UINT8 s,count;
     UINT32 time_count = 0;
     count = 0;
-    if( gUdisk_flag ){
+    if( gUdisk_flag )
+    {
 hot_reset_ag:
         printf("hot_reset\n");
         Hot_ret_flag = 1;
@@ -417,14 +432,16 @@ hot_reset_ag:
         mDelaymS( 80 );
         USBSSH->LINK_CTRL &= ~(1<<8) ;
         tx_lmp_port = 0;
-        while( Hot_ret_flag == 1 ){
+        while( Hot_ret_flag == 1 )
+        {
             if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
             time_count++;
-            if( time_count>=0x1ffff ){
+            if( time_count>=0x1ffff )
+            {
                 break;
-           }
+            }
         }
-            mDelaymS( 20*(count+1) );
+        mDelaymS( 20*(count+1) );
         Hot_ret_flag = 0;
         s = USB30HSOT_Enumerate_Hotrst( pdata );
         if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
@@ -433,50 +450,55 @@ hot_reset_ag:
         s = MS_Init_Hotrst( pdata );
         if( s == USB_INT_DISCONNECT )return s;
         if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
-        if( s!= 0x00 ){
+        if( s!= 0x00 )
+        {
             count++;
-            if( count<3 ){
+            if( count<3 )
+            {
                 mDelaymS(count*10+1);
                 goto hot_reset_ag;
             }
         }
     }
-    else{
+    else
+    {
         hot_reset_ag1:
-                printf("hot_reset1\n");
-                Hot_ret_flag = 1;
+            printf("hot_reset1\n");
+            Hot_ret_flag = 1;
 
-                USB30H_Switch_Powermode(POWER_MODE_2);
-                printf("warn_rst\n");
-                USBSSH->LINK_CTRL |= (1<<8) ;
-                mDelaymS( 80 );
-                USBSSH->LINK_CTRL &= ~(1<<8) ;
-                tx_lmp_port = 0;
-                while( Hot_ret_flag == 1 ){
-                    time_count++;
-                    if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
-                    if( time_count>=0x1ffff ){
-
-                        break;
-                   }
+            USB30H_Switch_Powermode(POWER_MODE_2);
+            printf("warn_rst\n");
+            USBSSH->LINK_CTRL |= (1<<8) ;
+            mDelaymS( 80 );
+            USBSSH->LINK_CTRL &= ~(1<<8) ;
+            tx_lmp_port = 0;
+            while( Hot_ret_flag == 1 )
+            {
+                time_count++;
+                if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
+                if( time_count>=0x1ffff )
+                {
+                    break;
                 }
-                mDelaymS( 20*(count+1) );
-                Hot_ret_flag = 0;
-                if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
-                USB30Host_Enum();
-                if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
+            }
+            mDelaymS( 20*(count+1) );
+            Hot_ret_flag = 0;
+            if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
+            USB30Host_Enum();
+            if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
 
-                s = MS_Init( pdata );
-                if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
-                if( s == USB_INT_DISCONNECT )return s;
-                if( s!= 0x00 ){
-                    count++;
-                    if( count<3 ){
-                        mDelaymS(count*10);
-                        goto hot_reset_ag1;
-                    }
+            s = MS_Init( pdata );
+            if( gDeviceConnectstatus == USB_INT_DISCONNECT )return USB_INT_DISCONNECT;
+            if( s == USB_INT_DISCONNECT )return s;
+            if( s!= 0x00 ){
+                count++;
+                if( count<3 )
+                {
+                    mDelaymS(count*10);
+                    goto hot_reset_ag1;
                 }
-                mDelaymS(500);
+            }
+            mDelaymS(500);
     }
     return s;
 }
@@ -523,7 +545,8 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 	}
 	if( status != USB_INT_SUCCESS )
 	{
-	    if( gDeviceUsbType == USB_U30_SPEED ){                                  /*Directly return when timeout occurs when USB3.0 is modified*/
+	    if( gDeviceUsbType == USB_U30_SPEED )
+	    {                                  /*Directly return when timeout occurs when USB3.0 is modified*/
             if( status!= USB_INT_SUCCESS )
             {
                 return status;                        /*Direct return to reduce time*/
@@ -531,7 +554,8 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
         }
 		status = MS_ResetErrorBOC( );
 
-		if( gDeviceUsbType == USB_U30_SPEED ){
+		if( gDeviceUsbType == USB_U30_SPEED )
+		{
 		    if(gDeviceConnectstatus == USB_INT_DISCONNECT)return USB_INT_DISCONNECT;
 		}
 		if( status == USB_INT_DISCONNECT )
@@ -541,11 +565,13 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 		else if( status != 0x14 )return ( status );
 		/* Send CBW packet again */
 		len = USB_BO_CBW_SIZE;
-		if( gDeviceUsbType == USB_U30_SPEED ){
+		if( gDeviceUsbType == USB_U30_SPEED )
+		{
 
 			status = MS_U30HOST_BulkOutHandle( (UINT8 *)&mBOC.mCBW, &len );
 		}
-		else{
+		else
+		{
 			status = MS_U20HOST_BulkOutHandle( (UINT8 *)&mBOC.mCBW, &len );
 		}
 		if( status == USB_INT_DISCONNECT )
@@ -554,7 +580,8 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 		}
 		if( status != USB_INT_SUCCESS )
 		{
-	        if( gDeviceUsbType == USB_U30_SPEED ){
+	        if( gDeviceUsbType == USB_U30_SPEED )
+	        {
 	            if( status!= USB_INT_SUCCESS )return status;
 	        }
 			s = MS_ResetErrorBOC( );
@@ -573,10 +600,12 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 //		}
 		/* Send upload IN */
 		len = mBOC.mCBW.mCBW_DataLen;
-		if( gDeviceUsbType == USB_U30_SPEED ){
+		if( gDeviceUsbType == USB_U30_SPEED )
+		{
 			status = MS_U30HOST_BulkInHandle( p, &len );
 		}
-		else{
+		else
+		{
 			status = MS_U20HOST_BulkInHandle( p, &len );
 		}
 
@@ -588,20 +617,24 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 		{
 			if( status == USB_INT_DISK_ERR )						           /* Return STALL error */
 			{
-                if( gDeviceUsbType == USB_U30_SPEED ){
+                if( gDeviceUsbType == USB_U30_SPEED )
+                {
                     status = USB30HOST_ClearEndpStall(  0x80 | gDiskBulkInEp );
                 }
-                else{
+                else
+                {
                     status = USB20HOST_ClearEndpStall( 0x80 | gDiskBulkInEp );
                 }
                 if( status == USB_INT_DISCONNECT )
                 {
                     return( status );
                 }
-                else if( status == 0x14 ){
+                else if( status == 0x14 )
+                {
                     gDiskBulkInTog = 0;
                 }
-                else{
+                else
+                {
                     gDiskBulkInTog = 0;
                 }
 			}
@@ -618,10 +651,12 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 		}
 		/* Send download OUT */
 		len = mBOC.mCBW.mCBW_DataLen;
-		if( gDeviceUsbType == USB_U30_SPEED ){
+		if( gDeviceUsbType == USB_U30_SPEED )
+		{
 			status = MS_U30HOST_BulkOutHandle( p, &len );
 		}
-		else{
+		else
+		{
 			status = MS_U20HOST_BulkOutHandle( p, &len );
 		}
 		if( status == USB_INT_DISCONNECT )
@@ -632,10 +667,12 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 		{
 			if( status == USB_INT_DISK_ERR )
 			{
-				if( gDeviceUsbType == USB_U30_SPEED ){
+				if( gDeviceUsbType == USB_U30_SPEED )
+				{
 				    status = USB30HOST_ClearEndpStall( gDiskBulkOutEp );
 				}
-				else{
+				else
+				{
 					status = USB20HOST_ClearEndpStall( gDiskBulkOutEp );
 				}
 				if( status == USB_INT_DISCONNECT )
@@ -693,11 +730,13 @@ UINT8 MS_ScsiCmd_Process( UINT8 *DataBuf )
 		/* Judge which step is wrong */
 		if( (status == USB_INT_DISK_ERR))
 		{
-			if( gDeviceUsbType == USB_U30_SPEED ){
+			if( gDeviceUsbType == USB_U30_SPEED )
+			{
 			    status = USB30HOST_ClearEndpStall( 0x80 | gDiskBulkInEp );
 				gDiskBulkInTog = 0;
 			}
-			else{
+			else
+			{
 				status = USB20HOST_ClearEndpStall(  0x80 | gDiskBulkInEp );
 			}
 			if( status == USB_INT_DISCONNECT )
@@ -746,7 +785,8 @@ UINT8 MS_RequestSense( UINT8 *pbuf )
 UINT8 MS_DiskInquiry(  UINT8 *pbuf )
 {
 	UINT8 s,retry;
-	for( retry = 0;retry!=3;retry++ ){
+	for( retry = 0;retry!=3;retry++ )
+	{
 	    mDelaymS( 100 * (retry+1) );
         mBOC.mCBW.mCBW_DataLen 	   = 0x00000024;
         mBOC.mCBW.mCBW_Flag 	   = 0x80;
@@ -989,7 +1029,6 @@ UINT8 MS_Init(  UINT8 *pbuf )
 			}
 		}
 
-
 		if( ( gDiskMaxLun == 0x00 ) && ( *( pbuf + 0 ) == 0x05 ) )
 		{
 			return( USB_OPERATE_ERROR );
@@ -1056,7 +1095,6 @@ UINT8 MS_Init(  UINT8 *pbuf )
 		status = MS_DiskTestReady( pbuf );
 		if ( status != USB_OPERATE_SUCCESS )
 		{
-
 			if( status == USB_INT_DISCONNECT )
 			{
 				return( status );
@@ -1095,7 +1133,8 @@ UINT8 MS_Init_Hotrst(  UINT8 *pbuf )
             {
                 return( status );
             }
-            else if( (status&0x20) != USB_PID_NAK ){
+            else if( (status&0x20) != USB_PID_NAK )
+            {
                 return( USB_OPERATE_ERROR );
             }
             else return status;
@@ -1138,34 +1177,42 @@ UINT8 MS_U20HOST_Bulk_Handle(  UINT8 EndpNum,UINT8 tog, UINT8 *pDatBuf, UINT16 *
 {
 	UINT8 s = 0;
 	UINT8 *p;
-	if( Pid == USB_PID_OUT ){			//send data
-		if( (UINT32)(UINT8 *)pDatBuf < (UINT32)(UINT8 *)MAX_DATA_ADDR ){
+	if( Pid == USB_PID_OUT )
+	{			//send data
+		if( (UINT32)(UINT8 *)pDatBuf < (UINT32)(UINT8 *)MAX_DATA_ADDR )
+		{
 			p = (UINT8 *)endpTXbuff;
 			R32_UH_TX_DMA = (UINT32)(UINT8 *)endpTXbuff;
 			R32_UH_RX_DMA = (UINT32)(UINT8 *)endpRXbuff;
 			memcpy( p,pDatBuf,*pSize );
 		}
-		else{
+		else
+		{
 			R32_UH_TX_DMA = (UINT32)(UINT8 *)pDatBuf;
 			R32_UH_RX_DMA = (UINT32)(UINT8 *)endpRXbuff;
 		}
 		R16_UH_TX_LEN = *pSize;
 	    s = USB20HOST_Transact( USB_PID_OUT << 4 | EndpNum, tog, 1000000 );          //out data,200mS timeout
 	}
-	else if( Pid == USB_PID_IN ){		//recive data
-		if( (UINT32)(UINT8 *)pDatBuf < (UINT32)(UINT8 *)MAX_DATA_ADDR ){
+	else if( Pid == USB_PID_IN )
+	{		//recive data
+		if( (UINT32)(UINT8 *)pDatBuf < (UINT32)(UINT8 *)MAX_DATA_ADDR )
+		{
 			R32_UH_TX_DMA = (UINT32)(UINT8 *)endpTXbuff;
 			R32_UH_RX_DMA = (UINT32)(UINT8 *)endpRXbuff;
 		}
-		else{
+		else
+		{
 			R32_UH_TX_DMA = (UINT32)(UINT8 *)endpTXbuff;
 			R32_UH_RX_DMA = (UINT32)(UINT8 *)pDatBuf;
 		}
 	    s = USB20HOST_Transact( USB_PID_IN << 4 | EndpNum, tog, 1000000 );          //in data,200mS timeout
-	    if( s == ERR_SUCCESS1 ){
+	    if( s == ERR_SUCCESS1 )
+	    {
 	    	*pSize = R16_USB_RX_LEN;
 
-	    	if( (UINT32)(UINT8 *)pDatBuf < (UINT32)(UINT8 *)MAX_DATA_ADDR ){
+	    	if( (UINT32)(UINT8 *)pDatBuf < (UINT32)(UINT8 *)MAX_DATA_ADDR )
+	    	{
 				p = (UINT8 *)endpRXbuff;
 				memcpy( pDatBuf,p,*pSize );
 	    	}
@@ -1188,11 +1235,14 @@ UINT8 MS_U20HOST_BulkOutHandle( UINT8 *pDatBuf, UINT32 *pSize )
 {
 	UINT8 status;
 	UINT16 len;
-	while(1){
-		if( *pSize >= U20_ENDP_SIZE ){
+	while(1)
+	{
+		if( *pSize >= U20_ENDP_SIZE )
+		{
 			len = U20_ENDP_SIZE;
 		}
-		else{
+		else
+		{
 			len = *pSize;
 		}
 		status = MS_U20HOST_Bulk_Handle( gDiskBulkOutEp,gDiskBulkOutTog,pDatBuf,&len,USB_PID_OUT );
@@ -1219,11 +1269,14 @@ UINT8 MS_U20HOST_BulkInHandle( UINT8 *pDatBuf, UINT32 *pSize )
 	UINT8 status;
 	UINT16 len,total_len;
 	total_len = 0;
-	while(1){
-		if( *pSize >= U20_ENDP_SIZE ){
+	while(1)
+	{
+		if( *pSize >= U20_ENDP_SIZE )
+		{
 			len = U20_ENDP_SIZE;
 		}
-		else{
+		else
+		{
 			len = *pSize;
 		}
 		status = MS_U20HOST_Bulk_Handle( gDiskBulkInEp,gDiskBulkInTog,pDatBuf,&len,USB_PID_IN );
@@ -1232,7 +1285,8 @@ UINT8 MS_U20HOST_BulkInHandle( UINT8 *pDatBuf, UINT32 *pSize )
 		*pSize -= len;
 		pDatBuf+=len;
 		total_len+=len;
-		if( (*pSize == 0) || (len<U20_ENDP_SIZE)){
+		if( (*pSize == 0) || (len<U20_ENDP_SIZE))
+		{
 			*pSize = total_len;
 			break;
 		}

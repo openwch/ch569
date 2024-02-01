@@ -17,15 +17,14 @@
 #include "type.h"
 #include "CH56x_host_hs.h"
 
-
 #define CREAT              1
-#define READ               0
-#define WRITE              0
+#define READ               1
+#define WRITE              1
 #define BYTEWRITE_READ     1
 #define MODIFY             1
-#define ERASE              0
+#define ERASE              1
 
-__attribute__ ((aligned(16))) UINT8 Buffer[512] __attribute__((section(".DMADATA"))); //Data sending/receiving buffer of endpoint1
+__attribute__ ((aligned(16))) UINT8 Fat_Buffer[512*16] __attribute__((section(".DMADATA"))); //Data sending/receiving buffer of endpoint1
 
 /*******************************************************************************
  * @fn       Fat_Init
@@ -35,11 +34,9 @@ __attribute__ ((aligned(16))) UINT8 Buffer[512] __attribute__((section(".DMADATA
  UINT8 Fat_Init( void )
  {
     UINT8  i,s,c,count;
-    UINT8  *pd;
-    UINT8  *pd1;
+
     UINT32 temp32;
-    pd = AA;
-    pd1 = BB;
+
     i = CHRV3LibInit();
 
     printf("LIB_Init=%02x\n",i);
@@ -80,14 +77,14 @@ __attribute__ ((aligned(16))) UINT8 Buffer[512] __attribute__((section(".DMADATA
     strcpy( (char *)&mCmdParam.Open.mPathName,( const char * )"\\NEWFILE.TXT");
     i = CHRV3FileOpen();
     if( i!= ERR_SUCCESS )return i;
-    memset(Buffer,0x42,512);
+    memset(Fat_Buffer,0x42,512*16);
 
-    mCmdParam.Write.mDataBuffer = Buffer;
-    mCmdParam.Write.mSectorCount = 1;
+    mCmdParam.Write.mDataBuffer = Fat_Buffer;
+    mCmdParam.Write.mSectorCount = 16;
     i=CHRV3FileWrite( );                               //Write data to NEWFILE.txt
 
     if( i != ERR_SUCCESS )  printf("write_error\n");
-    for(s=0;s!=5;s++)  printf("%02x ",Buffer[s]);
+    for(s=0;s!=5;s++)  printf("%02x ",Fat_Buffer[s]);
     printf("\n");
 
     mCmdParam.Close.mUpdateLen = 1;
@@ -100,7 +97,7 @@ __attribute__ ((aligned(16))) UINT8 Buffer[512] __attribute__((section(".DMADATA
     i = CHRV3FileOpen();
     if( i != ERR_SUCCESS ) return i;
 
-    mCmdParam.Read.mDataBuffer = pd;
+    mCmdParam.Read.mDataBuffer = Fat_Buffer;
     mCmdParam.Read.mSectorCount = 16;
     i=CHRV3FileRead( );
     if( i != ERR_SUCCESS ) return i;
@@ -108,16 +105,6 @@ __attribute__ ((aligned(16))) UINT8 Buffer[512] __attribute__((section(".DMADATA
     if( mCmdParam.Read.mSectorCount < 16 )
     {
       printf("err Number of sectors read only：%d\n",mCmdParam.Read.mSectorCount);
-    }
-
-    mCmdParam.Read.mDataBuffer = pd1;
-    mCmdParam.Read.mSectorCount = 16;
-    i=CHRV3FileRead( );
-    if( i != ERR_SUCCESS ) return i;
-
-    if( mCmdParam.Read.mSectorCount < 16 )
-    {
-        printf("err Number of sectors read only：%d\n",mCmdParam.Read.mSectorCount);
     }
 
     mCmdParam.Close.mUpdateLen = 1;
@@ -131,11 +118,11 @@ __attribute__ ((aligned(16))) UINT8 Buffer[512] __attribute__((section(".DMADATA
     if( i != ERR_SUCCESS ) return i;
 
 
-    i = sprintf( (PCHAR)Buffer,"Note: \xd\xa这个程序是以字节为单位进行U盘文件读写,简单演示功能。\xd\xa");
+    i = sprintf( (PCHAR)Fat_Buffer,"Note: \xd\xa这个程序是以字节为单位进行U盘文件读写,简单演示功能。\xd\xa");
     for(c=0; c<10; c++)
     {
         mCmdParam.ByteWrite.mByteCount = i;                          /* Specify the number of bytes written this time */
-        mCmdParam.ByteWrite.mByteBuffer = Buffer;                    /* Point to buffer */
+        mCmdParam.ByteWrite.mByteBuffer = Fat_Buffer;                    /* Point to buffer */
         s = CHRV3ByteWrite( );                                       /* Write data to the file in bytes */
         if(s != ERR_SUCCESS )
         {
@@ -151,7 +138,7 @@ __attribute__ ((aligned(16))) UINT8 Buffer[512] __attribute__((section(".DMADATA
         if ( count > (MAX_PATH_LEN-1) ) c = MAX_PATH_LEN-1;          /* There is a lot of data left. The length of a single read/write cannot exceed sizeof( mCmdParam.Other.mBuffer ) */
         else c = count;                                              /* Last remaining bytes */
         mCmdParam.ByteRead.mByteCount = c;                           /* Request to read tens of bytes of data */
-        mCmdParam.ByteRead.mByteBuffer= &Buffer[0];
+        mCmdParam.ByteRead.mByteBuffer= &Fat_Buffer[0];
         s = CHRV3ByteRead( );
         count -= mCmdParam.ByteRead.mByteCount;
         for ( i=0; i!=mCmdParam.ByteRead.mByteCount; i++ ) printf( "%c ", mCmdParam.ByteRead.mByteBuffer[i] );

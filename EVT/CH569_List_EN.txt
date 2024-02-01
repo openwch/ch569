@@ -1,7 +1,7 @@
 
-Nanjing Qinheng Microelectronics Co., Ltd. 2020.08
+Nanjing Qinheng Microelectronics Co., Ltd. 2024.01
 
-http://wch-ic.com
+https://wch-ic.com
 
   |
   |-- CH56x: RISC-V MCU 
@@ -64,7 +64,7 @@ http://wch-ic.com
   |      |      |      |      |      |      |--CH372-HSPI-Slave
   |      |      |      |      |      |-- CompatibilityHID: Simulate HID device, and the data sent by the upper computer is received through endpoint 1, and uploaded in loop by endpoint 2
   |      |      |      |      |      |-- SimulateCDC: Simulate CDC device
-  |      |      |      |      |      |-- UDisk: Simulate Udisk device,Emmc as storage medium
+  |      |      |      |      |      |-- MSC_U-Disk: Simulate Udisk device,Emmc as storage medium
   |      |      |      |      |-- USBH 
   |      |      |      |      |      |-- HOST_SS:Simple enumeration process routine of USB device
   |      |      |      |      |      |-- HOST_SS_udisk:Example of USB disk file system

@@ -14,7 +14,8 @@
  * This routine demonstrates that CH569 is the HSPI master sending data to the slave.
  * A flow control line needs to be connected:
  * CH569(HOST) GPIOB22 -> CH569(SLAVE) GPIOB23(Can be changed to other GPIO in HAL.h)
- * Overall process: CH569(A) -> HSPI -> CH569(B) -> USB upload
+ * CH569(SLAVE) GPIOB22 -> CH569(HOST) GPIOB23(Can be changed to other GPIO in HAL.h)
+ * Overall process: CH569(A) -> HSPI -> CH569(B) -> USB upload(endpoint 1)
 */
 
 #include "MAIN.h"
@@ -36,7 +37,7 @@ UINT64V Dbg_HSPI_Rx_TLen = 0x00;
  *
  * @return    None
  */
-void DebugInit(UINT32 baudrate)
+void DebugInit( UINT32 baudrate )
 {
 	UINT32 x;
 	UINT32 t = FREQ_SYS;
@@ -58,34 +59,27 @@ void DebugInit(UINT32 baudrate)
  *
  * @return  none
  */
-int main()
+int main( void )
 {
-    SystemInit(FREQ_SYS);
-	Delay_Init(FREQ_SYS);
+    SystemInit( FREQ_SYS );
+	Delay_Init( FREQ_SYS );
 
 	/* Configure serial port debugging */
-	DebugInit(UART1_BAUD);
-	PRINT("CH56x USB3.0 & USB2.0 device test(80MHz) !\n");
+	DebugInit( UART1_BAUD );
+	PRINT( "CH56x USB3.0 & USB2.0 device test(80MHz) !\n" );
     HSPI_GPIO_Init( );                                                          /* GPIO initialization related to HSPI interface */
     GPIO_Init( );                                                               /* Hardware related GPIO initialization */
-    DUG_PRINTF("CH56x HSPI Test@120MHZ_V1.%d\n",(UINT16)DEF_PROG_VERSION - 0x01 );
-    DUG_PRINTF("Edit Date and Time is: "__DATE__"  " __TIME__"\n");
+    DUG_PRINTF( "CH56x HSPI Test@120MHZ_V1.%d\n", (UINT16)DEF_PROG_VERSION - 0x01 );
+    DUG_PRINTF( "Edit Date and Time is: "__DATE__"  " __TIME__"\n" );
 
-    /*****************************Timer initialization **************************/
+    /* Timer initialization */
     Timer1_Init( 240000 );                                                      /* 2mS */
-
-    /*****************************HSPI*************************************/
-    /* Configure PB24 as push-pull output, and the drive capacity is 16mA level*/
-    R32_PB_DIR |= ( ( 1 << 24 ) );
-    R32_PB_DRV |= ( ( 1 << 24 ) );
-    R32_PB_PU &= ~( ( 1 << 24 ) );
-    R32_PB_PD &= ~( ( 1 << 24 ) );
 
     Dbg_Idle_TimeCount = 0x00;
     Dbg_HSPI_Tx_TLen = 0x00;
     Dbg_HSPI_Rx_TLen = 0x00;
 
-	while(1)
+	while( 1 )
 	{
 	    BULKMode_HSPI_Test( );
 	}
