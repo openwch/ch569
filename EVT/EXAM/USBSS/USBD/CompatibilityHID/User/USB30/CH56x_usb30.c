@@ -16,8 +16,8 @@
 
 
 /* Global Variable */
-UINT8V        tx_lmp_port = 0;
-UINT8V        link_sta = 0;
+UINT8V        Tx_Lmp_Port = 0;
+UINT8V        Link_Sta = 0;
 static UINT32 SetupLen = 0;
 static UINT8  SetupReqCode = 0;
 static PUINT8 pDescr;
@@ -309,20 +309,6 @@ const UINT8 CompactId[] =
 UINT8 GetStatus[] =
     {
         0x01, 0x00};
-
-/*******************************************************************************
- * @fn      USB30_BUS_RESET
- *
- * @brief   USB3.0 bus reset
- *
- * @return  None
- */
-void USB30_BUS_RESET(void)
-{
-    R8_SAFE_ACCESS_SIG = 0x57; // enable safe access mode
-    R8_SAFE_ACCESS_SIG = 0xa8;
-    R8_RST_WDOG_CTRL = 0x40 | RB_SOFTWARE_RESET;
-}
 
 /*******************************************************************************
  * @fn      USB30D_init
@@ -640,16 +626,16 @@ void TMR0_IRQHandler()
 {
     R8_TMR0_INT_FLAG = RB_TMR_IF_CYC_END;
 
-    if(link_sta == 1)
+    if( Link_Sta == LINK_STA_1 )
     {
-        link_sta = 0;
+        Link_Sta = 0;
         PFIC_DisableIRQ(USBSS_IRQn);
         PFIC_DisableIRQ(LINK_IRQn);
         USB30D_init(DISABLE);
         PRINT("USB3.0 disable\n");
         return;
     }
-    if(link_sta != 3)
+    if( Link_Sta != LINK_STA_3 )
     {
         PFIC_DisableIRQ(USBSS_IRQn);
         PFIC_DisableIRQ(LINK_IRQn);
@@ -659,7 +645,7 @@ void TMR0_IRQHandler()
         PFIC_EnableIRQ(USBHS_IRQn);
         USB20_Device_Init(ENABLE);
     }
-    link_sta = 1;
+    Link_Sta = LINK_STA_1;
     R8_TMR0_INTER_EN = 0;
     PFIC_DisableIRQ(TMR0_IRQn);
     R8_TMR0_CTRL_MOD = RB_TMR_ALL_CLEAR;
@@ -676,22 +662,22 @@ void LINK_IRQHandler() //USBSS link interrupt service
 {
     if(USBSS->LINK_INT_FLAG & LINK_Ux_EXIT_FLAG) // device enter U2
     {
-        USBSS->LINK_CFG = CFG_EQ_EN | DEEMPH_CFG | TERM_EN;
+        USBSS->LINK_CFG = CFG_EQ_EN | TX_SWING | DEEMPH_CFG | TERM_EN;
         USB30_Switch_Powermode(POWER_MODE_0);
         USBSS->LINK_INT_FLAG = LINK_Ux_EXIT_FLAG;
     }
     if(USBSS->LINK_INT_FLAG & LINK_RDY_FLAG) // POLLING SHAKE DONE
     {
         USBSS->LINK_INT_FLAG = LINK_RDY_FLAG;
-        if(tx_lmp_port) // LMP, TX PORT_CAP & RX PORT_CAP
+        if(Tx_Lmp_Port) // LMP, TX PORT_CAP & RX PORT_CAP
         {
             USBSS->LMP_TX_DATA0 = LINK_SPEED | PORT_CAP | LMP_HP;
             USBSS->LMP_TX_DATA1 = UP_STREAM | NUM_HP_BUF;
             USBSS->LMP_TX_DATA2 = 0x0;
-            tx_lmp_port = 0;
+            Tx_Lmp_Port = 0;
         }
         /*Successful USB3.0 communication*/
-        link_sta = 3;
+        Link_Sta = LINK_STA_3;
         PFIC_DisableIRQ(TMR0_IRQn);
         R8_TMR0_CTRL_MOD = RB_TMR_ALL_CLEAR;
         R8_TMR0_INTER_EN = 0;
@@ -701,13 +687,20 @@ void LINK_IRQHandler() //USBSS link interrupt service
 
     if(USBSS->LINK_INT_FLAG & LINK_INACT_FLAG)
     {
+        Link_Sta = 0;
+        PFIC_EnableIRQ(USBSS_IRQn);
+        PFIC_EnableIRQ(LINK_IRQn);
+        PFIC_EnableIRQ(TMR0_IRQn);
+        R8_TMR0_INTER_EN = RB_TMR_IE_CYC_END;
+        TMR0_TimerInit( 67000000 );
+        USB30D_init(ENABLE);
         USBSS->LINK_INT_FLAG = LINK_INACT_FLAG;
         USB30_Switch_Powermode(POWER_MODE_2);
     }
     if(USBSS->LINK_INT_FLAG & LINK_DISABLE_FLAG) // GO DISABLED
     {
         USBSS->LINK_INT_FLAG = LINK_DISABLE_FLAG;
-        link_sta = 1;
+        Link_Sta = LINK_STA_1;
         USB30D_init(DISABLE);
         PFIC_DisableIRQ(USBSS_IRQn);
         R8_TMR0_CTRL_MOD = RB_TMR_ALL_CLEAR;
@@ -732,13 +725,11 @@ void LINK_IRQHandler() //USBSS link interrupt service
         else
         {
             USBSS->LINK_INT_CTRL = 0;
-            mDelayuS(2);
-            USB30_BUS_RESET();
         }
     }
     if(USBSS->LINK_INT_FLAG & LINK_TXEQ_FLAG) // POLLING SHAKE DONE
     {
-        tx_lmp_port = 1;
+        Tx_Lmp_Port = 1;
         USBSS->LINK_INT_FLAG = LINK_TXEQ_FLAG;
         USB30_Switch_Powermode(POWER_MODE_0);
     }
@@ -749,8 +740,6 @@ void LINK_IRQHandler() //USBSS link interrupt service
         USBSS->LINK_CTRL |= TX_WARM_RESET;
         while(USBSS->LINK_STATUS & RX_WARM_RESET);
         USBSS->LINK_CTRL &= ~TX_WARM_RESET;
-        mDelayuS(2);
-        USB30_BUS_RESET();
         USB30_Device_Setaddress(0);
 
     }

@@ -275,7 +275,7 @@
 /*******************************************************************************
  * @fn        USB30HOST_Init
  *
- * @briefI    USB3.0 host initialized
+ * @brief     USB3.0 host initialized
  *
  * @param     sta - ENABLE    DISABLE
  *            endpTXbuff - Host send buffer

@@ -38,9 +38,11 @@ extern "C" {
 #define SIZE_MSOS20DescriptorSet     72
 #define SIZE_GetStatus				 2
 
+#define LINK_STA_1  (1<<0)
+#define LINK_STA_3  (1<<2)
 /* Global Variable */
 extern UINT8V USB30_rec_flag;
-extern UINT8V link_sta;
+extern UINT8V Link_Sta;
 
 extern UINT32V Endp1_Up_LastPackNum;                                            /* The number of packets uploaded by endpoint 1 */
 extern UINT32V Endp1_Up_LastPackLen;                                            /* The length of the last packet uploaded by endpoint 1 */
@@ -52,21 +54,14 @@ extern UINT32V Endp1_Down_IdleCount;                                            
 extern UINT8V  USB_Down_StopFlag;                                               /* USB Download pause flag(USB Received a non-full packet,must wait until the HSPI is sent before continuing to download) */
 extern UINT8V  HSPI_RX_StopFlag;                                                /* HSPI Receive pause flag(HSPI Received a non-full packet,You must wait for the USB upload to complete before continuing to receive) */
 
-
 extern __attribute__ ((aligned(16))) UINT8  endp0RTbuff[512] __attribute__((section(".DMADATA")));
 extern __attribute__ ((aligned(16))) UINT8  endp1RTbuff[4096] __attribute__((section(".DMADATA")));
-extern __attribute__ ((aligned(16))) UINT8  endp2RTbuff[4096] __attribute__((section(".DMADATA")));
-extern __attribute__ ((aligned(16))) UINT8  endp3RTbuff[4096] __attribute__((section(".DMADATA")));
-extern __attribute__ ((aligned(16))) UINT8  endp4RTbuff[4096] __attribute__((section(".DMADATA")));
-extern __attribute__ ((aligned(16))) UINT8  endp5RTbuff[4096] __attribute__((section(".DMADATA")));
-extern __attribute__ ((aligned(16))) UINT8  endp6RTbuff[4096] __attribute__((section(".DMADATA")));
-extern __attribute__ ((aligned(16))) UINT8  endp7RTbuff[4096] __attribute__((section(".DMADATA")));
 
 /* Function declaration */
-void USB30D_init(FunctionalState sta);
-void TMR0_IRQHandler() __attribute__((interrupt("WCH-Interrupt-fast")));
-void LINK_IRQHandler() __attribute__((interrupt("WCH-Interrupt-fast")));
-void USBSS_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USB30D_init( FunctionalState sta );
+void TMR0_IRQHandler( void ) __attribute__((interrupt("WCH-Interrupt-fast")));
+void LINK_IRQHandler( void ) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USBSS_IRQHandler( void ) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,6 @@
 Mcu Type=CH56x
 Address=0x00000000
+Target Path=obj\MSC_U-Disk.hex
 Erase All=true
 Program=true
 Verify=true
@@ -13,4 +14,4 @@ Description=ROM(byte): 32K, SRAMX(byte): 96K,SRAMS(byte): 16K, CHIP PINS: 68, GP
 
 PeripheralVersion=1.5
 MCU=CH569W
-Target Path=obj/UDisk.hex
+CLKSpeed=1

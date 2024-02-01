@@ -16,8 +16,8 @@
 
 
 /* Global Variable */
-UINT8V        tx_lmp_port = 0;
-UINT8V        link_sta = 0;
+UINT8V        Tx_Lmp_Port = 0;
+UINT8V        Link_Sta = 0;
 static UINT32 SetupLen = 0;
 static UINT8  SetupReqCode = 0;
 static PUINT8 pDescr;
@@ -56,7 +56,7 @@ const UINT8 SS_DeviceDescriptor[] =
 
 /*Superspeed Configuration Descriptor*/
 const UINT8 SS_ConfigDescriptor[] =
-    {
+{
         0x09, // length of this descriptor
         0x02, // CONFIGURATION (2)
         0xc8, // total length includes endpoint descriptors (should be 1 more than last address)
@@ -285,7 +285,8 @@ const UINT8 SS_ConfigDescriptor[] =
         DEF_ENDP7_OUT_BURST_LEVEL - 1, // max burst size
         0x00,                          // no stream
         0x00,
-        0x00};
+        0x00
+};
 
 
 /*String Descriptor Lang ID*/
@@ -299,7 +300,7 @@ const UINT8 StringLangID[] =
 
 /*String Descriptor Vendor*/
 const UINT8 StringVendor[] =
-    {
+{
         0x08, // length of this descriptor
         0x03,
         'W',
@@ -307,11 +308,12 @@ const UINT8 StringVendor[] =
         'C',
         0x00,
         'H',
-        0x00};
+        0x00
+};
 
 /*String Descriptor Product*/
 const UINT8 StringProduct[] =
-    {
+{
         38,         //38 bytes in length
         0x03,       //Type code
         0x57, 0x00, //W
@@ -331,11 +333,12 @@ const UINT8 StringProduct[] =
         0x49, 0x00, //I
         0x43, 0x00, //C
         0x45, 0x00, //E
-        0x20, 0x00};
+        0x20, 0x00
+};
 
 /*String Descriptor Serial*/
 UINT8 StringSerial[] =
-    {
+{
         0x16, // length of this descriptor
         0x03,
         '0',
@@ -361,7 +364,7 @@ UINT8 StringSerial[] =
 };
 
 const UINT8 OSStringDescriptor[] =
-    {
+{
         0x12, // length of this descriptor
         0x03,
         'M',
@@ -379,10 +382,11 @@ const UINT8 OSStringDescriptor[] =
         '0',
         0x00,
         0x01,
-        0x00};
+        0x00
+};
 
 const UINT8 BOSDescriptor[] =
-    {
+{
         0x05, // length of this descriptor
         0x0f, // CONFIGURATION (2)
         0x16, // total length includes endpoint descriptors (should be 1 more than last address)
@@ -408,10 +412,11 @@ const UINT8 BOSDescriptor[] =
         0x01, // the lowest speed is full speed
         0x0a, // u1 exit latency is 10us
         0xff, // u1 exit latency is 8us
-        0x07};
+        0x07
+};
 
 const UINT8 MSOS20DescriptorSet[] =
-    {
+{
         // Microsoft OS 2.0 Descriptor Set Header
         0x0A, 0x00,             // wLength - 10 bytes
         0x00, 0x00,             // MSOS20_SET_HEADER_DESCRIPTOR
@@ -439,7 +444,7 @@ const UINT8 MSOS20DescriptorSet[] =
 };
 
 const UINT8 PropertyHeader[] =
-    {
+{
         0x8e, 0x00, 0x00, 0x00, 0x00, 01, 05, 00, 01, 00,
         0x84, 0x00, 0x00, 0x00,
         0x01, 0x00, 0x00, 0x00,
@@ -453,30 +458,19 @@ const UINT8 PropertyHeader[] =
         0x2d, 0x00, 0x31, 0x00, 0x32, 0x00, 0x33, 0x00, 0x34, 0x00,
         0x2d, 0x00, 0x31, 0x00, 0x32, 0x00, 0x33, 0x00, 0x34, 0x00, 0x2d, 0x00, 0x31, 0x00, 0x32, 0x00, 0x33, 0x00,
         0x34, 0x00, 0x35, 0x00, 0x36, 0x00, 0x37, 0x00, 0x38, 0x00, 0x39, 0x00, 0x41, 0x00, 0x42, 0x00, 0x43, 0x00,
-        0x7d, 0x00, 0x00, 0x00};
+        0x7d, 0x00, 0x00, 0x00
+};
 
 const UINT8 CompactId[] =
-    {
+{
         0x28, 0x00, 0x00, 0x00, 0x00, 0x01, 0x04, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-        0x57, 0x49, 0x4e, 0x55, 0x53, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        0x57, 0x49, 0x4e, 0x55, 0x53, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
 
 UINT8 GetStatus[] =
-    {
-        0x01, 0x00};
-
-/*******************************************************************************
- * @fn      USB30_BUS_RESET
- *
- * @brief   USB3.0 bus reset
- *
- * @return  None
- */
-void USB30_BUS_RESET(void)
 {
-    R8_SAFE_ACCESS_SIG = 0x57; // enable safe access mode
-    R8_SAFE_ACCESS_SIG = 0xa8;
-    R8_RST_WDOG_CTRL = 0x40 | RB_SOFTWARE_RESET;
-}
+        0x01, 0x00
+};
 
 /*******************************************************************************
  * @fn      USB30D_init
@@ -544,7 +538,7 @@ void USB30D_init(FunctionalState sta)
  *
  * @return  Length
  */
-UINT16 USB30_NonStandardReq()
+UINT16 USB30_NonStandardReq( void )
 {
     UINT8 endp_dir;
 
@@ -620,7 +614,7 @@ UINT16 USB30_NonStandardReq()
  *
  * @return  Length
  */
-UINT16 USB30_StandardReq()
+UINT16 USB30_StandardReq( void )
 {
     SetupReqCode = UsbSetupBuf->bRequest;
     SetupLen = UsbSetupBuf->wLength;
@@ -761,7 +755,7 @@ UINT16 USB30_StandardReq()
  *
  * @return  Send length
  */
-UINT16 EP0_IN_Callback(void)
+UINT16 EP0_IN_Callback( void )
 {
     UINT16 len = 0;
     switch(SetupReqCode)
@@ -783,7 +777,7 @@ UINT16 EP0_IN_Callback(void)
  *
  * @return  Length
  */
-UINT16 EP0_OUT_Callback(void)
+UINT16 EP0_OUT_Callback( void )
 {
     UINT16 len;
     return len;
@@ -796,7 +790,7 @@ UINT16 EP0_OUT_Callback(void)
  *
  * @return  None
  */
-void USB30_Setup_Status(void)
+void USB30_Setup_Status( void )
 {
     switch(SetupReqCode)
     {
@@ -827,30 +821,29 @@ void USBSS_IRQHandler(void) //USBSS interrupt service
  *
  * @return  None
  */
-void TMR0_IRQHandler()
+void TMR0_IRQHandler( void )
 {
     R8_TMR0_INT_FLAG = RB_TMR_IF_CYC_END;
 
-    if(link_sta == 1)
+    if(Link_Sta == LINK_STA_1)
     {
-        link_sta = 0;
+        Link_Sta = 0;
         PFIC_DisableIRQ(USBSS_IRQn);
         PFIC_DisableIRQ(LINK_IRQn);
         USB30D_init(DISABLE);
         PRINT("USB3.0 disable\n");
         return;
     }
-    if(link_sta != 3)
+    if(Link_Sta != LINK_STA_3)
     {
         PFIC_DisableIRQ(USBSS_IRQn);
         PFIC_DisableIRQ(LINK_IRQn);
         USB30D_init(DISABLE);
-        //        PRINT("USB2.0\n");
         R32_USB_CONTROL = 0;
         PFIC_EnableIRQ(USBHS_IRQn);
         USB20_Device_Init(ENABLE);
     }
-    link_sta = 1;
+    Link_Sta = LINK_STA_1;
     R8_TMR0_INTER_EN = 0;
     PFIC_DisableIRQ(TMR0_IRQn);
     R8_TMR0_CTRL_MOD = RB_TMR_ALL_CLEAR;
@@ -867,22 +860,22 @@ void LINK_IRQHandler() //USBSS link interrupt service
 {
     if(USBSS->LINK_INT_FLAG & LINK_Ux_EXIT_FLAG) // device enter U2
     {
-        USBSS->LINK_CFG = CFG_EQ_EN | DEEMPH_CFG | TERM_EN;
+        USBSS->LINK_CFG = CFG_EQ_EN | TX_SWING | DEEMPH_CFG | TERM_EN;
         USB30_Switch_Powermode(POWER_MODE_0);
         USBSS->LINK_INT_FLAG = LINK_Ux_EXIT_FLAG;
     }
     if(USBSS->LINK_INT_FLAG & LINK_RDY_FLAG) // POLLING SHAKE DONE
     {
         USBSS->LINK_INT_FLAG = LINK_RDY_FLAG;
-        if(tx_lmp_port) // LMP, TX PORT_CAP & RX PORT_CAP
+        if(Tx_Lmp_Port) // LMP, TX PORT_CAP & RX PORT_CAP
         {
             USBSS->LMP_TX_DATA0 = LINK_SPEED | PORT_CAP | LMP_HP;
             USBSS->LMP_TX_DATA1 = UP_STREAM | NUM_HP_BUF;
             USBSS->LMP_TX_DATA2 = 0x0;
-            tx_lmp_port = 0;
+            Tx_Lmp_Port = 0;
         }
         /*Successful USB3.0 communication*/
-        link_sta = 3;
+        Link_Sta = LINK_STA_3;
         PFIC_DisableIRQ(TMR0_IRQn);
         R8_TMR0_CTRL_MOD = RB_TMR_ALL_CLEAR;
         R8_TMR0_INTER_EN = 0;
@@ -892,13 +885,20 @@ void LINK_IRQHandler() //USBSS link interrupt service
 
     if(USBSS->LINK_INT_FLAG & LINK_INACT_FLAG)
     {
+        Link_Sta = 0;
+        PFIC_EnableIRQ(USBSS_IRQn);
+        PFIC_EnableIRQ(LINK_IRQn);
+        PFIC_EnableIRQ(TMR0_IRQn);
+        R8_TMR0_INTER_EN = RB_TMR_IE_CYC_END;
+        TMR0_TimerInit( 67000000 );
+        USB30D_init(ENABLE);
         USBSS->LINK_INT_FLAG = LINK_INACT_FLAG;
         USB30_Switch_Powermode(POWER_MODE_2);
     }
     if(USBSS->LINK_INT_FLAG & LINK_DISABLE_FLAG) // GO DISABLED
     {
         USBSS->LINK_INT_FLAG = LINK_DISABLE_FLAG;
-        link_sta = 1;
+        Link_Sta = LINK_STA_1;
         USB30D_init(DISABLE);
         PFIC_DisableIRQ(USBSS_IRQn);
         R8_TMR0_CTRL_MOD = RB_TMR_ALL_CLEAR;
@@ -924,12 +924,11 @@ void LINK_IRQHandler() //USBSS link interrupt service
         {
             USBSS->LINK_INT_CTRL = 0;
             mDelayuS(2);
-            USB30_BUS_RESET();
         }
     }
     if(USBSS->LINK_INT_FLAG & LINK_TXEQ_FLAG) // POLLING SHAKE DONE
     {
-        tx_lmp_port = 1;
+        Tx_Lmp_Port = 1;
         USBSS->LINK_INT_FLAG = LINK_TXEQ_FLAG;
         USB30_Switch_Powermode(POWER_MODE_0);
     }
@@ -941,7 +940,6 @@ void LINK_IRQHandler() //USBSS link interrupt service
         while(USBSS->LINK_STATUS & RX_WARM_RESET);
         USBSS->LINK_CTRL &= ~TX_WARM_RESET;
         mDelayuS(2);
-        USB30_BUS_RESET();
         USB30_Device_Setaddress(0);
 
     }

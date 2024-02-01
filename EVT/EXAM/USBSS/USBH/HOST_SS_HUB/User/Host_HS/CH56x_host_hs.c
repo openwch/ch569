@@ -48,7 +48,7 @@ UINT16 EndpnMaxSize = 0;
 /*******************************************************************************
  * @fn        CopySetupReqPkg
  *
- * @briefI    copy the contents of the buffer to another address.
+ * @brief     copy the contents of the buffer to another address.
  *
  * @param     usrbuf - buffer address
  *            addr - target address
@@ -70,7 +70,7 @@ void CopySetupReqPkg( const UINT8 *pReqPkt )
 /*******************************************************************************
  * @fn        SetBusReset
  *
- * @briefI    send bus reset.
+ * @brief     send bus reset.
  *
  * @return    None
  */
@@ -93,7 +93,7 @@ void USB20HOST_SetBusReset( void )
 /*******************************************************************************
  * @fn        USBHS_Host_Init
  *
- * @briefI    USB host initialized.
+ * @brief     USB host initialized.
  *
  * @param     sta - 1-enable 0-disable
  *
@@ -126,7 +126,7 @@ void USB20Host_Init(FunctionalState sta)
 /*******************************************************************************
  * @fn        USB20HOST_Transact
  *
- * @briefI    USB transact
+ * @brief     USB transact
  *
  * @param     endp_pid - bit7~bit4 current PID  of USB transact. bit3~bit0 target endpoint number
  *            toggle - sync trigger bit
@@ -156,7 +156,10 @@ UINT8 USB20HOST_Transact( UINT8 endp_pid, UINT8 toggle,UINT32 timeout)
         }
 
         R16_UH_EP_PID = 0;
-        if ( (R8_USB_INT_FG&(RB_USB_IF_TRANSFER|RB_USB_IF_DETECT)) == 0 )     {return( ERR_USB_UNKNOWN );}
+        if ( (R8_USB_INT_FG&(RB_USB_IF_TRANSFER|RB_USB_IF_DETECT)) == 0 )
+        {
+            return( ERR_USB_UNKNOWN );
+        }
 
         if( R8_USB_INT_FG & RB_USB_IF_DETECT )
         {
@@ -170,10 +173,20 @@ UINT8 USB20HOST_Transact( UINT8 endp_pid, UINT8 toggle,UINT32 timeout)
             else    return ( ERR_USB_DISCON );
         }
 
-        if( R8_USB_INT_FG & RB_USB_IF_TRANSFER )
+        else if( R8_USB_INT_FG & RB_USB_IF_TRANSFER )
         {
-            if ( R8_USB_INT_ST & RB_USB_ST_TOGOK )        {return( ERR_SUCCESS1 );}
+
             r = R8_USB_INT_ST & RB_HOST_RES_MASK;
+
+            if ( R8_USB_INT_ST & RB_USB_ST_TOGOK )        {return( ERR_SUCCESS1 );}
+            else
+            {
+                if( ( r == USB_PID_ACK ) || ( r == USB_PID_NYET ) )
+                {
+                    return ERR_SUCCESS1;
+                }
+            }
+
             if ( r == USB_PID_STALL )                   {return( r | ERR_USB_TRANSFER );}
             if ( r == USB_PID_NAK )
             {
@@ -202,7 +215,9 @@ UINT8 USB20HOST_Transact( UINT8 endp_pid, UINT8 toggle,UINT32 timeout)
         else        R8_USB_INT_FG = 0xFF;
 //        mDelayuS(15);
     }while(++ TransRetry < 10);
+
     return (ERR_USB_TRANSFER);
+
 }
 
 /*******************************************************************************
@@ -230,7 +245,8 @@ UINT8 U20HOST_GetDeviceDescr( UINT8 *buf ,UINT16 *len )
     setup_buf[7] = 0x00;
 
     status = USB20HOST_CtrlTransfer( setup_buf,buf,&l );
-    if( status == USB_INT_SUCCESS ){
+    if( status == USB_INT_SUCCESS )
+    {
         *len = l;
         UsbDevEndp0Size = *(buf+7);
     }
@@ -385,7 +401,8 @@ UINT8 U20HOST_GetConfigDescr( PHUB_Port_Info phub,UINT8 *buf ,UINT16 *len )
     setup_buf[7] = 0x00;
     l = 0x40;
     status = USB20HOST_CtrlTransfer( setup_buf,buf,&l );
-    if( status == USB_INT_SUCCESS ){
+    if( status == USB_INT_SUCCESS )
+    {
         setup_buf[6] = (( (PUSB_CFG_DESCR)buf ) -> wTotalLength)&0xff;
         setup_buf[7] = (( (PUSB_CFG_DESCR)buf ) -> wTotalLength)>>8;
 
@@ -403,11 +420,13 @@ UINT8 U20HOST_GetConfigDescr( PHUB_Port_Info phub,UINT8 *buf ,UINT16 *len )
 
     thisUsbDev.DeviceCongValue = ( (PUSB_CFG_DESCR)buf )-> bConfigurationValue;
     printf("thisUsbDev.DeviceType=%02x\n",thisUsbDev.DeviceType);
-    if( thisUsbDev.DeviceType == 0x09 ){
+    if( thisUsbDev.DeviceType == 0x09 )
+    {
         //HUB processing
         HubAnalysis_Descr( phub,(UINT8 *)buf, pSetupReq->wLength );
     }
-    else{
+    else
+    {
         //Other equipment processing
         USBHS_Analysis_Descr( &thisUsbDev, (UINT8 *)buf, pSetupReq->wLength );
     }
@@ -525,7 +544,7 @@ UINT8 U20HOST_CofDescrAnalyse( UINT8 depth,UINT8 *pbuf, UINT8 port)
 /*******************************************************************************
  * @fn        USB20Host_Enum
  *
- * @briefI    enumerate device.
+ * @brief     enumerate device.
  *
  * @param     Databuf - receive buffer
  *
@@ -540,7 +559,8 @@ UINT8 USB20Host_Enum( UINT8 depth,UINT8 *Databuf )
     UINT16 len;
     USB20HOST_SetBusReset();
     timeout = 0;
-    while(1){
+    while(1)
+    {
         R8_USB_INT_FG = RB_USB_IF_DETECT;
         if( R8_USB_MIS_ST&RB_USB_ATTACH )
         {
@@ -558,25 +578,29 @@ UINT8 USB20Host_Enum( UINT8 depth,UINT8 *Databuf )
     R8_USB_DEV_AD = 0;
     len = 7;
     status = U20HOST_GetDeviceDescr( Databuf,&len );
-    if( status != USB_INT_SUCCESS ){
+    if( status != USB_INT_SUCCESS )
+    {
         printf("GetDev_ERROR=%02x\n",status);
         return USB_OPERATE_ERROR;
     }
     UsbDevEndp0Size = *(Databuf+4);
 
     status = U20HOST_SetAddress( 0x08 );
-    if( status != USB_INT_SUCCESS ){
+    if( status != USB_INT_SUCCESS )
+    {
         printf("SetAddr_ERROR=%02x\n",status);
         return USB_OPERATE_ERROR;
     }
     len = 0x12;
     status = U20HOST_GetDeviceDescr( Databuf,&len );
-    if( status != USB_INT_SUCCESS ){
+    if( status != USB_INT_SUCCESS )
+    {
         printf("GetDev_ERROR=%02x\n",status);
         return USB_OPERATE_ERROR;
     }
     status = U20HOST_GetConfigDescr( NULL,Databuf,&len );
-    if( status != USB_INT_SUCCESS ){
+    if( status != USB_INT_SUCCESS )
+    {
         printf("GetDev_ERROR=%02x\n",status);
         return USB_OPERATE_ERROR;
     }
@@ -605,7 +629,7 @@ UINT8 USB20Host_Enum( UINT8 depth,UINT8 *Databuf )
 /*******************************************************************************
  * @fn        USB20HOST_CtrlTransfer
  *
- * @briefI    enumerate device.
+ * @brief     enumerate device.
  *
  * @param     ReqBuf -- input parameter
  *            DataBuf-- read data
@@ -633,8 +657,11 @@ UINT8 USB20HOST_CtrlTransfer(UINT8 *ReqBuf, UINT8 *DataBuf, UINT8 *RetLen )
 
 
     R16_UH_TX_LEN = 8;
-    s = USB20HOST_Transact( USB_PID_SETUP << 4 | 0x00, 0x00, 0x1ffffff );
-    if ( s != ERR_SUCCESS1 )             return( s );
+    s = USB20HOST_Transact( USB_PID_SETUP << 4 | 0x00, 0x00, 100000 );
+    if ( s != ERR_SUCCESS1 )
+    {
+        return( s );
+    }
     R8_UH_RX_CTRL = UEP_DATA1;
     R8_UH_TX_CTRL = UEP_DATA1;
     R16_UH_TX_LEN = 0x01;
@@ -646,7 +673,7 @@ UINT8 USB20HOST_CtrlTransfer(UINT8 *ReqBuf, UINT8 *DataBuf, UINT8 *RetLen )
         {
             while ( RemLen )
             {
-                s = USB20HOST_Transact( USB_PID_IN << 4 | 0x00, tog, 0x1ffffff );
+                s = USB20HOST_Transact( USB_PID_IN << 4 | 0x00, tog, 100000 );
                 if ( s != ERR_SUCCESS1 ) return( s );
                 tog = tog ^ 1;
                 RxLen = R16_USB_RX_LEN < RemLen ? R16_USB_RX_LEN : RemLen;
@@ -668,7 +695,7 @@ UINT8 USB20HOST_CtrlTransfer(UINT8 *ReqBuf, UINT8 *DataBuf, UINT8 *RetLen )
                 R32_UH_TX_DMA = (UINT32)pBuf + *pLen;
                 R16_UH_TX_LEN = RemLen >= UsbDevEndp0Size ? UsbDevEndp0Size : RemLen;
 
-                s = USB20HOST_Transact( USB_PID_OUT << 4 | 0x00, tog, 0x1ffffff );
+                s = USB20HOST_Transact( USB_PID_OUT << 4 | 0x00, tog, 100000 );
                 if ( s != ERR_SUCCESS1 )         return( s );
                 tog = tog ^ 1;
                 RemLen -= R16_UH_TX_LEN;
@@ -826,8 +853,10 @@ UINT8 U20USBHostTransact( UINT8 endp_pid, UINT8 tog, UINT32 timeout )
         {
             mDelayuS(200);
             R8_USB_INT_FG = RB_USB_IF_DETECT;
-            if( R8_USB_MIS_ST & RB_USB_ATTACH ){
-                if(R8_UHOST_CTRL & RB_UH_AUTOSOF_EN){
+            if( R8_USB_MIS_ST & RB_USB_ATTACH )
+            {
+                if(R8_UHOST_CTRL & RB_UH_AUTOSOF_EN)
+                {
                     return ( ERR_USB_CONNECT );
                 }
             }
@@ -846,20 +875,21 @@ UINT8 U20USBHostTransact( UINT8 endp_pid, UINT8 tog, UINT32 timeout )
                 -- TransRetry;
             }
             else{
-                switch ( endp_pid >> 4 ){
-                case USB_PID_SETUP:
-                case USB_PID_OUT:
-                    if ( r ) {return( r | ERR_USB_TRANSFER );}
-                    break;
+                switch ( endp_pid >> 4 )
+                {
+                    case USB_PID_SETUP:
+                    case USB_PID_OUT:
+                        if ( r ) {return( r | ERR_USB_TRANSFER );}
+                        break;
 
-                case USB_PID_IN:
-                    if ( r == USB_PID_DATA0 || r == USB_PID_DATA1 ) { }
-                    else if ( r ) {return( r | ERR_USB_TRANSFER );}
-                    break;
+                    case USB_PID_IN:
+                        if ( r == USB_PID_DATA0 || r == USB_PID_DATA1 ) { }
+                        else if ( r ) {return( r | ERR_USB_TRANSFER );}
+                        break;
 
-                default:
-                    return( ERR_USB_UNKNOWN );
-                    break;
+                    default:
+                        return( ERR_USB_UNKNOWN );
+                        break;
                 }
             }
         }
@@ -946,7 +976,8 @@ UINT8  U20HOST_Hub_IntConnect_Process( UINT8 depth,UINT8 *pbuf )
     R32_UH_TX_DMA = (UINT32)(UINT8 *)endpTXbuff;
     R32_UH_RX_DMA = (UINT32)(UINT8 *)endpRXbuff;
     status = U20USBHostTransact( USB_PID_IN << 4 | hs_hub_info[depth].rootEndp[0].num, hs_hub_info[depth].rootEndp[0].tog, 1 );
-    if( status == 0x14 ){
+    if( status == 0x14 )
+    {
         len = R16_USB_RX_LEN;
         p = (UINT8 *)endpRXbuff;
         memcpy( pbuf,p,len );
@@ -978,7 +1009,8 @@ UINT8 U20HOST_ClearPortFeatrue( UINT8 port ,UINT8 port_status )
     setup_buf[6] = 0x00;
     setup_buf[7] = 0x00;
     status = USB20HOST_CtrlTransfer( setup_buf,NULL,NULL );
-    if( status == USB_INT_SUCCESS ){
+    if( status == USB_INT_SUCCESS )
+    {
     }
     return status;
 }
@@ -995,23 +1027,28 @@ UINT8 U20HOST_ClearPortFeatrue( UINT8 port ,UINT8 port_status )
 UINT8 U20HOST_ClearPortFeatrue_Process( UINT8 depth,UINT8 port )
 {
     UINT8 status;
-    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x01 ){
+    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x01 )
+    {
         status = U20HOST_ClearPortFeatrue( port,C_PORT_CONNECTION );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x02 ){
+    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x02 )
+    {
         status = U20HOST_ClearPortFeatrue( port,C_PORT_ENABLE );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x04 ){
+    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x04 )
+    {
         status = U20HOST_ClearPortFeatrue( port,C_PORT_SUSPEND );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x08 ){
+    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x08 )
+    {
         status = U20HOST_ClearPortFeatrue( port,C_PORT_OVER_CURRENT );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x10 ){
+    if( hs_hub_info[depth].portD[port-1].portpchangefield&0x10 )
+    {
         status = U20HOST_ClearPortFeatrue( port,C_PORT_RESET );
         if( status == USB_INT_SUCCESS )return status;
     }
@@ -1035,7 +1072,8 @@ UINT8 SSPLITPacket( PHUB_Port_Info portn, UINT8 *pbuf, UINT16 *plen, UINT8 endp_
 
     R8_USB_INT_FG = RB_USB_IF_TRANSFER;
 
-    for ( i = 500000; i != 0; i -- ){
+    for ( i = 500000; i != 0; i -- )
+    {
         r = ( R16_USB_FRAME_NO>>13 );
         if( r == 3 )    break;
     }
@@ -1144,9 +1182,12 @@ UINT8 HubCtrlTransfer( PHUB_Port_Info phub,UINT8 *ReqBuf, uint8_t *pDataBuf, uin
     if( s != ERR_SUCCESS )  return s;
     RemLen = ((PUSB_SETUP_REQ)ReqBuf) -> wLength;
     ctrltog = 1;
-    if ( RemLen && pDataBuf ){
-        if ( ((PUSB_SETUP_REQ)ReqBuf)-> bRequestType & USB_REQ_TYP_IN ){
-            while ( RemLen ){
+    if ( RemLen && pDataBuf )
+    {
+        if ( ((PUSB_SETUP_REQ)ReqBuf)-> bRequestType & USB_REQ_TYP_IN )
+        {
+            while ( RemLen )
+            {
                 mDelayuS( 100 );
                 s = SSPLITPacket(phub, pBuf, &len, USB_PID_IN << 4 | 0x00, ctrltog ,hubaddr);
                 if( s != ERR_SUCCESS )  {printf("12=%02x\n",s);return s;}
@@ -1157,14 +1198,16 @@ UINT8 HubCtrlTransfer( PHUB_Port_Info phub,UINT8 *ReqBuf, uint8_t *pDataBuf, uin
                 RemLen -= len;
                 pBuf += len;
                 if ( pLen ) *pLen += len;
-                if ( (len == 0) || ( len & ( UsbDevEndp0Size - 1 ) ) ){
+                if ( (len == 0) || ( len & ( UsbDevEndp0Size - 1 ) ) )
+                {
                     break;
                 }
             }
             ctrltog = 0;
         }
         else{
-            while ( RemLen ){
+            while ( RemLen )
+            {
                 len = RemLen >= UsbDevEndp0Size ? UsbDevEndp0Size : RemLen;
                 s = SSPLITPacket(phub, pBuf, &len, USB_PID_OUT << 4 | 0x00, ctrltog ,hubaddr);
                 if( s != ERR_SUCCESS )  return s;
@@ -1181,7 +1224,8 @@ UINT8 HubCtrlTransfer( PHUB_Port_Info phub,UINT8 *ReqBuf, uint8_t *pDataBuf, uin
     }
     mDelayuS( 200 );
     len = 0;
-    for( i=0;i!=100;i++ ){
+    for( i=0;i!=100;i++ )
+    {
         s = SSPLITPacket(phub, pBuf, &len, (ctrltog ? USB_PID_IN : USB_PID_OUT) << 4 | 0x00, 1 ,hubaddr);
         if( s != ERR_SUCCESS )  return s;
         s = CSPLITPacket(phub, pBuf, &len, (ctrltog ? USB_PID_IN : USB_PID_OUT) << 4 | 0x00, 1 ,hubaddr);
@@ -1216,8 +1260,10 @@ UINT8 U20HubUSBGetDevDescr( PHUB_Port_Info phub,UINT8 *Databuf,UINT8 *len ,UINT8
     setup_buf[7] = 0x00;
 
     status = HubCtrlTransfer(  phub,setup_buf,Databuf,&l, hubaddr );
-    if( status == ERR_SUCCESS ){
-        for( l=0;l!=*len;l++ ){
+    if( status == ERR_SUCCESS )
+    {
+        for( l=0;l!=*len;l++ )
+        {
             printf("%02x ",*(Databuf+l));
         }
         printf("\n");
@@ -1336,7 +1382,8 @@ UINT8 U20HubUSBSetConfig( PHUB_Port_Info phub, UINT8 cfg ,UINT8 hubaddr)
     setup_buf[6]  = 0x00;
     setup_buf[7]  = 0x00;
     status = HubCtrlTransfer( phub,setup_buf,NULL,NULL, hubaddr);
-    if( status == ERR_SUCCESS ){
+    if( status == ERR_SUCCESS )
+    {
     }
     return status;
 
@@ -1389,20 +1436,23 @@ UINT8 U20HOST_Enumerate(UINT8 depth, UINT8 *pbuf,UINT8 addr, UINT8 port)
     }
     len = 7;
     status = U20HOST_GetDeviceDescr( pbuf,&len );
-    if( status != USB_INT_SUCCESS ){
+    if( status != USB_INT_SUCCESS )
+    {
         printf("GetDev_ERROR=%02x\n",status);
         return USB_OPERATE_ERROR;
     }
     UsbDevEndp0Size = *(pbuf+4);
 
     status = U20HOST_SetAddress( addr );
-    if( status != USB_INT_SUCCESS ){
+    if( status != USB_INT_SUCCESS )
+    {
         printf("SetAddr_ERROR=%02x\n",status);
         return USB_OPERATE_ERROR;
     }
     len = 0x12;
     status = U20HOST_GetDeviceDescr( pbuf,&len );
-    if( status != USB_INT_SUCCESS ){
+    if( status != USB_INT_SUCCESS )
+    {
         printf("GetDev_ERROR=%02x\n",status);
         return USB_OPERATE_ERROR;
     }
@@ -1437,21 +1487,22 @@ UINT8 U20HOST_Enumerate(UINT8 depth, UINT8 *pbuf,UINT8 addr, UINT8 port)
 
         printf("GetHUBDevDescr\n");
         status = U20HOST_GetHUBDevDescr( pbuf,&len );
-        if ( status != USB_INT_SUCCESS ){
+        if ( status != USB_INT_SUCCESS )
+        {
             printf( "GetHUBDevDescr_ERROR = %02X\n", (UINT16)status );
             return( USB_OPERATE_ERROR );
         }
-        hs_hub_info[depth].rootnumofport = *(pbuf+2);
+        hs_hub_info[depth].numofport = *(pbuf+2);
 
-        if( hs_hub_info[depth].rootnumofport>=MAX_HUBNUMPORT  )hs_hub_info[depth].rootnumofport = MAX_HUBNUMPORT;
+        if( hs_hub_info[depth].numofport>=MAX_HUBNUMPORT  )hs_hub_info[depth].numofport = MAX_HUBNUMPORT;
         printf("status=%02x,%d\n",status,len);
-        for( i=0;i!=len;i++ ){
+        for( i=0;i!=len;i++ )
+        {
             printf("%02x ",*(pbuf+i));
         }
         printf("\n");
 
-
-        for( i=0;i!=hs_hub_info[depth].rootnumofport;i++ )
+        for( i=0;i!=hs_hub_info[depth].numofport;i++ )
         {
             status = U20HOST_SetPortFeatrue(i+1,PORT_POWER);
             if ( status != USB_INT_SUCCESS )
@@ -1482,7 +1533,8 @@ UINT8 USBHS_HUBCheckPortConnect( UINT8 depth,UINT8 port )
     {
         if( endpRXbuff[ 0 ] & 0x01 )
         {
-            if( hs_hub_info[depth].portD[port].status<HUB_ERR_SCUESS ){
+            if( hs_hub_info[depth].portD[port].status<HUB_ERR_SCUESS )
+            {
                 hs_hub_info[depth].portD[port].status = HUB_ERR_CONNECT;
             }
             return( 0x18 );                                    /* This port: Device connection detected */
@@ -1501,7 +1553,8 @@ UINT8 USBHS_HUBCheckPortConnect( UINT8 depth,UINT8 port )
     {
         if( endpRXbuff[ 0 ] & 0x01 )
         {
-            if( hs_hub_info[depth].portD[port].status<HUB_ERR_SCUESS ){
+            if( hs_hub_info[depth].portD[port].status<HUB_ERR_SCUESS )
+            {
                 hs_hub_info[depth].portD[port].status = HUB_ERR_CONNECT;
             }
             return( 0x02 );                                                     /* This port: has devices */
@@ -1543,9 +1596,7 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
       return ret;
   }
 
-  for (i = 0; i < 100; ++i) {
-    mDelayuS(1000);
-  }
+  mDelaymS(100);
 
   ret = U20HOST_SetPortFeatrue(port+1,PORT_RESET);
   if( ret != USB_INT_SUCCESS )
@@ -1573,7 +1624,8 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
       return ret;
   }
 
-  for( ret=0;ret!=4;ret++ ){
+  for( ret=0;ret!=4;ret++ )
+  {
       printf("%02x ",endpRXbuff[ret]);
   }
   printf("\n");
@@ -1599,14 +1651,12 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
 
   if( hs_hub_info[depth].portD[port].speed == 1)//high speed
   {
-      for (i = 0; i < 30000; ++i)
-      {
-        mDelayuS(1);
-      }
+      mDelaymS(30);
 
       len = 7;
       s = U20HOST_GetDeviceDescr( Databuf,&len );
-      if( s != USB_INT_SUCCESS ){
+      if( s != USB_INT_SUCCESS )
+      {
           printf("GetDev_ERROR=%02x\n",s);
           return USB_OPERATE_ERROR;
       }
@@ -1632,7 +1682,8 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
           return( ret );
       }
 
-      if( hs_hub_info[depth].portD[port].devicetype == 0x09 ){         //Initialization of HUB
+      if( hs_hub_info[depth].portD[port].devicetype == 0x09 )
+      {         //Initialization of HUB
           ret = U20HOST_GetHUBDevDescr( Databuf,NULL );
           if( ret != USB_INT_SUCCESS )
           {
@@ -1640,14 +1691,14 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
               return( ret );
           }
 
-
           hs_hub_info[depth].numofport = *(Databuf+2);
           if( hs_hub_info[depth].numofport > MAX_HUBNUMPORT)
           {
               hs_hub_info[depth].numofport = MAX_HUBNUMPORT;
           }
 
-          for( i=0;i!=hs_hub_info[depth].numofport;i++ ){
+          for( i=0;i!=hs_hub_info[depth].numofport;i++ )
+          {
 
               ret = U20HOST_SetPortFeatrue( i+1,0x08 );
               printf("hub_power_status=%02x,%d\n",ret,i);
@@ -1670,7 +1721,8 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
       l = 0x08;
       UsbDevEndp0Size = 0x08;
       s = U20HubUSBGetDevDescr( &hs_hub_info[depth].portD[port],Databuf,&l ,hubaddr);
-      if( s != ERR_SUCCESS ){
+      if( s != ERR_SUCCESS )
+      {
           printf("Get_Desrc_Error=%02x\n",s);
           return s;
       }
@@ -1685,12 +1737,14 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
       }
       l = 0x12;
       s = U20HubUSBGetDevDescr( &hs_hub_info[depth].portD[port],Databuf,&l ,hubaddr);
-      if( s != ERR_SUCCESS ){
+      if( s != ERR_SUCCESS )
+      {
           printf("Get_Desrc_Error\n");
       }
       l = 0x09;
       s = U20HubUSBGetConfigDescr( &hs_hub_info[depth].portD[port],Databuf,&l,hubaddr );
-      if( s != ERR_SUCCESS ){
+      if( s != ERR_SUCCESS )
+      {
           printf("Get_Config_Error\n");
       }
       cfg = ( (PUSB_CFG_DESCR)Databuf ) -> bConfigurationValue;
@@ -1702,7 +1756,8 @@ UINT8 USBHS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT8 uplevelpo
           return( USB_OPERATE_ERROR );
       }
       s=U20HubUSBSetConfig( &hs_hub_info[depth].portD[port],cfg ,hubaddr);
-      if( s != ERR_SUCCESS ){
+      if( s != ERR_SUCCESS )
+      {
           printf("Set_Cfg_Error\n");
       }
       printf("fls_hub_info.device_type=%02x\n",hs_hub_info[depth].portD[port-1].devicetype);
@@ -1736,6 +1791,7 @@ UINT8  USBHS_HUB_Main_Process( UINT8 depth ,UINT8 addr ,UINT8 uplevelport,UINT8 
           R32_UH_TX_DMA = (UINT32)(UINT8 *)endpTXbuff;
           R32_UH_RX_DMA = (UINT32)(UINT8 *)endpRXbuff;
 
+          hs_hub_info[depth].devaddr = addr;
           AssignHubData(&hubdata,depth,uplevelport,i+1,hs_hub_info[depth]);
           ret = SearchHubData(Hub_LinkHead , &hubdata);//Determine whether the current node has saved data
 
@@ -1753,7 +1809,8 @@ UINT8  USBHS_HUB_Main_Process( UINT8 depth ,UINT8 addr ,UINT8 uplevelport,UINT8 
 
           if( hs_hub_info[depth].portD[i].portpchangefield )
           {
-              if( (hs_hub_info[depth].portD[i].status == HUB_ERR_CONNECT) ){            //device connect
+              if( (hs_hub_info[depth].portD[i].status == HUB_ERR_CONNECT) )
+              {            //device connect
 
                   ret = USBHS_HUBHostEnum( depth,Test_Buf,i ,uplevelport,addr);
                   if( ret == ERR_SUCCESS )
@@ -1818,9 +1875,9 @@ UINT8  USBHS_HUB_Main_Process( UINT8 depth ,UINT8 addr ,UINT8 uplevelport,UINT8 
               }
           }
           mDelaymS(2);
-
       }
-      if( (R8_USB_MIS_ST&RB_USB_ATTACH) == 0){                //The overall device is disconnected and directly jumps away. It is necessary to clear all changes in the HUB
+      if( (R8_USB_MIS_ST&RB_USB_ATTACH) == 0)
+      {                //The overall device is disconnected and directly jumps away. It is necessary to clear all changes in the HUB
           printf("dis\n");
           for( i=0;i!=portnum;i++ )
           {

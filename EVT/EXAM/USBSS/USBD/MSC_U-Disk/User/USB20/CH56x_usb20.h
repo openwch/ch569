@@ -1,14 +1,15 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : CH56x_usb20.h
 * Author             : WCH
-* Version            : V1.0
-* Date               : 2022/11/18
-* Description        :
+* Version            : V1.1
+* Date               : 2023/02/16
+*
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #ifndef USB20_CH56X_USB20_H_
 #define USB20_CH56X_USB20_H_
-#include "MAIN.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,17 +33,17 @@ typedef struct __attribute__((packed))
 }DevInfo_Typedef;
 
 //#define PID_SETUP	3
-extern const UINT8 hs_device_descriptor[ ];
-extern const UINT8 hs_config_descriptor[ ];
-extern const UINT8 hs_string_descriptor0[ ];
-extern const UINT8 hs_string_descriptor1[ ];
-extern const UINT8 hs_string_descriptor2[ ];
-extern const UINT8 hs_bos_descriptor[ ];
+extern const UINT8 hs_device_descriptor[];
+extern const UINT8 hs_config_descriptor[];
+extern const UINT8 hs_string_descriptor0[];
+extern const UINT8 hs_string_descriptor1[];
+extern const UINT8 hs_string_descriptor2[];
+extern const UINT8 hs_bos_descriptor[];
 
-void   USB20_Device_Init ( FunctionalState sta );  // USBSS device initial
-UINT16 U20_NonStandard_Request_Deal( void );
-UINT16 U20_Standard_Request_Deal( void );
-UINT16 U20_Endp0_IN_Callback( void );
+void   USB20_Device_Init ( FunctionalState sta );
+UINT16 U20_NonStandard_Request_Deal();
+UINT16 U20_Standard_Request_Deal();
+UINT16 U20_Endp0_IN_Callback(void);
 
 
 #ifdef __cplusplus

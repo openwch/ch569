@@ -1,8 +1,8 @@
 ;/********************************** (C) COPYRIGHT *******************************
 ;* File Name          : startup_CH56x.s
 ;* Author             : WCH
-;* Version            : V1.0
-;* Date               : 2020/07/31
+;* Version            : V1.1
+;* Date               : 2023/11/11
 ;* Description        : CH56x vector table for eclipse toolchain.
 ;*********************************************************************************
 ;* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -60,7 +60,6 @@ _vector_base:
         j   ECDC_IRQHandler            /* ECDC */
 
     .option rvc;
-
     .section    .text.vector_handler, "ax", @progbits
     .weak   NMI_Handler
     .weak   HardFault_Handler
@@ -88,31 +87,33 @@ _vector_base:
     .weak   PMT_IRQHandler
     .weak   ECDC_IRQHandler
 
-NMI_Handler:  1:  j 1b
-HardFault_Handler:  1:  j 1b
-SysTick_Handler:  1:  j 1b
-SW_Handler:  1:  j 1b
-WDOG_IRQHandler:  1:  j 1b
-TMR0_IRQHandler:  1:  j 1b
-GPIO_IRQHandler:  1:  j 1b
-SPI0_IRQHandler:  1:  j 1b
-USBSS_IRQHandler:  1:  j 1b
-LINK_IRQHandler:  1:  j 1b
-TMR1_IRQHandler:  1:  j 1b
-TMR2_IRQHandler:  1:  j 1b
-UART0_IRQHandler:  1:  j 1b
-USBHS_IRQHandler:  1:  j 1b
-EMMC_IRQHandler:  1:  j 1b
-DVP_IRQHandler:  1:  j 1b
-HSPI_IRQHandler:  1:  j 1b
-SPI1_IRQHandler:  1:  j 1b
-UART1_IRQHandler:  1:  j 1b
-UART2_IRQHandler:  1:  j 1b
-UART3_IRQHandler:  1:  j 1b
-SERDES_IRQHandler:  1:  j 1b
-ETH_IRQHandler:  1:  j 1b
-PMT_IRQHandler:  1:  j 1b
-ECDC_IRQHandler:  1:  j 1b
+NMI_Handler:
+HardFault_Handler:
+SysTick_Handler:
+SW_Handler:
+WDOG_IRQHandler:
+TMR0_IRQHandler:
+GPIO_IRQHandler:
+SPI0_IRQHandler:
+USBSS_IRQHandler:
+LINK_IRQHandler:
+TMR1_IRQHandler:
+TMR2_IRQHandler:
+UART0_IRQHandler:
+USBHS_IRQHandler:
+EMMC_IRQHandler:
+DVP_IRQHandler:
+HSPI_IRQHandler:
+SPI1_IRQHandler:
+UART1_IRQHandler:
+UART2_IRQHandler:
+UART3_IRQHandler:
+SERDES_IRQHandler:
+ETH_IRQHandler:
+PMT_IRQHandler:
+ECDC_IRQHandler:
+1:
+	j 1b
 
 	.section	.text.handle_reset,"ax",@progbits
 	.weak	handle_reset
@@ -124,9 +125,8 @@ handle_reset:
 .option	pop 
 1:
 	la sp, _eusrstack 
-
-/* Load data section from flash to RAM */
 2:	
+/* Load data section from flash to RAM */
 	la a0, _data_lma
 	la a1, _data_vma
 	la a2, _edata
@@ -138,7 +138,7 @@ handle_reset:
 	addi a1, a1, 4
 	bltu a1, a2, 1b
 2:
-	/* clear bss section */
+/* Clear bss section */
 	la a0, _sbss
 	la a1, _ebss
 	bgeu a0, a1, 2f
@@ -146,10 +146,8 @@ handle_reset:
 	sw zero, (a0)
 	addi a0, a0, 4
 	bltu a0, a1, 1b
-
-	/* clear dmadata section */
-
 2:
+/* Clear dmadata section */
     la a0, _dmadata_start
     la a1, _dmadata_end
     bgeu a0, a1, 2f
@@ -157,18 +155,17 @@ handle_reset:
     sw zero, (a0)
     addi a0, a0, 4
     bltu a0, a1, 1b
-
 2:
-	/* enable all interrupt */
+/* Enable global interrupt and configure privileged mode */
     li t0, 0x88
-    csrs mstatus, t0
+    csrw mstatus, t0
+/* Configure entry address mode */
 	la t0, _vector_base
     ori t0, t0, 1
 	csrw mtvec, t0
+
 	la t0, main
 	csrw mepc, t0
-
-	
 	mret
 
 

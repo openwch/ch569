@@ -17,7 +17,7 @@
 
 /* Function */
 void LINK_IRQHandler( void ) __attribute__((interrupt("WCH-Interrupt-fast")));
-void Analysis_Descr(UINT8 *pdesc, UINT16 l);
+void Analysis_Descr(UINT8 *pdesc, UINT16 len);
 
 /* Global define */
 #define pSetupreq    ((PUSB_SETUP_REQ)endpTXbuff)
@@ -124,7 +124,7 @@ const uint8_t set_feature_U2[] =
 /*******************************************************************************
  * @fn        InitHubLink
  *
- * @briefI    Create a link header node for HUB
+ * @brief     Create a link header node for HUB
  *
  * @param     None
  *
@@ -153,7 +153,7 @@ Link_HUBSaveData* InitHubLink()
 /*******************************************************************************
  * @fn        AssignHubData
  *
- * @briefI    Assign HUB data
+ * @brief     Assign HUB data
  *
  * @param     hubdata - Node to be assigned
  *
@@ -170,7 +170,7 @@ void AssignHubData(USB_HUB_SaveData *hubdata ,UINT8 depth,UINT8 uplevelport,UINT
 /*******************************************************************************
  * @fn        SearchHubData
  *
- * @briefI    Find elements in a linked list
+ * @brief     Find elements in a linked list
  *
  * @param     p - Original linked list
  *            HUB_SaveData - Represents the searched element
@@ -198,7 +198,7 @@ UINT8 SearchHubData(Link_HUBSaveData* p, USB_HUB_SaveData *HUB_SaveData)
 /*******************************************************************************
  * @fn        SearchHubData
  *
- * @briefI    Insert Linked List Node
+ * @brief     Insert Linked List Node
  *
  * @param     p - Original linked list
  *            HUB_SaveData - Node elements that need to be inserted
@@ -234,7 +234,7 @@ UINT8 InsertHubData(Link_HUBSaveData* p, USB_HUB_SaveData HUB_SaveData)
 /*******************************************************************************
  * @fn        DeleteHubData
  *
- * @briefI    Delete elements from HUB linked list
+ * @brief     Delete elements from HUB linked list
  *
  * @param     p - Original linked list
  *            HUB_SaveData - The target element to be deleted
@@ -277,7 +277,7 @@ UINT8 DeleteHubData(Link_HUBSaveData* p, USB_HUB_SaveData HUB_SaveData)
 /*******************************************************************************
  * @fn        ModifyHubData
  *
- * @briefI    Modify HUB linked list elements
+ * @brief     Modify HUB linked list elements
  *
  * @param     p - Original linked list
  *            oldhubdata - Old Elements
@@ -306,7 +306,7 @@ UINT8 ModifyHubData(Link_HUBSaveData* p, USB_HUB_SaveData oldhubdata, USB_HUB_Sa
 /*******************************************************************************
  * @fn        Hublink_judgingstructures
  *
- * @briefI    Determine and delete sub devices under the device
+ * @brief     Determine and delete sub devices under the device
  *
  * @param     hubdata - Variables used for judgment
  *
@@ -360,7 +360,7 @@ UINT8  Hublink_judgingstructures( USB_HUB_SaveData hubdata )
 /*******************************************************************************
  * @fn        Hublink_finesubstructures
  *
- * @briefI    Used to query whether there are sub devices under this variable
+ * @brief     Used to query whether there are sub devices under this variable
  *
  * @param     hubdata - Variables used for judgment
  *
@@ -384,7 +384,7 @@ void Hublink_finesubstructures( USB_HUB_SaveData hubdata )
 /*******************************************************************************
  * @fn        Hublink_finesubstructures
  *
- * @briefI    Number of assigned addresses
+ * @brief     Number of assigned addresses
  *
  * @param     None
  *
@@ -407,7 +407,7 @@ UINT8 USB_SetAddressNumber(void)
 /*******************************************************************************
  * @fn        Hublink_finesubstructures
  *
- * @briefI    Number of assigned addresses
+ * @brief     Number of assigned addresses
  *
  * @param     None
  *
@@ -427,11 +427,11 @@ UINT8 USB_DelAddressNumber(UINT8 addr)
 /*******************************************************************************
  * @fn        USB30HOST_INTransaction
  *
- * @briefI    bulk Transmit IN transaction
+ * @brief     bulk Transmit IN transaction
  *
- * @param     seq_num - The host is ready to receive the packet sequence of the first packet
- *            recv_packnum - The number of packets the host is ready to receive
- *            endp_num - endponit number
+ * @param     seq_num -         The host is ready to receive the packet sequence of the first packet
+ *            recv_packnum -    The number of packets the host is ready to receive
+ *            endp_num -        endpoint number
  *
  * @return    None
  */
@@ -444,6 +444,7 @@ UINT16 USB30HOST_INTransaction(UINT8 seq_num,UINT8 *recv_packnum ,UINT8 endp_num
     UINT32 i = 0;
 
     num = USB30H_IN_Data(seq_num, recv_packnum, endp_num );
+    mDelayuS(200);
     switch( num & 0x7000 )
     {
         case 0x1000:                                                           //ACK
@@ -463,8 +464,8 @@ UINT16 USB30HOST_INTransaction(UINT8 seq_num,UINT8 *recv_packnum ,UINT8 endp_num
                         break;                                      //Retry succeeded
                     }
                     else
-                    {
-                        break;
+					{
+                        return USB30_IN_DISCONNECT;
                     }
                 }
             }
@@ -489,12 +490,12 @@ UINT16 USB30HOST_INTransaction(UINT8 seq_num,UINT8 *recv_packnum ,UINT8 endp_num
 /*******************************************************************************
  * @fn        USB30HOST_OUTTransaction
  *
- * @briefI    bulk Transmit OUT transaction
+ * @brief     bulk Transmit OUT transaction
  *
- * @param     seq_num£º                The packet sequence of the first packet of the distributed packet
- *            recv_packnum:  The number of packets that the host is ready to send
- *            endp_num£º              endponit number
- *            txlen£º                      The packet length of the last packet of data
+ * @param     seq_num       -   The packet sequence of the first packet of the distributed packet
+ *            recv_packnum  -   The number of packets that the host is ready to send
+ *            endp_num      -   endpoint number
+ *            txlen         -   The packet length of the last packet of data
  *
  * @return    Number of unsent packets remaining
  */
@@ -527,11 +528,12 @@ UINT8 USB30HOST_OUTTransaction(UINT8 seq_num,UINT8 send_packnum ,UINT8 endp_num,
                     }
                     else
                     {
-                        break;
+                        return USB30_OUT_DISCONNECT;
                     }
                 }
             }
-            if(packnump > 1){                                                         //Only one package
+            if(packnump > 1)
+            {                                                         //Only one package
                 packnump = 1;
             }
             if((sta&0x07) == 2)
@@ -548,7 +550,7 @@ UINT8 USB30HOST_OUTTransaction(UINT8 seq_num,UINT8 send_packnum ,UINT8 endp_num,
 /*******************************************************************************
  * @fn        USB30HOST_CtrlTransaciton
  *
- * @briefI    Control transmission
+ * @brief     Control transmission
  *
  * @param     databuf - receiving or send buffer
  *
@@ -558,7 +560,6 @@ UINT8 USB30HOST_OUTTransaction(UINT8 seq_num,UINT8 send_packnum ,UINT8 endp_num,
  */
 UINT16 USB30HOST_CtrlTransaciton(UINT8 *databuf)
 {
-
     UINT8   *pBuf;
     UINT8   seq_num =0;
     UINT8   req_nump = 1;
@@ -593,8 +594,9 @@ UINT16 USB30HOST_CtrlTransaciton(UINT8 *databuf)
                         i=0;
                         len = USB30H_IN_Data(seq_num, &req_nump, 0 );
                         if( (len & 0x7000) == 0x1000 )    break;
-                        else{
-                            break;
+                        else
+                        {
+                            return USB30_IN_DISCONNECT;
                         }
                       }
                   }
@@ -629,7 +631,7 @@ UINT16 USB30HOST_CtrlTransaciton(UINT8 *databuf)
                  while( !USB30H_Erdy_Status(  NULL, NULL  ) )
                  {
                      i++;
-                     if(i==1000000)
+                     if(i==2000000)
                      {
                          printf("OUT ERDY timeout...\n");
                          i=0;
@@ -638,8 +640,9 @@ UINT16 USB30HOST_CtrlTransaciton(UINT8 *databuf)
                          {
                              break;
                          }
-                         else{
-                             break;
+                         else
+                         {
+                             return USB30_OUT_DISCONNECT;
                          }
                      }
                  }
@@ -661,7 +664,7 @@ UINT16 USB30HOST_CtrlTransaciton(UINT8 *databuf)
 /*******************************************************************************
  * @fn        GetDEV_Descrptor
  *
- * @briefI    GetDEV_Descrptor
+ * @brief     GetDEV_Descrptor
  *
  * @return    len
  */
@@ -678,7 +681,7 @@ UINT16 GetDEV_Descriptor(void)
 /*******************************************************************************
  * @fn        GetConfig_Descrptor
  *
- * @briefI    GetConfig_Descrptor
+ * @brief     GetConfig_Descrptor
  *
  * @return    len
  */
@@ -717,7 +720,7 @@ UINT16 GetConfig_Descriptor(PHUB_Port_Info phub,UINT8 depth , UINT8 port)
 /*******************************************************************************
  * @fn        Set_Address
  *
- * @briefI    Set device address
+ * @brief     Set device address
  *
  * @param     addr - device address
  *
@@ -736,7 +739,7 @@ void Set_Address(UINT8 addr)
 /*******************************************************************************
  * @fn        U30_RootSetAddress
  *
- * @briefI    Set root device address
+ * @brief     Set root device address
  *
  * @param     addr - device address
  *
@@ -766,7 +769,7 @@ void U30_RootSetAddress(UINT8 addr)
 /*******************************************************************************
  * @fn        Set_IsochDelay
  *
- * @briefI    set isoch_delay
+ * @brief     set isoch_delay
  *
  * @return    None
  */
@@ -780,7 +783,7 @@ void Set_IsochDelay(void)
 /*******************************************************************************
  * @fn        Set_Sel
  *
- * @briefI    set Set_Sel
+ * @brief     set Set_Sel
  *
  * @return    None
  */
@@ -800,7 +803,7 @@ void Set_Sel(void)
 /*******************************************************************************
  * @fn        SetFeatureU1
  *
- * @briefI    None
+ * @brief     None
  *
  * @return    None
  */
@@ -816,7 +819,7 @@ void SetFeatureU1(void)
 /*******************************************************************************
  * @fn        SetFeatureU2
  *
- * @briefI    None
+ * @brief     None
  *
  * @return    None
  */
@@ -831,7 +834,7 @@ void SetFeatureU2(void)
 /*******************************************************************************
  * @fn        Set_Configuration
  *
- * @briefI    set configuration
+ * @brief     set configuration
  *
  * @return    None
  */
@@ -846,19 +849,19 @@ void Set_Configuration(void)
 /*******************************************************************************
  * @fn        Anaylisys_Descr
  *
- * @briefI    descriptor analysis.
+ * @brief     descriptor analysis.
  *
  * @param     pdesc - descriptor buffer to analyze
  *            l - length
  *
  * @return    None
  */
-void Analysis_Descr(UINT8 *pdesc, UINT16 l)
+void Analysis_Descr(UINT8 *pdesc, UINT16 len)
 {
     UINT8 in_endp_num = 1;
     UINT8 out_endp_num = 1;
     UINT16 i;
-    for(i=0;i<l;i++)                                                //Analysis Descriptor
+    for(i=0;i<len;i++)                                                //Analysis Descriptor
     {
         if((pdesc[i]==0x09)&&(pdesc[i+1]==0x02))
         {
@@ -923,27 +926,33 @@ UINT8 U30HOST_CofDescrAnalyse( UINT8 depth,UINT8 *pbuf, UINT8 port )
     gDeviceClassType = ( (PUSB_CFG_DESCR_LONG_U30)pbuf ) -> itf_descr.bInterfaceClass;
     if( ( gDeviceClassType <= 0x09 ) || ( gDeviceClassType == 0xFF ) )
     {
-        if( gDeviceClassType == 0x09 ){         //HUB
-            if( port == 0 ){
+        if( gDeviceClassType == 0x09 )
+        {         //HUB
+            if( port == 0 )
+            {
                 ss_hub_info[depth].device_type = gDeviceClassType;
             }
             else{
                 ss_hub_info[depth].portD[port-1].devicetype = gDeviceClassType;
             }
         }
-        else if( gDeviceClassType == 0x08 ){    //U-DISK
+        else if( gDeviceClassType == 0x08 )
+        {    //U-DISK
             if( port == 0 ){
                 ss_hub_info[depth].device_type = gDeviceClassType;
             }
-            else{
+            else
+            {
                 ss_hub_info[depth].portD[port-1].devicetype = gDeviceClassType;
             }
         }
-        else {
+        else
+        {
             if( port == 0 ){
                 ss_hub_info[depth].device_type = gDeviceClassType;
             }
-            else{
+            else
+            {
                 ss_hub_info[depth].portD[port-1].devicetype = gDeviceClassType;
             }
         }
@@ -959,11 +968,11 @@ UINT8 U30HOST_CofDescrAnalyse( UINT8 depth,UINT8 *pbuf, UINT8 port )
 /*******************************************************************************
  * @fn        USB30Host_Enum
  *
- * @briefI    enumerate device
+ * @brief     enumerate device
  *
  * @return    None
  */
-void USB30Host_Enum(UINT8 depth,UINT8 addr,  UINT8 port )
+void USB30Host_Enum(UINT8 depth,UINT8 addr, UINT8 port )
 {
     UINT8 status,i;
     UINT16 len;
@@ -985,7 +994,7 @@ void USB30Host_Enum(UINT8 depth,UINT8 addr,  UINT8 port )
 //============= set sel =======================
         Set_Sel();
 
-        if( (ss_hub_info[depth].device_type == 0x09) /*&& (port == 0)*/)
+        if( ss_hub_info[depth].device_type == 0x09 )
         {
             status = U30HOST_GetHubDescr( endpRXbuff,&len );
             if( status != USB_INT_SUCCESS )
@@ -1011,9 +1020,9 @@ void USB30Host_Enum(UINT8 depth,UINT8 addr,  UINT8 port )
 //============= set config ====================
         Set_Configuration();
 
-        SetFeatureU1();
-
-        SetFeatureU2();
+//        SetFeatureU1();
+//
+//        SetFeatureU2();
 
         if( ss_hub_info[depth].device_type == 0x09 )/*HUB*/
         {
@@ -1078,7 +1087,7 @@ UINT8 USB30HSOT_Enumerate_Hotrst( UINT8 *pbuf )
 /*******************************************************************************
  * @fn        USB30_HUBHostEnum
  *
- * @briefI    Enumerate USB 3.0 devices under HUB
+ * @brief     Enumerate USB 3.0 devices under HUB
  *
  * @return    None
  */
@@ -1106,11 +1115,12 @@ void USB30_HUBHostEnum(UINT8 depth, UINT8 addr, UINT8 port )
 //============= set config ====================
         Set_Configuration();
 
-        SetFeatureU1();
+//        SetFeatureU1();
+//
+//        SetFeatureU2();
 
-        SetFeatureU2();
-
-        if( (ss_hub_info[depth].portD[port].devicetype == 0x09)/* && (port == 0)*/){             /*HUB*/
+        if( ss_hub_info[depth].portD[port].devicetype == 0x09 )
+        {             /*HUB*/
             status = U30HOST_GetHubDescr( endpRXbuff,&len );
             if( status != USB_INT_SUCCESS )
             {
@@ -1133,7 +1143,7 @@ void USB30_HUBHostEnum(UINT8 depth, UINT8 addr, UINT8 port )
             }
 
             printf("U30HOST_SetHubDepth\n");
-            status = U30HOST_SetHubDepth( depth+1 );
+            status = U30HOST_SetHubDepth( (depth)+1 );
             if ( status != USB_INT_SUCCESS )
             {
                 printf( "U30HOST_SetHubDepth_ERROR = %02X\n", (UINT16)status );
@@ -1164,7 +1174,7 @@ void USB30_HUBHostEnum(UINT8 depth, UINT8 addr, UINT8 port )
 /*******************************************************************************
  * @fn        USB30_link_status
  *
- * @briefI    set link status
+ * @brief     set link status
  *
  * @param     s - value of link status
  *
@@ -1172,11 +1182,13 @@ void USB30_HUBHostEnum(UINT8 depth, UINT8 addr, UINT8 port )
  */
 void USB30_link_status(UINT8 s)
 {
-    if(s){    //Successfully connected to the device
+    if(s)
+    {    //Successfully connected to the device
         printf("Linked!\n");
         device_link_status = 1;
     }
-    else{     //Device disconnected
+    else
+    {     //Device disconnected
         device_link_status = 0;
         printf("link is disconnect !\n\n");
     }
@@ -1185,14 +1197,15 @@ void USB30_link_status(UINT8 s)
 /*******************************************************************************
  * @fn        LINK_IRQHandler
  *
- * @briefI    LINK_IRQHandler
+ * @brief     LINK_IRQHandler
  *
  * @return    None
  */
-void LINK_IRQHandler (void)         //USBSSH interrupt severice
+void LINK_IRQHandler (void)         //USBSSH interrupt service
 {
     UINT32 temp;
     temp = USBSS->LINK_ERR_STATUS;
+
     if( USBSSH->LINK_INT_FLAG & LINK_RECOV_FLAG )
     {
         USBSSH->LINK_INT_FLAG = LINK_RECOV_FLAG;
@@ -1264,11 +1277,11 @@ void LINK_IRQHandler (void)         //USBSSH interrupt severice
 /*******************************************************************************
  * @fn        USBSS_IRQHandler
  *
- * @briefI    USBSS_IRQHandler
+ * @brief     USBSS_IRQHandler
  *
  * @return    None
  */
-void USBSS_IRQHandler (void)            //USBSSH interrupt severice
+void USBSS_IRQHandler (void)            //USBSSH interrupt service
 {
     ;
 }
@@ -1284,7 +1297,7 @@ void USBSS_IRQHandler (void)            //USBSSH interrupt severice
 *******************************************************************************/
 UINT8 U30HOST_GetPortStstus( UINT8 depth,UINT8 port )
 {
-    UINT16  Port_Status_Bits,Port_Change_Field;
+    UINT16  Port_Status_Bits,Port_Change_Field,timeoutcnt;
     UINT8  status;
     UINT8 setup_buf[8];
     UINT8 buf[4];
@@ -1298,13 +1311,31 @@ UINT8 U30HOST_GetPortStstus( UINT8 depth,UINT8 port )
     setup_buf[7] = 0x00;
 
     memcpy( endpTXbuff , setup_buf , 8);
+
     status =  USB30H_Send_Setup( 8 );
     if(status == 1)
     {
         return USB_CH56XUSBTIMEOUT;
     }
-    USB30HOST_CtrlTransaciton(endpRXbuff);
-    USB30H_Send_Status();
+
+    timeoutcnt = 0;
+    do
+    {
+        if( timeoutcnt >= 100 )
+        {
+            return USB_CH56XUSBTIMEOUT;
+        }
+        status = USB30HOST_CtrlTransaciton(endpRXbuff);
+        timeoutcnt++;
+    }
+    while (status == 0);
+
+    status = USB30H_Send_Status();
+    if( status == 1)
+    {
+        return USB_CH56XUSBTIMEOUT;
+    }
+
     status = USB_INT_SUCCESS;
     memcpy( buf,endpRXbuff,4 );
     if( status == USB_INT_SUCCESS )
@@ -1315,13 +1346,16 @@ UINT8 U30HOST_GetPortStstus( UINT8 depth,UINT8 port )
         Port_Change_Field = buf[2];
         Port_Change_Field |= ((UINT16)buf[3]<<8);
 
-        if( Port_Status_Bits&PORT_CONNECTION ){                        //Device connection detected
-            if(ss_hub_info[depth].portD[port-1].status<PORT_CONNECTION){
+        if( Port_Status_Bits&PORT_CONNECTION )
+        {                        //Device connection detected
+            if(ss_hub_info[depth].portD[port-1].status<PORT_CONNECTION)
+            {
                 ss_hub_info[depth].portD[port-1].speed = PORT_SS_SPEED;
                 ss_hub_info[depth].portD[port-1].status = PORT_CONNECTION;    //Device connection
             }
         }
-        else{
+        else
+        {
             ss_hub_info[depth].portD[port-1].status = PORT_DISCONNECT;        //Device disconnection
         }
         ss_hub_info[depth].portD[port-1].portpchangefield = Port_Change_Field;
@@ -1358,7 +1392,8 @@ UINT8 U30HOST_ClearPortFeatrue( UINT8 port ,UINT8 port_status )
     USB30HOST_CtrlTransaciton(endpRXbuff);
     USB30H_Send_Status();
     status = USB_INT_SUCCESS;
-    if( status == USB_INT_SUCCESS ){
+    if( status == USB_INT_SUCCESS )
+    {
     }
     return status;
 }
@@ -1375,27 +1410,33 @@ UINT8 U30HOST_ClearPortFeatrue( UINT8 port ,UINT8 port_status )
 UINT8 U30HOST_ClearPortFeatrue_Process( UINT8 depth,UINT8 port )
 {
     UINT8 status;
-    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x01 ){      //Connection status changes
+    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x01 )
+    {      //Connection status changes
         status = U30HOST_ClearPortFeatrue( port,C_PORT_CONNECTION );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x08 ){      //Overcurrent indication changes
+    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x08 )
+    {      //Overcurrent indication changes
         status = U30HOST_ClearPortFeatrue( port,C_PORT_OVER_CURRENT );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x10 ){      //Reset change
+    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x10 )
+    {      //Reset change
         status = U30HOST_ClearPortFeatrue( port,C_PORT_RESET );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x20 ){      //This field will be set when the hot reset processing on this port is completed
+    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x20 )
+    {      //This field will be set when the hot reset processing on this port is completed
         status = U30HOST_ClearPortFeatrue( port,C_BH_PORT_RESET );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x40 ){      //Port connection changes
+    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x40 )
+    {      //Port connection changes
         status = U30HOST_ClearPortFeatrue( port,C_PORT_LINK_STATE );
         if( status == USB_INT_SUCCESS )return status;
     }
-    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x80 ){      //Configuration error change
+    if( ss_hub_info[depth].portD[port-1].portpchangefield&0x80 )
+    {      //Configuration error change
         status = U30HOST_ClearPortFeatrue( port,C_PORT_CONFIG_ERROR );
         if( status == USB_INT_SUCCESS )return status;
     }
@@ -1534,7 +1575,8 @@ UINT8 USBSS_HUBCheckPortConnect( UINT8 depth,UINT8 port )
     {
         if( endpRXbuff[ 0 ] & 0x01 )
         {
-            if( ss_hub_info[depth].portD[port].status<HUB_ERR_SCUESS ){
+            if( ss_hub_info[depth].portD[port].status<HUB_ERR_SCUESS )
+            {
                 ss_hub_info[depth].portD[port].status = HUB_ERR_CONNECT;
             }
             return( 0x18 );                                    /* This port: Device connection detected */
@@ -1542,10 +1584,6 @@ UINT8 USBSS_HUBCheckPortConnect( UINT8 depth,UINT8 port )
         else
         {
             ss_hub_info[depth].portD[port].status = HUB_ERR_DISCONNECT;
-            ss_hub_info[depth].portD[port].status = 0;
-            ss_hub_info[depth].portD[port].addr = 0;
-            ss_hub_info[depth].portD[port].speed = 0;
-            ss_hub_info[depth].portD[port].devicetype = 0;
             return( 0x19 );                                 /* This port: Device disconnection detected */
         }
     }
@@ -1553,7 +1591,8 @@ UINT8 USBSS_HUBCheckPortConnect( UINT8 depth,UINT8 port )
     {
         if( endpRXbuff[ 0 ] & 0x01 )
         {
-            if( ss_hub_info[depth].portD[port].status<HUB_ERR_SCUESS ){
+            if( ss_hub_info[depth].portD[port].status<HUB_ERR_SCUESS )
+            {
                 ss_hub_info[depth].portD[port].status = HUB_ERR_CONNECT;
             }
             return( 0x02 );                                                     /* This port: has devices */
@@ -1561,10 +1600,6 @@ UINT8 USBSS_HUBCheckPortConnect( UINT8 depth,UINT8 port )
         else
         {
             ss_hub_info[depth].portD[port].status = HUB_ERR_DISCONNECT;
-            ss_hub_info[depth].portD[port].status = 0;
-            ss_hub_info[depth].portD[port].addr = 0;
-            ss_hub_info[depth].portD[port].speed = 0;
-            ss_hub_info[depth].portD[port].devicetype = 0;
             return( 0x01 );                                                     /* This port: No device */
         }
     }
@@ -1589,7 +1624,8 @@ UINT8 USBSS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT32 route_st
     mDelaymS( 10 );
 
     s = U30HOST_GetPortStstus( depth,port+1 );
-    if( s != USB_INT_SUCCESS ){
+    if( s != USB_INT_SUCCESS )
+    {
       printf( "U30HOST_GetPortStstus = %02x,%02x\n", (UINT16)s,port+1 );
       return s;
     }
@@ -1609,7 +1645,8 @@ UINT8 USBSS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT32 route_st
 
       printf("0x10\n");
 
-    }while( endpRXbuff[ 0 ] & 0x10 );
+    }
+    while( endpRXbuff[ 0 ] & 0x10 );
 
 
     printf("hub_device_connect_port=%02x\n",port+1);
@@ -1621,7 +1658,8 @@ UINT8 USBSS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT32 route_st
     if( s != USB_INT_SUCCESS )return s;
 
 
-    for( ret=0;ret!=4;ret++ ){
+    for( ret=0;ret!=4;ret++ )
+    {
       printf("%02x ",endpRXbuff[ret]);
     }
     printf("\n");
@@ -1636,7 +1674,7 @@ UINT8 USBSS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT32 route_st
     USB30H_Set_Address(0x00);
     ss_hub_info[depth].portD[port].addr = USB_SetAddressNumber();
 
-    route_string = ((port+1)<<depth*4)|route_string;
+    route_string = ((port+1)<<((depth)*4)|route_string);
     USBSS->LINK_ROUTE_STRING = route_string;
 
     USB30_HUBHostEnum( depth,ss_hub_info[depth].portD[port].addr,port);
@@ -1644,7 +1682,7 @@ UINT8 USBSS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT32 route_st
     USBSS->LINK_ROUTE_STRING = 0;
     USB30H_Set_Address(ss_hub_info[depth].devaddr);
 
-    ss_hub_info[depth+1].devaddr = ss_hub_info[depth].portD[port].addr;   //Root directory address of subordinate HUB
+    ss_hub_info[(depth)+1].devaddr = ss_hub_info[depth].portD[port].addr;   //Root directory address of subordinate HUB
     ss_hub_info[depth].portD[port].status = PORT_INIT;
 
     USBSSH->UH_TX_DMA = (UINT32)(UINT8 *)endpTXbuff;
@@ -1663,25 +1701,28 @@ UINT8 USBSS_HUBHostEnum( UINT8 depth, UINT8 *Databuf,UINT8 port ,UINT32 route_st
 *                  route_string --- USB3.0 Route string
 * Return         : Operational state
 *******************************************************************************/
-UINT8  USBSS_HUB_Main_Process( UINT8 depth,UINT8 addr ,UINT8 uplevelport,UINT32 route_string)
+UINT8  USBSS_HUB_Main_Process( UINT8 depth,UINT8 addr ,UINT8 uplevelport,UINT32 route_string,UINT8 portnum)
 {
     UINT8 i,ret;
     USB_HUB_SaveData hubdata;
 
-      for( i=0;i!=4;i++ )
+      for( i = 0; i != portnum; i++ )
       {
           USBSSH->UH_TX_DMA = (UINT32)(UINT8 *)endpTXbuff;
           USBSSH->UH_RX_DMA = (UINT32)(UINT8 *)endpRXbuff;
 
+          ss_hub_info[depth].devaddr = addr;
+
           AssignHubData(&hubdata,depth,uplevelport,i+1,ss_hub_info[depth]);
           ret = SearchHubData(Hub_LinkHead , &hubdata);//Determine whether the current node has saved data
+
           if( ret == 0 )
           {
               ss_hub_info[depth] = hubdata.HUB_Info;//Replace if there is saved data
           }
           else
           {
-              memset( &ss_hub_info[depth].portD[i],0x00,sizeof( ss_hub_info[depth].portD[i] ) );//Clear without saved data to prevent the use of previous HUB data
+              memset( &ss_hub_info[depth].portD[i],0,sizeof( ss_hub_info[depth].portD[i] ) );//Clear without saved data to prevent the use of previous HUB data
           }
 
           USBSS->LINK_ROUTE_STRING = route_string;
@@ -1690,8 +1731,9 @@ UINT8  USBSS_HUB_Main_Process( UINT8 depth,UINT8 addr ,UINT8 uplevelport,UINT32 
 
           if( ss_hub_info[depth].portD[i].portpchangefield )
           {
-              if( (ss_hub_info[depth].portD[i].status == HUB_ERR_CONNECT && depth < 2))//device connect
+              if( ss_hub_info[depth].portD[i].status == HUB_ERR_CONNECT )//device connect
               {
+                  mDelaymS(5);
                   ret = USBSS_HUBHostEnum( depth,Test_Buf,i,route_string );
                   if( ret == ERR_SUCCESS )
                   {
@@ -1741,7 +1783,7 @@ UINT8  USBSS_HUB_Main_Process( UINT8 depth,UINT8 addr ,UINT8 uplevelport,UINT32 
               if( ss_hub_info[depth].portD[i].devicetype == 0x09 ) //HUB
               {
                   Global_Index++;
-                  ret = USBSS_HUB_Main_Process( Global_Index ,ss_hub_info[depth].portD[i].addr,i+1, ((i+1)<<(depth)*4)|route_string);
+                  ret = USBSS_HUB_Main_Process( Global_Index ,ss_hub_info[depth].portD[i].addr,i+1, ((i+1)<<((depth)*4))|route_string,ss_hub_info[depth].numofport);
                   Global_Index--;
                   if( ret != ERR_SUCCESS )return ret;
               }
@@ -1750,6 +1792,7 @@ UINT8  USBSS_HUB_Main_Process( UINT8 depth,UINT8 addr ,UINT8 uplevelport,UINT32 
 
               }
           }
+
           mDelaymS(2);
       }
 

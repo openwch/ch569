@@ -43,31 +43,14 @@ volatile UINT32 Pack_Recv_Num = 0x00;
 *******************************************************************************/
 void HSPI_GPIO_Init( void )
 {
-    /* configure HTCLK(PA11),HTREQ(PA9),HTVLD(PA21),HTACK(PA10),output,16mA */
-    R32_PA_DIR |= ( ( 1 << 9 ) | ( 1 << 10 ) | ( 1 << 11 ) | ( 1 << 21 ) );
-    R32_PA_DRV |= ( ( 1 << 11 ) );
-    R32_PA_PU &= ~( ( 1 << 9 ) | ( 1 << 10 ) | ( 1 << 11 ) | ( 1 << 21 ) );
-    R32_PA_PD &= ~( ( 1 << 9 ) | ( 1 << 10 ) | ( 1 << 11 ) | ( 1 << 21 ) );
+    //TX GPIO PA9 11 21 push-pull output
+    R32_PA_DIR |= (1<<9) | (1<<11) | (1<<21);
 
-    /* configure HTRDY(PA23),HRCLK(PA19),HRACK(PA18),HRVLD(PA6),input */
-    R32_PA_DIR &= ~( ( 1 << 6 ) | ( 1 << 18 ) | ( 1 << 19 ) | ( 1 << 23 ) );
-    R32_PA_PU &= ~( ( 1 << 6 ) | ( 1 << 18 ) | ( 1 << 19 ) | ( 1 << 23 ) );
-    R32_PA_PD |= ( ( 1 << 6 ) | ( 1 << 18 ) | ( 1 << 19 ) | ( 1 << 23 ) );
+    //clk 16mA
+    R32_PA_DRV |= (1<<11);
 
-    /* configure HD0(PA6),HD1(PA4),HD2(PA22), HD3(PA3),HD4(PA2), HD5(PA1),HD6(PA0),HD7(PB21),
-       HD8(PB20), HD9(PB19),HD10(PB18),HD11(PB17),HD12(PA17),HD13(PB16),HD14(PB15),HD15(PB14),
-       HD16(PB0),HD17(PB1),HD18(PB2), HD19(PA20),HD20(PB3),HD21(PB4),HD22(PB5),HD23(PB6),
-       HD24(PA16),HD25(PB7),HD26(PB8), HD27(PB9), HD28(PB10),HD29(PB11),HD30(PB12),HD31(PB13) floating input */
-    R32_PA_DIR &= ~( ( 1 << 6 ) | ( 1 << 4 ) | ( 1 << 22 ) | ( 1 << 3 ) | ( 1 << 2 ) | ( 1 << 1 ) | ( 1 << 0 ) |
-                     ( 1 << 17 ) | ( 1 << 20 ) | ( 1 << 16 ) );
-    R32_PA_PU &= ~( ( 1 << 6 ) | ( 1 << 4 ) | ( 1 << 22 ) | ( 1 << 3 ) | ( 1 << 2 ) | ( 1 << 1 ) | ( 1 << 0 ) |
-                    ( 1 << 17 ) | ( 1 << 20 ) | ( 1 << 16 ) );
-    R32_PA_PD &= ~( ( 1 << 6 ) | ( 1 << 4 ) | ( 1 << 22 ) | ( 1 << 3 ) | ( 1 << 2 ) | ( 1 << 1 ) | ( 1 << 0 ) |
-                    ( 1 << 17 ) | ( 1 << 20 ) | ( 1 << 16 ) );
-
-    R32_PB_DIR &= 0xFFC00000;
-    R32_PB_PU &= 0xFFC00000;
-    R32_PB_PD &= 0xFFC00000;
+    //Rx GPIO PA10 push-pull output
+    R32_PA_DIR |= (1<<10);
 }
 
 /*******************************************************************************
@@ -171,7 +154,7 @@ void HSPI_Init( void )
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void HSPI_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void HSPI_IRQHandler( void ) __attribute__((interrupt("WCH-Interrupt-fast")));
 void HSPI_IRQHandler( void )
 {
     UINT32V i,j;

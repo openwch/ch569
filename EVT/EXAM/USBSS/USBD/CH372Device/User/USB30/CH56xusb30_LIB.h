@@ -22,6 +22,7 @@ extern "C" {
 #define PIPE_RESET              (1<<3)
 #define LFPS_RX_PD              (1<<5)
 #define CFG_EQ_EN               (1<<6)
+#define TX_SWING                (1<<7)
 #define DEEMPH_CFG              (1<<8)
 
 #define POWER_MODE_0            ((UINT32)0x00000000)

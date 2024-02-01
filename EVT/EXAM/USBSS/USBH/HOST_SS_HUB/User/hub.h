@@ -34,7 +34,6 @@
      UINT8 devaddr;     //hub address
      UINT8 endpsize;    //HUB Endpoint size
      UINT8 numofport;   //hub Number of ports
-     UINT8 rootnumofport;//root hub Number of ports
      UINT8 device_type; //Device type
      UINT8 time_out;
      HUB_Endp_Info rootEndp[2];
@@ -74,8 +73,6 @@
  extern __attribute__ ((aligned(16))) UINT8 pNTFS_BUF[512] __attribute__((section(".DMADATA")));
 
 
-#endif
-
 #define     PORT_DISCONNECT         0x00        //The device is disconnected or not connected
 #define     PORT_CONNECTION         0x01        //Device connection
 #define     PORT_INIT               0x02        //Device connection, enumerated
@@ -99,11 +96,20 @@
 #define     PORT_LOW_SPEED      0X02           //low speed
 #define     PORT_SS_SPEED       0X03           //super speed
 
+typedef enum
+{
+    SS_HUBNUM = 5,
+    HS_HUBNUM = 7,
+}HUBNUM;
 
-extern USB_HUB_Info    ss_hub_info[8];
-extern USB_HUB_Info    hs_hub_info[8];
+
+
+extern USB_HUB_Info ss_hub_info[SS_HUBNUM];
+extern USB_HUB_Info hs_hub_info[HS_HUBNUM];
 extern UINT8 U30HOST_Hub_Connect_Process( UINT8 depth );
 extern void U30HOST_Hub_Device_Process( UINT8 depth,UINT8 port );
 extern UINT8 U20HOST_Hub_Connect_Process( UINT8 depth );
 extern UINT8 U20USBHostTransact( UINT8 endp_pid, UINT8 tog, UINT32 timeout );
 
+
+#endif

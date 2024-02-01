@@ -20,12 +20,12 @@ static UINT8V SetupReq = 0;        //Host request descriptor type
 static PUINT8 pDescr;
 UINT32V seq_num = 0;
 DevInfo_Typedef  g_devInfo;
-extern UINT8V link_sta;
+extern UINT8V Link_Sta;
 
 /* Function declaration */
 void USBHS_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));           //USB2.0 interrupt service
 
-const UINT8 hs_device_descriptor[] =
+const UINT8 hs_device_descriptor[ ] =
 {
     0x12,   // bLength
     0x01,   // DEVICE descriptor type
@@ -34,7 +34,7 @@ const UINT8 hs_device_descriptor[] =
     0x00,   // device class
     0x00,   // device sub-class
     0x00,   // vendor specific protocol
-    0x40,   // max packet size 512B
+    0x40,   // max packet size 64B
     0x86,   // vendor id-0x1A86(qinheng)
     0x1A,
     0x37,   // product id 0x5537
@@ -47,7 +47,7 @@ const UINT8 hs_device_descriptor[] =
     0x01    // number of configurations
 };
 
-const UINT8 hs_config_descriptor[] =
+const UINT8 hs_config_descriptor[ ] =
 {
     0x09,   // length of this descriptor
     0x02,   // CONFIGURATION (2)
@@ -88,7 +88,7 @@ const UINT8 hs_config_descriptor[] =
 };
 
 /* Language Descriptor */
-const UINT8 hs_string_descriptor0[] =
+const UINT8 hs_string_descriptor0[ ] =
 {
     0x04,   // this descriptor length
     0x03,   // descriptor type
@@ -97,7 +97,7 @@ const UINT8 hs_string_descriptor0[] =
 };
 
 /* Manufacturer Descriptor */
-const UINT8 hs_string_descriptor1[] =
+const UINT8 hs_string_descriptor1[ ] =
 {
     0x08,   // length of this descriptor
     0x03,
@@ -110,7 +110,7 @@ const UINT8 hs_string_descriptor1[] =
 };
 
 /* Product Descriptor */
-const UINT8 hs_string_descriptor2[]=
+const UINT8 hs_string_descriptor2[ ]=
 {
     38,         //38 bytes
     0x03,       //0x03
@@ -134,8 +134,6 @@ const UINT8 hs_string_descriptor2[]=
     0x20, 0x00  //
 };
 
-
-
 /*******************************************************************************
  * @fn     USB20_Endp_Init
  *
@@ -143,7 +141,7 @@ const UINT8 hs_string_descriptor2[]=
  *
  * @return  None
  */
-void USB20_Endp_Init ()
+void USB20_Endp_Init( void )
 {
     R8_UEP4_1_MOD = RB_UEP1_RX_EN | RB_UEP1_TX_EN;
 
@@ -151,7 +149,6 @@ void USB20_Endp_Init ()
     R16_UEP1_MAX_LEN = 512;
 
     R32_UEP0_RT_DMA = (UINT32)(UINT8 *)endp0RTbuff;
-
     R32_UEP1_TX_DMA = (UINT32)(UINT8 *)DEF_ENDP1_TX_DMA_ADDR;
 	R32_UEP1_RX_DMA = (UINT32)(UINT8 *)DEF_ENDP1_RX_DMA_ADDR;
 
@@ -162,8 +159,6 @@ void USB20_Endp_Init ()
 	R16_UEP1_T_LEN = 0;
 	R8_UEP1_TX_CTRL = UEP_T_RES_ACK |RB_UEP_T_TOG_1;
 	R8_UEP1_RX_CTRL = UEP_R_RES_ACK |RB_UEP_R_TOG_0;
-
-
 }
 
 /*******************************************************************************
@@ -179,12 +174,12 @@ void USB20_Device_Init ( FunctionalState sta )
 {
     UINT16 i;
     UINT32 *p;
-    if(sta)
+    if( sta )
     {
         R8_USB_CTRL = 0;
-        R8_USB_CTRL =  UCST_HS | RB_DEV_PU_EN | RB_USB_INT_BUSY |RB_USB_DMA_EN;
-        R8_USB_INT_EN = RB_USB_IE_SETUPACT | RB_USB_IE_TRANS | RB_USB_IE_SUSPEND  |RB_USB_IE_BUSRST ;
-        USB20_Endp_Init();
+        R8_USB_CTRL =  UCST_HS | RB_DEV_PU_EN | RB_USB_INT_BUSY | RB_USB_DMA_EN;
+        R8_USB_INT_EN = RB_USB_IE_SETUPACT | RB_USB_IE_TRANS | RB_USB_IE_SUSPEND  | RB_USB_IE_BUSRST ;
+        USB20_Endp_Init( );
     }
     else
     {
@@ -213,10 +208,9 @@ void USB20_Device_Setaddress( UINT32 address )
  *
  * @return   None
  */
-UINT16 U20_NonStandard_Request_Deal()
+UINT16 U20_NonStandard_Request_Deal( void )
 {
   UINT16 len = 0;
-
   return len;
 }
 
@@ -227,7 +221,7 @@ UINT16 U20_NonStandard_Request_Deal()
  *
  * @return   None
  */
-UINT16 U20_Standard_Request_Deal()
+UINT16 U20_Standard_Request_Deal( void )
 {
   UINT16 len = 0;
   UINT8 endp_dir;
@@ -241,11 +235,11 @@ UINT16 U20_Standard_Request_Deal()
         {
             case USB_DESCR_TYP_DEVICE:
                 pDescr = (UINT8 *)hs_device_descriptor;
-                SetupLen = ( SetupReqLen > sizeof(hs_device_descriptor) )? sizeof(hs_device_descriptor):SetupReqLen;
+                SetupLen = ( SetupReqLen > sizeof( hs_device_descriptor ) )? sizeof( hs_device_descriptor ):SetupReqLen;
                 break;
             case USB_DESCR_TYP_CONFIG:
                 pDescr = (UINT8 *)hs_config_descriptor;
-                SetupLen = ( SetupReqLen > sizeof(hs_config_descriptor) )? sizeof(hs_config_descriptor):SetupReqLen;
+                SetupLen = ( SetupReqLen > sizeof( hs_config_descriptor ) )? sizeof( hs_config_descriptor ):SetupReqLen;
                 break;
             case USB_DESCR_TYP_STRING:
                 switch( UsbSetupBuf->wValueL )
@@ -253,15 +247,15 @@ UINT16 U20_Standard_Request_Deal()
                     case USB_DESCR_LANGID_STRING:
 
                         pDescr = (UINT8 *)hs_string_descriptor0;
-                        SetupLen = ( SetupReqLen > sizeof(hs_string_descriptor0) )? sizeof(hs_string_descriptor0):SetupReqLen;
+                        SetupLen = ( SetupReqLen > sizeof( hs_string_descriptor0 ) )? sizeof( hs_string_descriptor0 ):SetupReqLen;
                         break;
                     case USB_DESCR_VENDOR_STRING:
                         pDescr = (UINT8 *)hs_string_descriptor1;
-                        SetupLen = ( SetupReqLen > sizeof(hs_string_descriptor1) )? sizeof(hs_string_descriptor1):SetupReqLen;
+                        SetupLen = ( SetupReqLen > sizeof( hs_string_descriptor1 ) )? sizeof( hs_string_descriptor1 ):SetupReqLen;
                         break;
                     case USB_DESCR_PRODUCT_STRING:
                         pDescr =(UINT8 *) hs_string_descriptor2;
-                        SetupLen = ( SetupReqLen > sizeof(hs_string_descriptor2) )? sizeof(hs_string_descriptor2):SetupReqLen;;
+                        SetupLen = ( SetupReqLen > sizeof( hs_string_descriptor2 ) )? sizeof( hs_string_descriptor2 ):SetupReqLen;;
                         break;
                     case USB_DESCR_SERIAL_STRING:
                         break;
@@ -285,11 +279,11 @@ UINT16 U20_Standard_Request_Deal()
         break;
 
     case USB_SET_CONFIGURATION:
-        if( (R8_USB_SPD_TYPE & RB_USBSPEED_MASK)  == UST_FS )
+        if( ( R8_USB_SPD_TYPE & RB_USBSPEED_MASK )  == UST_FS )
         {
             U20_EndpnMaxSize = 64;
         }
-        else if( (R8_USB_SPD_TYPE & RB_USBSPEED_MASK) == UST_LS )
+        else if( ( R8_USB_SPD_TYPE & RB_USBSPEED_MASK ) == UST_LS )
         {
             U20_EndpnMaxSize = 8;
         }
@@ -434,7 +428,7 @@ UINT16 U20_Standard_Request_Deal()
         break;
    }
   /* Judge whether it can be handled normally */
-  if( (SetupLen != USB_DESCR_UNSUPPORTED) && (SetupLen != 0))
+  if( ( SetupLen != USB_DESCR_UNSUPPORTED ) && ( SetupLen != 0 ) )
   {
       len = ( SetupLen >= U20_UEP0_MAXSIZE ) ? U20_UEP0_MAXSIZE : SetupLen;
       if(endp_dir)
@@ -470,7 +464,7 @@ void USBHS_IRQHandler(void)
     UINT16 rx_len;
 
 	int_flg = R8_USB_INT_FG;
-	/*SETUP Interrupt*/
+	/* SETUP Interrupt */
 	if( int_flg & RB_USB_IF_SETUOACT )
 	{
 #if 0
@@ -481,20 +475,20 @@ void USBHS_IRQHandler(void)
 #endif
 		 SetupReqType = UsbSetupBuf->bRequestType;
 		 SetupReq = UsbSetupBuf->bRequest;
-		 /*Data length*/
+		 /* Data length */
 		 SetupReqLen = UsbSetupBuf->wLength;
 
-		 /*Analyze host requests*/
+		 /* Analyze host requests */
 		 if((UsbSetupBuf->bRequestType & USB_REQ_TYP_MASK) != USB_REQ_TYP_STANDARD)
          {
-             ret_len =  U20_NonStandard_Request_Deal();
+             ret_len =  U20_NonStandard_Request_Deal( );
          }
          else
          {
-             ret_len = U20_Standard_Request_Deal();
+             ret_len = U20_Standard_Request_Deal( );
          }
-		 /*Unsupported descriptor*/
-		 if(ret_len == 0xFFFF)
+		 /* Unsupported descriptor */
+		 if( ret_len == 0xFFFF )
          {
               R16_UEP0_T_LEN = 0;
               R8_UEP0_TX_CTRL = UEP_T_RES_STALL ;
@@ -506,15 +500,15 @@ void USBHS_IRQHandler(void)
               R8_UEP0_TX_CTRL = UEP_T_RES_ACK | RB_UEP_T_TOG_1;
               R8_UEP0_RX_CTRL = UEP_R_RES_ACK | RB_UEP_R_TOG_1;
          }
-		/*clear int flag*/
+		/* clear int flag */
 		R8_USB_INT_FG = RB_USB_IF_SETUOACT;
 	}
-	/*Transaction transfer complete interrupt*/
+	/* Transaction transfer complete interrupt */
 	else if( int_flg & RB_USB_IF_TRANSFER )
 	{
 
 		end_num =   R8_USB_INT_ST & 0xf;
-		rx_token = ( (R8_USB_INT_ST )>>4) & 0x3;
+		rx_token = ( R8_USB_INT_ST >> 4 ) & 0x3;
 #if 0
 		if( !(R8_USB_INT_ST & RB_USB_ST_TOGOK) )
 		{
@@ -526,9 +520,9 @@ void USBHS_IRQHandler(void)
 		   case 0:
                 if( rx_token == PID_IN )
                 {
-                    ret_len = U20_Endp0_IN_Callback();
+                    ret_len = U20_Endp0_IN_Callback( );
                     /*Data sending completed*/
-                    if(ret_len == 0)
+                    if( ret_len == 0 )
                     {
                         R8_UEP0_RX_CTRL = UEP_R_RES_ACK | RB_UEP_R_TOG_1;
                         R16_UEP0_T_LEN = 0;
@@ -538,7 +532,7 @@ void USBHS_IRQHandler(void)
                     {
                         R16_UEP0_T_LEN = ret_len;
                         R8_UEP0_TX_CTRL ^= RB_UEP_T_TOG_1;
-                        R8_UEP0_TX_CTRL = ( R8_UEP0_TX_CTRL &~RB_UEP_TRES_MASK )| UEP_T_RES_ACK ;
+                        R8_UEP0_TX_CTRL = ( R8_UEP0_TX_CTRL &~RB_UEP_TRES_MASK ) | UEP_T_RES_ACK ;
                     }
                 }
                 else if( rx_token == PID_OUT )
@@ -546,8 +540,8 @@ void USBHS_IRQHandler(void)
                     SetupLen -= SetupLen > R16_USB_RX_LEN ? R16_USB_RX_LEN :SetupLen;
                     if( SetupLen > 0 )
                     {
-                       R8_UEP0_RX_CTRL ^=RB_UEP_R_TOG_1;
-                       R8_UEP0_RX_CTRL = ( R8_UEP0_RX_CTRL &~RB_UEP_RRES_MASK) | UEP_R_RES_ACK;
+                       R8_UEP0_RX_CTRL ^= RB_UEP_R_TOG_1;
+                       R8_UEP0_RX_CTRL = ( R8_UEP0_RX_CTRL &~ RB_UEP_RRES_MASK) | UEP_R_RES_ACK;
 
                     }
                     /*No data reception*/
@@ -564,7 +558,7 @@ void USBHS_IRQHandler(void)
 		       {
 		           /* Batch transmission mode processing */
                    /* Switching USB DMA addresses */
-                   HSPI_Rx_Data_DealAddr += ( 1 * 512 );
+                   HSPI_Rx_Data_DealAddr += 512;
 
                    if( HSPI_Rx_Data_DealAddr >= DEF_HPSI_RX_DMA_ADDR_MAX )
                    {
@@ -579,19 +573,17 @@ void USBHS_IRQHandler(void)
                    remanlen = HSPI_Rx_Data_RemainLen;
                    R8_HSPI_INT_EN = HSPI_Int_En_Save;
 
-
 		           /* Determine if there is still data to upload */
 		           if( remanlen )
 		           {
-
 		               /* Calculate the length and number of packages uploaded this time */
 		               offset = ( DEF_HPSI_RX_DMA_ADDR_MAX - HSPI_Rx_Data_DealAddr );//Remaining buffer size
-		               if( remanlen >= ( 1 * 512 ) )//The data to be sent is greater than or equal to 512
+		               if( remanlen >= 512 )//The data to be sent is greater than or equal to 512
 		               {
 		                   /* Determine if the buffer offset is sufficient, and if not, send it to the end of the buffer at most */
-		                   if( offset >= ( 1 * 512 ) )//The remaining buffer is greater than or equal to 4k
+		                   if( offset >= 512 )//The remaining buffer is greater than or equal to 4k
 		                   {
-		                       Endp1_Up_LastPackLen = ( 1 * 512 );
+		                       Endp1_Up_LastPackLen = 512;
 		                       len = 512;
 		                   }
 		                   else
@@ -599,10 +591,7 @@ void USBHS_IRQHandler(void)
 		                       Endp1_Up_LastPackLen = offset;
 		                       Endp1_Up_LastPackNum = Endp1_Up_LastPackLen / 512;
 		                       len = Endp1_Up_LastPackLen % 512;
-		                       if( len )
-		                       {
-		                       }
-		                       else if( len == 0 )
+		                       if( len == 0 )
 		                       {
 		                           len = 512;
 		                       }
@@ -620,10 +609,7 @@ void USBHS_IRQHandler(void)
 		                       Endp1_Up_LastPackLen = offset;
 		                   }
 		                   len = Endp1_Up_LastPackLen % 512;
-		                   if( len )
-		                   {
-		                   }
-		                   else if( len == 0 )
+		                   if( len == 0 )
 		                   {
 		                       len = 512;
 		                   }
@@ -632,14 +618,14 @@ void USBHS_IRQHandler(void)
 		               /* Enable USB data upload*/
 	                   R16_UEP1_T_LEN = len;
 	                   R8_UEP1_TX_CTRL ^= RB_UEP_T_TOG_1;
-	                   R8_UEP1_TX_CTRL = (R8_UEP1_TX_CTRL & ~RB_UEP_TRES_MASK) | UEP_T_RES_ACK;
+	                   R8_UEP1_TX_CTRL = ( R8_UEP1_TX_CTRL &~ RB_UEP_TRES_MASK ) | UEP_T_RES_ACK;
 
 		               /* Set endpoint 1 upload status */
 		               Endp1_Up_Status = 0x01;
 		           }
 		           else
 		           {
-		               if(HSPI_RX_StopFlag == 1)
+		               if( HSPI_RX_StopFlag == 1 )
 		               {
 		                   HSPI_Rx_Data_LoadAddr = DEF_HPSI_DMA_RX_ADDR0;
 		                   HSPI_Rx_Data_DealAddr = DEF_HPSI_DMA_RX_ADDR0;
@@ -651,7 +637,7 @@ void USBHS_IRQHandler(void)
 		               }
 
 		               /* Determine if there is still data to upload */
-	                   R8_UEP1_TX_CTRL = (R8_UEP1_TX_CTRL & ~RB_UEP_TRES_MASK) | UEP_T_RES_NAK;
+	                   R8_UEP1_TX_CTRL = ( R8_UEP1_TX_CTRL &~ RB_UEP_TRES_MASK ) | UEP_T_RES_NAK;
 		               Endp1_Up_Status = 0x00;
 		           }
 		       }
@@ -660,7 +646,7 @@ void USBHS_IRQHandler(void)
 		           /* Endpoint 1 download processing */
 		           /* Obtain the number of received packets */
 		           /* Switch buffer address */
-		           HSPI_Tx_Data_LoadAddr += ( 512 );
+		           HSPI_Tx_Data_LoadAddr += 512;
 		           if( HSPI_Tx_Data_LoadAddr >= DEF_HPSI_TX_DMA_ADDR_MAX )
 		           {
 		               HSPI_Tx_Data_LoadAddr = DEF_HPSI_DMA_TX_ADDR0;
@@ -690,21 +676,21 @@ void USBHS_IRQHandler(void)
 		           {
 		               /* Calculate the length and number of packets allowed for download this time */
 		               packnum = 1;
-		               if( remanlen < ( 1 * 512 ) )
+		               if( remanlen < 512 )
 		               {
 		                   packnum = remanlen / 512;
 		               }
 
 		               /* Determine whether the buffer offset is sufficient, and if not, limit it */
 		               remanlen = ( DEF_HPSI_TX_DMA_ADDR_MAX - HSPI_Tx_Data_LoadAddr );
-		               if( remanlen < ( DEF_ENDP1_IN_BURST_LEVEL * 512 ) )
+		               if( remanlen < DEF_ENDP1_IN_BURST_LEVEL * 512 )
 		               {
 		                   packnum = remanlen / 512;
 		               }
 
 		               /* Notify the computer to continue downloading N packets of data */
 	                   R8_UEP1_RX_CTRL ^= RB_UEP_R_TOG_1;
-	                   R8_UEP1_RX_CTRL = (R8_UEP1_RX_CTRL & ~RB_UEP_RRES_MASK) | UEP_R_RES_ACK;
+	                   R8_UEP1_RX_CTRL = ( R8_UEP1_RX_CTRL &~ RB_UEP_RRES_MASK ) | UEP_R_RES_ACK;
 
 		               Endp1_Down_Status = 0x00;
 		           }
@@ -713,7 +699,7 @@ void USBHS_IRQHandler(void)
 		               /* Notify the computer to pause downloading */
 		               packnum = 0;
                        R8_UEP1_RX_CTRL ^= RB_UEP_R_TOG_1;
-                       R8_UEP1_RX_CTRL = (R8_UEP1_RX_CTRL & ~RB_UEP_RRES_MASK) | UEP_R_RES_NAK;
+                       R8_UEP1_RX_CTRL = ( R8_UEP1_RX_CTRL &~ RB_UEP_RRES_MASK ) | UEP_R_RES_NAK;
 		               Endp1_Down_Status = 0x01;
 		           }
 
@@ -731,10 +717,10 @@ void USBHS_IRQHandler(void)
 	/*Bus reset interrupt*/
 	else if( int_flg & RB_USB_IF_BUSRST )
 	{
-		USB20_Endp_Init();
+		USB20_Endp_Init( );
 		USB20_Device_Setaddress( 0 );
 		R8_USB_INT_FG = RB_USB_IF_BUSRST;
-        if( link_sta == 1 )
+        if( Link_Sta == LINK_STA_1 )
         {
             PFIC_EnableIRQ(USBSS_IRQn);
             PFIC_EnableIRQ(LINK_IRQn);
@@ -758,19 +744,19 @@ void USBHS_IRQHandler(void)
  *
  * @return   None
  */
-UINT16 U20_Endp0_IN_Callback(void)
+UINT16 U20_Endp0_IN_Callback( void )
 {
     UINT16 len = 0;
-    switch(SetupReq)
+    switch( SetupReq )
     {
       case USB_GET_DESCRIPTOR:
           len = SetupLen >= U20_UEP0_MAXSIZE ? U20_UEP0_MAXSIZE : SetupLen;
-          memcpy(endp0RTbuff, pDescr, len);
+          memcpy( endp0RTbuff, pDescr, len );
           SetupLen -= len;
           pDescr += len;
           break;
       case USB_SET_ADDRESS:
-          USB20_Device_Setaddress(g_devInfo.dev_addr);
+          USB20_Device_Setaddress( g_devInfo.dev_addr );
           break;
       default:
           break;

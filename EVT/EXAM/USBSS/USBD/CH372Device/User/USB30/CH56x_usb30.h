@@ -46,6 +46,8 @@ extern "C" {
 #define SIZE_MSOS20DescriptorSet     72
 #define SIZE_GetStatus				 2
 
+#define LINK_STA_1  (1<<0)
+#define LINK_STA_3  (1<<2)
 /* Global Variable */
 extern __attribute__ ((aligned(16))) UINT8  endp0RTbuff[512] __attribute__((section(".DMADATA")));
 extern __attribute__ ((aligned(16))) UINT8  endp1RTbuff[4096] __attribute__((section(".DMADATA")));

@@ -14,26 +14,13 @@
 #include "UVCLIB.H"
 
 /* Global Variable */
-UINT8V      tx_lmp_port = 0;
+UINT8V      Tx_Lmp_Port = 0;
 UINT8V      Link_sta = 0;
 UINT32      SetupLen = 0;
 UINT8       SetupReqCode = 0;
 PUINT8      pDescr;
 __attribute__ ((aligned(16))) UINT8 endp0RTbuff[512] __attribute__((section(".DMADATA")));  //Endpoint 0 data send / receive buffer
 __attribute__ ((aligned(16))) UINT8 endp1RTbuff[1024] __attribute__((section(".DMADATA"))); //Endpoint 1 data send / receive buffer
-/*******************************************************************************
- * @fn      USB30_BUS_RESET
- *
- * @brief   USB3.0 bus reset
- *
- * @return  None
- */
-void USB30_BUS_RESET()
-{
-    R8_SAFE_ACCESS_SIG = 0x57; // enable safe access mode
-    R8_SAFE_ACCESS_SIG = 0xa8;
-    R8_RST_WDOG_CTRL = 0x40 | RB_SOFTWARE_RESET;
-}
 
 /*******************************************************************************
  * @fn      USB30D_init
@@ -121,19 +108,19 @@ void LINK_IRQHandler() //USBSS link interrupt service
 {
     if(USBSS->LINK_INT_FLAG & LINK_Ux_EXIT_FLAG) // device enter U2
     {
-        USBSS->LINK_CFG = CFG_EQ_EN | DEEMPH_CFG | TERM_EN;
+        USBSS->LINK_CFG = CFG_EQ_EN | TX_SWING | DEEMPH_CFG | TERM_EN;
         USB30_Switch_Powermode(POWER_MODE_0);
         USBSS->LINK_INT_FLAG = LINK_Ux_EXIT_FLAG;
     }
     if(USBSS->LINK_INT_FLAG & LINK_RDY_FLAG) // POLLING SHAKE DONE
     {
         USBSS->LINK_INT_FLAG = LINK_RDY_FLAG;
-        if(tx_lmp_port) // LMP, TX PORT_CAP & RX PORT_CAP
+        if(Tx_Lmp_Port) // LMP, TX PORT_CAP & RX PORT_CAP
         {
             USBSS->LMP_TX_DATA0 = LINK_SPEED | PORT_CAP | LMP_HP;
             USBSS->LMP_TX_DATA1 = UP_STREAM | NUM_HP_BUF;
             USBSS->LMP_TX_DATA2 = 0x0;
-            tx_lmp_port = 0;
+            Tx_Lmp_Port = 0;
         }
         /*Successful USB3.0 communication*/
         Link_sta = 3;
@@ -177,13 +164,11 @@ void LINK_IRQHandler() //USBSS link interrupt service
         else
         {
             USBSS->LINK_INT_CTRL = 0;
-            mDelayuS(2);
-            USB30_BUS_RESET();
         }
     }
     if(USBSS->LINK_INT_FLAG & LINK_TXEQ_FLAG) // POLLING SHAKE DONE
     {
-        tx_lmp_port = 1;
+        Tx_Lmp_Port = 1;
         USBSS->LINK_INT_FLAG = LINK_TXEQ_FLAG;
         USB30_Switch_Powermode(POWER_MODE_0);
     }
@@ -194,8 +179,6 @@ void LINK_IRQHandler() //USBSS link interrupt service
         USBSS->LINK_CTRL |= TX_WARM_RESET;
         while(USBSS->LINK_STATUS & RX_WARM_RESET);
         USBSS->LINK_CTRL &= ~TX_WARM_RESET;
-        mDelayuS(2);
-        USB30_BUS_RESET();
         USB30_Device_Setaddress(0);
 
     }

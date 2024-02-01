@@ -52,8 +52,6 @@ extern "C" {
 #define DEF_ENDP1_RX_DMA_ADDR      ( DEF_ENDP1_TX_DMA_ADDR + DEF_ENDP1_TX_BUF_LEN_BULK ) /* USB endpoint 1 receives DMA address */
 #define DEF_ENDP1_RX_BUF_LEN       ( 32 * 1024 )                                    /* USB endpoint 1 receive buffer size */
 
-
-
 /* HSPI-related RAM address allocation */
 #define DEF_HPSI_DMA_TX_ADDR0      DEF_ENDP1_RX_DMA_ADDR                            /* HSPI sends DMA0 address*/
 #define DEF_HPSI_DMA_RX_ADDR0      DEF_ENDP1_TX_DMA_ADDR                            /* HSPI receive DMA0 address */

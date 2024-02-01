@@ -45,6 +45,9 @@ extern "C" {
 #define USB_INT_DISK_ERR1                   0x20            /* USB memory operation failed */
 #define USB_CH56XUSBTIMEOUT                 0x28            /* USB device timeout */
 
+#define USB30_OUT_DISCONNECT        0xFA
+#define USB30_IN_DISCONNECT         0xAAFF
+
 #define U30_PID_OUT                     0x00            /* OUT */
 #define U30_PID_IN                      0x01            /* IN */
 
@@ -86,7 +89,6 @@ extern UINT8V gDeviceConnectstatus;                                             
 extern UINT8  gDeviceUsbType;                                                      /* 01--USB2.0&1.1  02--USB3.0*/
 extern UINT8  gDeviceClassType;
 
-
 extern const UINT8 get_descriptor[];
 extern const UINT8 get_cfg_descriptor[];
 extern const UINT8 get_cfg_descriptor_all[];
@@ -123,7 +125,8 @@ UINT8 U30HOST_GetPortStstus( UINT8 depth,UINT8 port );
 UINT8 U30HOST_SetHubDepth( UINT8 depth );
 UINT8 U30HOST_SetPortFeatrue( UINT8 port );
 UINT8 USB30HSOT_Enumerate_Hotrst( UINT8 *pbuf );
-UINT8  USBSS_HUB_Main_Process( UINT8 depth ,UINT8 addr,UINT8 uplevelport,UINT32 routestring);
+UINT8  USBSS_HUB_Main_Process( UINT8 depth ,UINT8 addr,UINT8 uplevelport,UINT32 routestring,UINT8 portnum);
+UINT8 USBSS_HUBCheckPortConnect( UINT8 depth,UINT8 port );
 
 void LINK_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void USBSS_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));

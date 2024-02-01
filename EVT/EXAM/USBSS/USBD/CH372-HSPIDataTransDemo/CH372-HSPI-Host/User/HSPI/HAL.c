@@ -144,29 +144,14 @@ void GPIO_Init( void )
 
     /* configure ACT(PB24)¡¢HRTS(PB23) Push-pull output,16mA */
     PIN_HRTS_HIGH( );
-    R32_PB_DIR |= ( ( 1 << 23 ) | ( 1 << 24 ) );
-    R32_PB_DRV |= ( ( 1 << 23 ) | ( 1 << 24 ) );
-    R32_PB_PU &= ~( ( 1 << 23 ) | ( 1 << 24 ) );
-    R32_PB_PD &= ~( ( 1 << 23 ) | ( 1 << 24 ) );
+    R32_PB_DIR |= (  1 << 23  );
+    R32_PB_DRV |= (  1 << 23  );
+    R32_PB_PU &= ~(  1 << 23  );
+    R32_PB_PD &= ~(  1 << 23  );
 
     /* configure HCTS(PB22) Pull up input */
-    R32_PB_DIR &= ~( ( 1 << 22 ) );
-    R32_PB_PU |= ( ( 1 << 22 ) );
-    R32_PB_PD &= ~( ( 1 << 22 ) );
+    R32_PB_DIR &= ~(  1 << 22  );
+    R32_PB_PU |= (  1 << 22  );
+    R32_PB_PD &= ~(  1 << 22  );
 
-    /* configure MODE(PA12) Pull up input */
-    R32_PA_DIR &= ~( ( 1 << 12 ) );
-    R32_PA_PU |= ( ( 1 << 12 ) );
-    R32_PA_PD &= ~( ( 1 << 12 ) );
-
-    /* test */
-    while( 1 )
-    {
-        temp1 = PIN_MODE_RD( );
-        Delay_mS( 3 );
-        if( temp1 == PIN_MODE_RD( ) )
-        {
-            break;
-        }
-    }
 }
